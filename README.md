@@ -1,4 +1,4 @@
-Open-source VuFind software [https://vufind-org.github.io/vufind/](https://vufind-org.github.io/vufind/) (developed by Villanova University's Falvey Memorial Library) is used as the digital repository for SOAS' Endangered Language Archive (ELAR). The repository is available at the URL: [https://elar.soas.ac.uk/](https://elar.soas.ac.uk/)
+Open-source VuFind software [https://vufind-org.github.io/vufind/](https://vufind-org.github.io/vufind/) (developed by Villanova University's Falvey Memorial Library) is used as the digital repository for SOAS' Endangered Languages Archive (ELAR). The repository is available at the URL: [https://elar.soas.ac.uk/](https://elar.soas.ac.uk/)
 
 This site was largely designed by Scanbit [https://www.scanbit.net/](https://www.scanbit.net/) who provide software development and hosting for cultural heritage and research institutions.
 
