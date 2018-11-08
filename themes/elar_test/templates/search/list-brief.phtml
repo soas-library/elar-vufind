@@ -1,0 +1,8 @@
+<? if (!isset($this->indexStart)) $this->indexStart = 0; ?>
+<? $showCheckboxes = (isset($this->showCartControls) && $this->showCartControls)
+  || (isset($this->showBulkOptions) && $this->showBulkOptions); ?>
+<? $i = $this->indexStart; foreach ($this->results->getResults() as $current):
+  $recordNumber = $this->results->getStartRecord()+$i-$this->indexStart; ?>
+   <?=$this->record($current)->getSearchResult('brief')?>
+<? endforeach; ?>
+

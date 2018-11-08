@@ -1,0 +1,411 @@
+.vertical .carousel-inner {
+  height: 100%;
+}
+
+.carousel.vertical .item {
+  -webkit-transition: 0.3s ease-in-out top;
+     -moz-transition: 0.3s ease-in-out top;
+      -ms-transition: 0.3s ease-in-out top;
+       -o-transition: 0.3s ease-in-out top;
+          transition: 0.3s ease-in-out top;
+}
+
+.carousel.vertical .active {
+  top: 0;
+}
+
+.carousel.vertical .next {
+  top: 400px;
+}
+
+.carousel.vertical .prev {
+  top: -400px;
+}
+
+.carousel.vertical .next.left,
+.carousel.vertical .prev.right {
+  top: 0;
+}
+
+.carousel.vertical .active.left {
+  top: -400px;
+}
+
+.carousel.vertical .active.right {
+  top: 400px;
+}
+
+.carousel.vertical .item {
+    left: 0;
+}
+
+.carousel-control.left, .carousel-control.right {
+	background-image:none !important;
+}
+
+#myCarousel {
+	background-color: darkgrey;
+}
+
+#collections {
+    text-align: justify;
+    text-justify: inter-word;
+	margin: 5px;
+}
+
+#coll {
+	background-color: #d3d3d3;
+	height: auto;
+}
+
+#coll p{
+	margin: 5px;
+}
+
+.pane{
+    border: 1px solid gray;
+    padding: 5px;
+}
+
+.menuHeader {
+    background: #ddd none repeat scroll 0 0;
+    border: 1px solid #aaa;
+    color: #222;
+    font-family: Verdana,Arial,sans-serif;
+    font-size: 1em;
+    font-weight: bold;
+    margin: 1em 5px 0;
+    padding: 3px 5px;
+}
+
+.contentMenu {
+	margin: 1em 5px 5px;
+	text-align: justify;
+    text-justify: inter-word;
+}
+
+#carouselImages {
+	width:100%;
+    text-align: center;
+}
+
+.carousel-inner > .item > img,
+.carousel-inner > .item > a > img {
+        width: 80%;
+        margin: auto;
+}
+
+#myCarousel .left {
+        width: auto !important;
+}
+
+#myCarousel .right {
+        width: auto !important;
+}
+
+.inner
+{
+    display: inline-block;
+}
+
+a:active,
+a:focus { 
+	-webkit-outline-style: none;
+     -moz-outline-style: none;
+      -ms-outline-style: none;
+       -o-outline-style: none;
+         outline-style: none;
+}
+
+.bg
+{
+  width: 100%;
+  z-index: 0;
+}
+
+.post-thumb {
+    float: left;
+}
+
+.post-thumb img {
+    display: block;
+}
+
+.post-content {
+    margin-left: 50px;
+}
+
+li{
+   list-style-type: none;
+   word-wrap: break-word;
+}
+
+.breakWord {
+    word-wrap: break-word;
+}
+
+.post-thumb-right {
+    float: right;
+}
+
+.post-thumb-right img {
+    display: block;
+	margin-left: 10px;
+}
+
+.m-urcs {
+    color: #bbb;
+    font-family: arial,helvetica,non-serif;
+    font-size: 8pt;
+}
+
+.m-urcs span {
+    border: 1px solid #ddd;
+    margin: 0 2px 0 0;
+    padding: 0 2px;
+}
+
+.d {
+    background: white none repeat scroll 0 0;
+    border: 1px solid #ddd;
+	color: black;
+}
+
+.vd {
+    background: #dfd none repeat scroll 0 0;
+    border: 1px solid green;
+    color: black;
+}
+
+.tit {
+    font-size: 14px;
+    line-height: 45px;
+    font-weight: bold;
+    text-decoration: underline;
+    color: darkgrey;
+}
+
+.line {
+    border-bottom:8px solid #ccc;
+}
+
+.inf {
+    list-style-type: unset;
+}
+
+.keywordsLink {
+    border: 1px dotted #a96;
+    line-height: 1.8em;
+}
+
+#filters {
+    background-color: #e6e6e6;
+}
+
+.depInf {
+    list-style-type: square;
+}
+
+.title {
+    text-align: center;
+}
+
+.searchPadding {
+    padding: 10%;
+}
+
+.blackBackgroundColor {
+    background-color: black;
+}
+
+.whiteTextColor {
+    color: white;
+}
+
+.recordDesc {
+	margin-top: 10px;
+}
+
+.table-align
+{
+    vertical-align: middle;
+    text-align: center!important;
+}
+
+.table tbody>tr>td.table-align
+{
+    vertical-align: middle!important;
+    text-align: center!important;
+}
+
+
+.result a.title {
+    font-weight: bold;
+    word-wrap: break-word;
+}
+.soasbreak {
+    word-wrap: break-word;
+}
+.depositorMargin{
+    margin: 2%;
+}
+
+#titlePodcast, #titleShowreel {
+	padding-bottom: 2%;
+}
+
+#bibliograficInfo {
+    padding-top: 5%;
+}
+
+.stat_text {
+    border: 1px dashed #aaaaaa;
+    margin-top: 10px;
+    padding: 15px;
+}
+
+.stat_text_checkbox {
+    border: 1px dashed #aaaaaa;
+    margin-top: 10px;
+    padding-top: 5px;
+    display: grid;
+    padding-left: 15px;
+}
+
+.stat_text_checkbox input[type="radio"], input[type="checkbox"] {
+    margin-top: 1px \9;
+    margin-right: 10px;
+    line-height: normal;
+}
+
+.filterLabel {
+    text-align: center;
+}
+
+.data {
+    float: right;
+}
+
+.files_stat_text {
+    border: 1px dashed #aaaaaa;
+    margin-top: 10px;
+    padding: 5px;
+}
+#settingsForm div {
+    margin: 10px 5px 10px 5px;
+}
+#settingsForm input[type="submit"] {
+    margin-left: 200px;
+}
+.statics-data {
+    margin: 1em 5px 0;
+    width: 97%;
+}
+.statics-data th, .statics-data td {
+    padding: 3px;
+}
+.statics-data th {
+    border-bottom: 1px dashed #aaaaaa;
+}
+.dataTables_length label {
+    margin:1em 5px 0;
+}
+.depositorDot {
+    margin-bottom: 5%;
+    margin-top: 5%;
+    border: 1px dotted #aaaaaa;
+}
+#bibliograficInfo li {
+    list-style-type: unset;
+}
+
+.prev, .prev:hover {
+    background-image: url('../../../themes/elar/images/double-left-chevron.png') !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    cursor: pointer !important;
+}
+
+.next , .next:hover {
+    background-image: url('../../../themes/elar/images/double-right-chevron.png') !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    cursor: pointer !important;
+}
+
+.soasImg {
+    text-align:left;
+    padding-left:0px;
+    padding-rigth:0px;
+}
+
+.socialIcons {
+    text-align:right;
+}
+
+.followLink {
+    padding-bottom:5%;
+}
+
+#showreelInfo {
+    margin-top: 20px;
+}
+
+.sortasc:after{
+    content: url(../../elar/images/datatables/sort_asc.png) !important;
+    opacity: unset;
+    box-sizing: border-box;
+    position: relative;
+    bottom: 8px;
+    right: 8px;
+    display: block;
+    font-family: 'Glyphicons Halflings';
+    float: right;
+    width: 9%;
+}
+.sortdesc:after{
+    content: url(../../elar/images/datatables/sort_desc.png) !important;
+    opacity: unset;
+    box-sizing: border-box;
+    position: relative;
+    bottom: 8px;
+    right: 8px;
+    display: block;
+    font-family: 'Glyphicons Halflings';
+    float: right;
+    width: 9%;
+}
+.sortboth:after{
+    content: url(../../elar/images/datatables/sort_both.png) !important;
+    opacity: unset;
+    box-sizing: border-box;
+    position: relative;
+    bottom: 8px;
+    right: 8px;
+    display: block;
+    font-family: 'Glyphicons Halflings';
+    float: right;
+    width: 9%;
+}
+
+.sortboth > a {
+   color:black;
+   text-decoration: none;
+}
+
+.sortasc > a {
+   color:black;
+   text-decoration: none;
+}
+
+.sortdesc > a {
+   color:black;
+   text-decoration: none;
+}
+
+
+.adatatable {
+padding-right: 30px;
+/*display: inline-grid;*/
+display: -webkit-box;
+}

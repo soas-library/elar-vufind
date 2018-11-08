@@ -1,0 +1,384 @@
+<?
+    // Set page title.
+    $this->headTitle($this->translate('VuFind Administration - Private Statistics'));
+?>
+
+<? /*SCB datepicker*/ ?>
+
+<script src="/themes/elar/js/bootstrap-datepicker.js"></script>
+<link href="/themes/elar/css/datepicker.css" rel="stylesheet">
+<script src="/themes/elar/js/admin/privatestatsgeneral.js"></script>
+
+<? /*SCB datepicker*/ ?>
+
+<? /*SCB mapFocus Statistics*/ ?>
+
+<link rel="stylesheet" media="all" href="/themes/elar/css/mapFocus/jquery-jvectormap.css"/>
+
+<script src="/themes/elar/js/mapFocus/jquery-1.8.2.js"></script>
+<script src="/themes/elar/js/mapFocus/jquery-jvectormap.js"></script>
+<script src="/themes/elar/js/mapFocus/jquery-mousewheel.js"></script>
+<script src="/themes/elar/js/mapFocus/jvectormap.js"></script>
+<script src="/themes/elar/js/mapFocus/abstract-element.js"></script>
+<script src="/themes/elar/js/mapFocus/abstract-canvas-element.js"></script>
+<script src="/themes/elar/js/mapFocus/abstract-shape-element.js"></script>
+<script src="/themes/elar/js/mapFocus/svg-element.js"></script>
+
+<script src="/themes/elar/js/mapFocus/vml-group-element.js"></script>
+<script src="/themes/elar/js/mapFocus/svg-canvas-element.js"></script>
+<script src="/themes/elar/js/mapFocus/svg-shape-element.js"></script>
+<script src="/themes/elar/js/mapFocus/svg-path-element.js"></script>
+
+<script src="/themes/elar/js/mapFocus/svg-circle-element.js"></script>
+<script src="/themes/elar/js/mapFocus/svg-image-element.js"></script>
+<script src="/themes/elar/js/mapFocus/svg-text-element.js"></script>
+<script src="/themes/elar/js/mapFocus/vml-element.js"></script>
+<script src="/themes/elar/js/mapFocus/svg-group-element.js"></script>
+<script src="/themes/elar/js/mapFocus/vml-canvas-element.js"></script>
+<script src="/themes/elar/js/mapFocus/vml-circle-element.js"></script>
+<script src="/themes/elar/js/mapFocus/vml-image-element.js"></script>
+<script src="/themes/elar/js/mapFocus/map-object.js"></script>
+<script src="/themes/elar/js/mapFocus/region.js"></script>
+<script src="/themes/elar/js/mapFocus/marker.js"></script>
+<script src="/themes/elar/js/mapFocus/vector-canvas.js"></script>
+<script src="/themes/elar/js/mapFocus/simple-scale.js"></script>
+
+<script src="/themes/elar/js/mapFocus/ordinal-scale.js"></script>
+<script src="/themes/elar/js/mapFocus/numeric-scale.js"></script>
+<script src="/themes/elar/js/mapFocus/color-scale.js"></script>
+<script src="/themes/elar/js/mapFocus/legend.js"></script>
+<script src="/themes/elar/js/mapFocus/data-series.js"></script>
+<script src="/themes/elar/js/mapFocus/proj.js"></script>
+<script src="/themes/elar/js/mapFocus/map.js"></script>
+
+<script src="/themes/elar/js/mapFocus/jquery-jvectormap-world-mill-en.js"></script>
+
+<?
+	$s = $this->results;
+?>
+
+<script>
+    jQuery.noConflict();
+    jQuery(function(){
+    var $ = jQuery;
+    
+    var gdpData = '{<?php echo $s[7]; ?>}';
+    var gdpData = JSON.parse(gdpData.replace(/array\(/g, '{').replace(/\)/g, '}').replace(/=>/g, ':'));
+    
+    $('#map').vectorMap({
+        map: 'world_mill_en',
+        panOnDrag: true,
+        focusOn: {
+          x: 0.5,
+          y: 0.5,
+          scale: 2,
+          animate: true
+        },
+		
+        series: {
+          regions: [{
+            scale: ['#C8EEFF', '#0071A4'],
+            normalizeFunction: 'polynomial',
+            values: gdpData
+          }]
+        },
+        onRegionTipShow: function(e, el, code){
+        
+          if (typeof(gdpData[code])=='undefined')
+           {
+           	el.html(el.html() + '<p>Count: 0</p>');
+           } else {
+           	el.html(el.html() + '<p>Count: ' + gdpData[code] + '</p>');
+           }
+        }
+		
+      });
+      
+    });
+    
+  </script>
+  
+  <style>
+  
+  #map {
+  padding: 1%;
+  height:500px;
+  width:100%;
+}
+
+.jvectormap-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    touch-action: none;
+}
+  
+  </style>
+  
+
+<? /*SCB mapFocus Statistics*/ ?>
+
+<div class="row">
+  <div class="sidebar col-sm-2">
+  	<?=$this->render("admin/menu.phtml")?>
+  </div>
+  <div class="col-sm-10">
+  <? if($this->request->get('PrivateStats')== 1){ ?>
+  <div class="col-sm-7">
+		<div class="border-facet">
+		<p class="menuHeader">
+			<?=$this->transEsc('statistics map')?>
+		</p>
+		<div id="map"></div>
+	</div>
+  </div>
+  <div class="col-sm-5">
+  <div class="border-facet">
+				<? 
+				//$current_year = date("Y");
+				//$current_month = date('m', strtotime('-1 month'))+1;
+				//$month = $_GET['month'];
+                                //$year = $_GET['year'];
+
+				//if (empty($year)) $year = $current_year;
+				//if (empty($month)) $month = $current_month;
+				
+				$today = date('d/m/Y');
+				$year = date('Y');
+				$month = date('m');
+				$day = date('d');
+				
+				?>
+				<p class="menuHeader">
+					<?=$this->transEsc('Private Statistics')?>
+				</p>
+				
+				<form id="statisticsForm" name="statisticsForm" action='PrivateStatsGeneral?yearFrom=<?=$year?>&monthFrom=<?=$month?>&dayFrom=<?=$day?>&yearTo=<?=$year?>&monthTo=<?=$month?>&dayTo=<?=$day?>' method="post">
+				    <input type="hidden" name="btnExportarExcel" value="Exportar" />
+				    <p class="contentMenu">
+				    <?
+				    echo $this->transEsc('CSV download info');
+				    ?>
+				    
+				    <a class="csvlink" href="#" onclick="document.getElementById('statisticsForm').submit();" style="text-decoration: underline;">
+				    <?
+				    echo $this->transEsc('CSV file');
+				    ?>
+				    </a>
+				    </p>
+				</form>
+				<div class="contentMenu">                
+					<div class="post-content-right">
+					
+					<div class="form-group" align="center">
+						<label class="control-label" for="email_message"><?=$this->transEsc('From')?>:</label>
+						  <div>
+						    <input type="text" value="<?=$today;?>" data-date-format="dd/mm/yyyy" id="datepickerFrom" name="datefrom" style="text-align: center;">
+						  </div>
+						  <label class=" control-label" for="email_message"><?=$this->transEsc('To')?>:</label>
+						  <div>
+						    <input type="text" value="<?=$today;?>" data-date-format="dd/mm/yyyy" id="datepickerTo" name="dateto" style="text-align: center;">
+						  </div>
+					</div>
+					
+					<script>
+						$('#datepickerFrom').datepicker({
+						   weekStart: 1 // day of the week start. 0 for Sunday - 6 for Saturday
+						 });
+						$('#datepickerTo').datepicker({
+						   weekStart: 1 // day of the week start. 0 for Sunday - 6 for Saturday
+						 });
+					</script>
+					
+					
+					<style>
+						.datepicker{z-index:1151 !important;}
+					</style>
+					
+					
+						<? /*<div class="form-group" align="center">
+							<label for="sel1"><?=$this->transEsc('show data by year')?>:</label>
+								  <select class="form-control" id="years" name="year">
+								    <option value="0"><?=$this->transEsc('All'); ?></option>
+								    <? foreach ($s[9] as $y){?>
+								    	<? echo '<option value="';
+								    	echo $y;
+								    	echo '" ';
+								    	if($current_year == $y): 
+								    		echo 'selected="selected"';
+								    	endif;
+								    	echo '>';
+								    	echo $y;
+								    	echo '</option>'; ?>
+								    <?}?>
+								  </select>
+						</div>
+						<div class="form-group" align="center">
+							  <label for="sel1"><?=$this->transEsc('show data by month')?>:</label>
+								  <select class="form-control" id="months" name="month">
+								    <option value="0"><?=$this->transEsc('All'); ?></option>
+								    <option value="1" <? if($month == '1'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('January'); ?></option>
+								    <option value="2" <? if($month == '2'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('February'); ?></option>
+								    <option value="3" <? if($month == '3'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('March'); ?></option>
+								    <option value="4" <? if($month == '4'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('April'); ?></option>
+								    <option value="5" <? if($month == '5'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('May'); ?></option>
+								    <option value="6" <? if($month == '6'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('June'); ?></option>
+								    <option value="7" <? if($month == '7'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('July'); ?></option>
+								    <option value="8" <? if($month == '8'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('August'); ?></option>
+								    <option value="9" <? if($month == '9'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('September'); ?></option>
+								    <option value="10" <? if($month == '10'): echo 'selected="selected"'; endif; ?>><?= $this->transEsc('October'); ?></option>
+								    <option value="11" <? if($month == '11'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('November'); ?></option>
+								    <option value="12" <? if($month == '12'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('December'); ?></option>
+								  </select>
+						</div>*/ ?>
+						<div class="form-group" align="center">
+						  <? echo '<a class="btn btn-default" type="button" onclick="filterELARWebTrafficGeneralPrivate(0);"><i class="fa fa-filter" aria-hidden="true"></i> Filter</a>';?>
+						</div>
+						
+						<div class="form-group" align="center">
+						<?
+						$dateObj   = DateTime::createFromFormat('!m', $month);
+						$monthNameFrom = $dateObj->format('F');
+						$dateObj   = DateTime::createFromFormat('!m', $month);
+						$monthNameTo = $dateObj->format('F');
+						?>
+						<? echo '<span><i>'.$this->transEsc('Data from').' </i></span><span class="labelPublicStatsResultsFrom"><i>' . $year . ' ' . $monthNameFrom . ' ' . $day . '</i></span><i> '.$this->transEsc('to').' </i><span class="labelPublicStatsResultsTo"><i>' . $year . ' ' . $monthNameTo . ' ' . $day . '</i></span>'; ?>
+						</div>
+						
+						<div class="stat_text_checkbox" align="left" style="display:none">
+							<label><input type="checkbox"  value="All deposits" id="fundingbody" name="fundingbody"  checked="yes"/><?=$this->transEsc('All deposits')?></label>
+						<?
+							$fundingBodies = $this->fundingbodies;
+							foreach ($fundingBodies as $fb=>$k){
+							echo '<label><input type="checkbox"  value="'.$k.'" name="fundingbody" />'.$k.'</label>';
+							}
+						?>
+
+
+						</div>
+
+						<div class="stat_text_checkbox" align="left" style="display:none">
+						
+							<label style="display: inline-flex;"><input type="radio" class="radio" value="Current" id="current_or_superseded" name="current_or_superseded"  checked="yes"/><?=$this->transEsc('Current')?></label>
+							<label style="display: inline-flex;"><input type="radio" class="radio" value="Superseded" id="current_or_superseded" name="current_or_superseded" /><?=$this->transEsc('Superseded')?></label>
+
+						</div>
+
+
+						<?
+							$s = $this->results;
+						?>
+						
+						<div class="stat_text">
+							<p>
+							<?
+							/*$pageHits = $this->driver->getHitsStat($deposit_node_id, $current_year, $current_month);*/
+							?>
+							<span><?=$this->transEsc('page hits')?></span>
+							<span class="data pageHitsResults"><?=$s[0]?></span>
+							</p>
+							<p>
+							<span><?=$this->transEsc('user logins')?></span>
+							<span class="data userLoginsResults"><?=$s[1]?></span>
+							</p>
+							<p>
+							<span><?=$this->transEsc('clics_per_visit')?></span>
+							<span class="data clicsPerVisitResults"><?=$s[5]?></span>
+							</p>
+							<p>
+							<span><?=$this->transEsc('duration_of_visit')?></span>
+							<span class="data clicsDurationPerVisit"><?=gmdate("H:i:s", $s[6])?></span>
+							</p>
+							<p>
+							<span><?=$this->transEsc('files with O access')?></span>
+							<span class="data OAccessResults"><?=$s[2]?></span>
+							</p>
+							<p>
+							<span><?=$this->transEsc('files with U access')?></span>
+							<span class="data UAccessResults"><?=$s[3]?></span>
+							</p>
+							<p>
+							<span><?=$this->transEsc('files with S access')?></span>
+							<span class="data SAccessResults"><?=$s[4]?></span>
+							</p>
+						</div>
+						<div class="form-group" align="center">
+						<br/><? echo '<span><i>'.$this->transEsc('Total number of resources').'</i></span>'; ?>
+						</div>
+						<div class="stat_text">
+							<?$countO=0;?>
+							<?$countS=0;?>
+							<?$countU=0;?>
+							<?
+								foreach ($s[8] as $subIndex=>$k){
+     									foreach ($k as $j=>$l) {
+     										//if ($subIndex=='O') print_r($l);
+     										//echo "nodo".$j."///". $l;
+     										if($j=='accessavailability') $tipo=$l;
+     										if($j=='num') {
+     											if ($tipo=='S') $countS=$l;
+     											if ($tipo=='O') $countO=$l;
+     											if ($tipo=='U') $countU=$l;
+     										}
+
+	        							}
+     								}
+     								
+							?>
+							<p>
+							<span><?=$this->transEsc('O resources')?></span>
+							<span class="data Oresources">
+							<?= $countO;?>
+							</span>
+							</p>
+							<p>
+							<span><?=$this->transEsc('U resources')?></span>
+							<span class="data Uresources">
+							<?= $countU;?>
+							</span>
+							</p>
+							<p>
+							<span><?=$this->transEsc('S resources')?></span>
+							<span class="data Sresources">
+							<?= $countS;?>
+							</span>
+							</p>
+						</div>
+
+				   	</div>
+				</div>
+			</div>
+		</div>
+		
+
+
+
+
+
+
+
+
+			<div class="contentMenu col-sm-12">
+				<div id="carouselImages">
+					<div class="inner hidden">
+						<img src="../../../themes/elar/images/arcadia_logo_n.gif" class="img-responsive" alt="Responsive image">
+					</div>
+					<div class="inner">
+						<img src="../../../themes/elar/images/soas_60h189w.png" class="img-responsive" alt="Responsive image">
+					</div>
+				</div>
+			</div>
+  </div>
+
+
+
+</div>
+    <? }else { ?>
+    
+    <?=$this->flashmessages();?>
+    
+    <? } ?>
+</div>
+  
+</div>

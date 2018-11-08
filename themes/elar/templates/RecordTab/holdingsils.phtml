@@ -1,0 +1,366 @@
+<?
+    // Set up convenience variables:
+    $account = $this->auth()->getManager();
+    $user = $account->isLoggedIn();
+    $setSpec = $this->driver->getSetSpec();
+    if (is_array($setSpec)) $setSpec=$setSpec[0];
+    $resources = $this->driver->getRealTimeResources($user->email, $setSpec);
+    
+    // Devuelve la KEY
+    $key = $this->driver->getConfigKey();
+    
+    // Set page title.
+    //$this->headTitle($this->translate('Resources') . ': ' . $this->driver->getBreadcrumb());
+
+    function get_browser_name($user_agent)
+    {
+    	if (strpos($user_agent, 'Opera') || strpos($user_agent, 'OPR/')) return 'Opera';
+        elseif (strpos($user_agent, 'Edge')) return 'Edge';
+        elseif (strpos($user_agent, 'Chrome')) return 'Chrome';
+        elseif (strpos($user_agent, 'Safari')) return 'Safari';
+        elseif (strpos($user_agent, 'Firefox')) return 'Firefox';
+        elseif (strpos($user_agent, 'MSIE') || strpos($user_agent, 'Trident/7')) return 'Internet Explorer';
+
+        return 'Other';
+    }
+
+    $browser_plugin = get_browser_name($_SERVER['HTTP_USER_AGENT']);
+
+?>
+
+ <!-- CUSTOM CODE FOR SOAS LIBRARY ELAR
+           @author Simon Barron sb174@soas.ac.uk-->
+      <? 
+         $count=0;
+         $resourceId=0;
+         $total = count($resources);
+         
+         
+         if (!empty($resources)): ?>
+         
+         	<table id="example" class="table table-striped table-bordered" cellspacing="0" width="95%">
+         		<thead>
+		            <tr>
+		                <th class="col-sm-2 table-align"><?=$this->transEsc('Access')?></th>
+		                <th class="col-sm-2 table-align"><?=$this->transEsc('Name')?></th>
+		                <th class="col-sm-2 table-align"><?=$this->transEsc('Type')?></th>
+		                <th class="col-sm-6 table-align"><?=$this->transEsc('Resource')?></th>
+		            </tr>
+		        </thead>
+		        <tbody>
+		        
+         	<?foreach($resources as $field):?>
+
+		       <?$filename=$field['path1'];?>
+		       <?$extension=$field['path2'];?>
+		       
+		       <? $mnt = '/mnt/ELAR_Deposit_Resources/';
+		       
+		       $file = $mnt . $filename . '.' . $extension;
+		       
+		       //echo "</br>";
+		        $spec = explode("#", $setSpec);
+			$length = sizeof($spec);
+    			//print_r(str_replace("/MPI", "", $spec[2]));
+    			$dep_node_id = str_replace("/MPI", "", $spec[2]);
+		       
+		       //echo "</br>";
+		       $partes = explode("/", $_SERVER[REQUEST_URI]);
+		       //echo str_replace("MPI", "", end($partes) );
+		       $int_node_id = str_replace("MPI", "", end($partes) );
+		       //echo "</br>";
+		       ?>
+		       
+		       <?$user = $this->auth()->isLoggedIn(); if ($user): ?>
+			<?
+			/*<?= $user->firstname;?>
+			<?= $user->lastname;?>
+			<?= $user->email;?>*/
+			?>
+			<? endif; ?>
+		       
+		       <?
+		       /*echo "</br>";
+		       echo $field['path1'] . '.' . $field['path2'];
+		       echo "</br>";
+		       echo $field['filename'];
+		       echo "</br>";
+		       echo date('Y-m-d');
+		       echo "</br>";
+		       echo date ('H:i:s');
+		       echo "</br>";
+		       $dep = $this->driver->getDepositorFromNodeId(str_replace("MPI", "", end($partes) ));
+		       echo $dep;
+		       
+		       echo "</br>";*/
+		       
+		       // set the default timezone
+                       date_default_timezone_set('Europe/London');
+		
+		       // url replace '/' by '-b-' 
+		       $url = $filename . '.' . $extension;
+		       $url = str_replace('/', '-b-', $url);
+		       
+		       ?>
+	
+			<tr>
+         		<?if($field['accessavailability']!=""){?>
+	         		<td class="table-align">
+	         			<span class="m-urcs">
+	         				<span <?if($field['accessavailability']=="O") echo 'class="vd"';?>>O</span>
+						<span <?if($field['accessavailability']=="U") echo 'class="vd"';?>>U</span>
+						<span <?if($field['accessavailability']=="S") echo 'class="vd"';?>>S</span>
+					</span>
+				</td>
+         		<?}?>
+         		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			
+			<?//SCB - Authorised user
+			if (($this->auth()->isLoggedIn() && $field['anyuser']=="1")){
+			?>
+				<?// SCB - Exist file
+				if(is_file($file) && $field['type']!=""){?>
+         				<?if($field['filename']!=""){?>
+						<td class="table-align"> 
+                                                <input type="hidden" name="nodeid" value="" />
+                                                <input type="hidden" name="userid" value="" />
+                                                <input type="hidden" name="filename" value="" />
+<a onclick="insertStat('<?=$user->firstname;?>','<?=$user->lastname;?>','<?=$user->email;?>','<?=$field['path1'].'.'.$field['path2'];?>','<?=$field['filename'];?>','<?=$int_node_id;?>','<?=date('Y-m-d H:i:s');?>','<?=$dep;?>','<?=$dep_node_id;?>','V','<?=$field['accessavailability'];?>','<?=strtolower($field['type']);?>','<?=$field['funding_body'];?>','<?=$field['size'];?>','<?=$field['duration'];?>')" href="http<?=(isset($_SERVER['HTTPS']) ? 's' : '');?>://<?= $_SERVER['SERVER_NAME'];?>/MyResearch/Resource/<?=$url?>" download><?=$field['filename']?></a> </td>	         		
+         				<? } else { ?>
+                                		<td class="table-align"></td>
+                        		<?}?>
+				<? } else { ?>
+					<?if($field['filename']!=""){?>
+						<td class="table-align"> <?=$field['filename']?> </td>
+					<? } else {?>
+						<td class="table-align"></td>
+					<?}?>	
+				<? } ?>
+			<? } else { ?>
+         			<?if($field['filename']!=""){?>
+					<?if ($field['authorised']=="1") {?>
+						<td class="table-align"> 
+
+                                                 <input type="hidden" name="nodeid" value="" />
+                                                 <input type="hidden" name="userid" value="" />
+<a onclick="insertStat('<?=$user->firstname;?>','<?=$user->lastname;?>','<?=$user->email;?>','<?=$field['path1'].'.'.$field['path2'];?>','<?=$field['filename'];?>','<?=$int_node_id;?>','<?=date('Y-m-d H:i:s');?>','<?=$dep;?>','<?=$dep_node_id;?>','V','<?=$field['accessavailability'];?>','<?=strtolower($field['type']);?>','<?=($field['funding_body']);?>','<?=($field['size']);?>','<?=($field['duration']);?>')" href="http<?=(isset($_SERVER['HTTPS']) ? 's' : '');?>://<?= $_SERVER['SERVER_NAME'];?>/resources/<?=$filename.'.'.$extension;?>,'" download><?=$field['filename']?></a> </td>	
+                                        <? } else { ?>
+						<td class="table-align"> <?=$field['filename']?> </td>
+                                        <? } ?>
+				<?}?>
+				<?if($field['filename']==""){?>
+					<td class="table-align"></td>
+				<?}?>
+			<? } ?>
+			
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+         		<?if($field['type']!=""){?>
+	         		<td class="table-align"> <?=strtolower($field['type'])?> </td>
+         		<?}?>
+                        <?if($field['type']==""){?>
+                                <td class="table-align"></td>
+                        <?}?>
+
+         		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+         		<?//SCB - User
+				if (($this->auth()->isLoggedIn() && $field['anyuser']=="1")):
+				
+				?>
+         		<?if($filename.'.'.$extension!=""){?>
+         		
+				 <?if(!is_file($file)){?>
+
+                       			<? echo '<td class="table-align"><strong>' . $this->transEsc('File not available') . '</strong></td>' ; ?>
+
+				<? } else if($field['type']==""){ ?>
+
+                                	<? echo '<td class="table-align"><strong>' . $this->transEsc('File not available') . '</strong></td>' ; ?>
+ 
+                            <? } else { ?>
+	
+         			<?
+				if(strtolower($field['type'])=="video" && strtolower($extension)!="mts"):
+				    
+				echo '<td class="table-align"><div align="center">'?>
+				
+				<? if(strcmp($browser_plugin, 'Safari') == 0){ ?>
+                       			<video src="http<?=(isset($_SERVER['HTTPS']) ? 's' : '');?>://<?= $_SERVER['SERVER_NAME'];?>/resources/<?=$filename . '.' . $extension;?>" style="width: 100%; height: 100%;" id="player_video" controls="controls" preload="none"></video>
+				<?} else {?>
+                       			<video src="http<?=(isset($_SERVER['HTTPS']) ? 's' : '');?>://<?= $_SERVER['SERVER_NAME'];?>/MyResearch/Resource/<?=$url?>" style="width: 100%; height: 100%;" id="player_video" controls="controls" preload="none"></video>
+				<?}?>
+    
+				<script>
+					$('video').mediaelementplayer();
+				</script>
+                                        <input type="hidden" name="nodeid" value="" />
+                                        <input type="hidden" name="userid" value="" />
+                                        <input type="hidden" name="filename" value="" />
+					<a onclick="insertStat('<?=$user->firstname;?>','<?=$user->lastname;?>','<?=$user->email;?>','<?=$field['path1'].'.'.$field['path2'];?>','<?=$field['filename'];?>','<?=$int_node_id;?>','<?=date('Y-m-d H:i:s');?>','<?=$dep;?>','<?=$dep_node_id;?>','V','<?=$field['accessavailability'];?>','<?=strtolower($field['type']);?>','<?=$field['funding_body'];?>','<?=$field['size'];?>','<?=$field['duration'];?>')" href="http<?=(isset($_SERVER['HTTPS']) ? 's' : '');?>://<?= $_SERVER['SERVER_NAME'];?>/MyResearch/Resource/<?=$url?>" download><?=$this->transEsc('Download')?></a>				        
+				<?'</div></td>';
+				else:
+				if(strtolower($field['type'])=="audio"):
+				    echo '<td class="table-align"><div align="center">'?>
+					
+					<? if(strcmp($browser_plugin, 'Safari') == 0){ ?>
+                                		<?$variable='http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . $_SERVER['SERVER_NAME']. '/resources/'.$filename . '.' . $extension;?>
+					<?} else {?>
+                                		<?$variable='http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . $_SERVER['SERVER_NAME']. '/MyResearch/Resource/'.$url;?>
+					<?}?>
+					
+					<audio id="player_audio" src="<?=$variable?>" style="width: 100%; height: 100%;" controls="controls"></audio>
+					<script>
+						$('audio').mediaelementplayer();
+					</script>
+                                        <input type="hidden" name="nodeid" value="" />
+                                        <input type="hidden" name="userid" value="" />
+                                        <input type="hidden" name="filename" value="" />	
+					<a onclick="insertStat('<?=$user->firstname;?>','<?=$user->lastname;?>','<?=$user->email;?>','<?=$field['path1'].'.'.$field['path2'];?>','<?=$field['filename'];?>','<?=$int_node_id;?>','<?=date('Y-m-d H:i:s');?>','<?=$dep;?>','<?=$dep_node_id;?>','V','<?=$field['accessavailability'];?>','<?=strtolower($field['type']);?>','<?=$field['funding_body'];?>',,'<?=$field['size'];?>','<?=$field['duration'];?>')" href="http<?=(isset($_SERVER['HTTPS']) ? 's' : '');?>://<?= $_SERVER['SERVER_NAME'];?>/MyResearch/Resource/<?=$url?>" download><?=$this->transEsc('Download')?></a>				       
+ 
+				<?'</div></td>';
+				else:
+				if(strtolower($field['type'])=="image"):
+				    echo '<td class="table-align"><div align="center"><img src="http' . (isset($_SERVER['HTTPS']) ? 's' : '')  . '://'.$_SERVER['SERVER_NAME'].'/MyResearch/Resource/'.$url.'" alt="Description" height="150" width="150" class="img-responsive">
+<input type="hidden" class="nodeid" value=""/><input type="hidden" class="filename" value=""/><input type="hidden" class="userid" value=""/>
+<a onclick="insertStat(\''.$user->firstname.'\',\''.$user->lastname.'\',\''.$user->email.'\',\''.$field['path1'].'.'.$field['path2'].'\',\''.$field['filename'].'\',\''.$int_node_id.'\',\''.date('Y-m-d H:i:s').'\',\''.$dep.'\',\''.$dep_node_id.'\',\'V\',\''.$field['accessavailability'].'\',\''.strtolower($field['type']).'\',\''.strtolower($field['funding_body']).'\',\''.strtolower($field['size']).'\',\''.strtolower($field['duration']).'\')" href="http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://'.$_SERVER['SERVER_NAME'].'/MyResearch/Resource/'.$url.'" download  target="_blank">'.$this->transEsc('Download').'</a></div></td>';
+
+				    
+				else:
+				    echo '<td class="table-align"><input type="hidden" class="nodeid" value=""/><input type="hidden" class="filename" value=""/><input type="hidden" class="userid" value=""/><a onclick="insertStat(\''.$user->firstname.'\',\''.$user->lastname.'\',\''.$user->email.'\',\''.$field['path1'].'.'.$field['path2'].'\',\''.$field['filename'].'\',\''.$int_node_id.'\',\''.date('Y-m-d H:i:s').'\',\''.$dep.'\',\''.$dep_node_id.'\',\'V\',\''.$field['accessavailability'].'\',\''.strtolower($field['type']).'\',\''.$field['funding_body'].'\',\''.$field['size'].'\',\''.$field['duration'].'\')" href="http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://'.$_SERVER['SERVER_NAME'].'/MyResearch/Resource/'.$url.'" download>'.$this->transEsc('Download').'</a></td>';
+
+
+				endif;
+				endif;
+				endif;
+				
+
+				
+				?>
+			<?}?>			
+         		<?}?>
+         		<?else:
+
+			if($field['authorised']=="1"):?>
+	
+				<?if($filename.'.'.$extension!=""){?>
+                                 <? /*OJOOOOOOOOOOO QUITO EL ! SOLO PARA EL ENTORNO DE PRUEBA*/ ?>
+                                 <?if(!is_file($file)){?>
+
+                                        <? echo '<td class="table-align"><strong>' . $this->transEsc('File not available') . '</strong></td>' ; ?>
+
+                                <? } else if($field['type']==""){ ?>
+
+                                        <? echo '<td class="table-align"><strong>' . $this->transEsc('File not available') . '</strong></td>' ; ?>
+
+                            	<? } else { ?>
+					
+					<?
+                                if(strtolower($field['type'])=="video" && strtolower($extension)!="mts"):
+
+                                echo '<td class="table-align"><div align="center">'?>
+
+                                        <video src="http<?=(isset($_SERVER['HTTPS']) ? 's' : '');?>://<?= $_SERVER['SERVER_NAME'];?>/resources/<?=$filename . '.' . $extension;?>" style="width: 100%; height: 100%;" id="player_video" controls="controls" preload="none"></video>
+
+                                <script>
+                                        $('video').mediaelementplayer();
+                                </script>
+                                <input type="hidden" name="nodeid" value="" />
+                                <input type="hidden" name="userid" value="" />
+                                <input type="hidden" name="filename" value="" />
+
+                                        <a onclick="insertStat('<?=$user->firstname;?>','<?=$user->lastname;?>','<?=$user->email;?>','<?=$field['path1'].'.'.$field['path2'];?>','<?=$field['filename'];?>','<?=$int_node_id;?>','<?=date('Y-m-d H:i:s');?>','<?=$dep;?>','<?=$dep_node_id;?>','V','<?=$field['accessavailability'];?>','<?=strtolower($field['type']);?>','<?=$field['funding_body'];?>','<?=$field['size'];?>','<?=$field['duration'];?>')" href="http<?=(isset($_SERVER['HTTPS']) ? 's' : '');?>://<?= $_SERVER['SERVER_NAME'];?>/resources/<?=$filename . '.' . $extension;?>" download><?=$this->transEsc('Download')?></a>
+                                <?'</div></td>';
+                                else:
+				if(strtolower($field['type'])=="audio"):
+                                    echo '<td class="table-align"><div align="center">'?>
+
+                                                <?$variable='http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . $_SERVER['SERVER_NAME']. '/resources/'.$filename . '.' . $extension;?>
+
+                                        <audio id="player_audio" src="<?=$variable?>" style="width: 100%; height: 100%;" controls="controls"></audio>
+                                        <script>
+                                                $('audio').mediaelementplayer();
+                                        </script>
+                                        <input type="hidden" name="nodeid" value="" />
+                                        <input type="hidden" name="userid" value="" />
+                                        <input type="hidden" name="filename" value="" />
+                                        <a onclick="insertStat('<?=$user->firstname;?>','<?=$user->lastname;?>','<?=$user->email;?>','<?=$field['path1'].'.'.$field['path2'];?>','<?=$field['filename'];?>','<?=$int_node_id;?>','<?=date('Y-m-d H:i:s');?>','<?=$dep;?>','<?=$dep_node_id;?>','V','<?=$field['accessavailability'];?>','<?=strtolower($field['type']);?>','<?=$field['funding_body'];?>','<?=$field['size'];?>','<?=$field['duration'];?>')" href="http<?=(isset($_SERVER['HTTPS']) ? 's' : '');?>://<?= $_SERVER['SERVER_NAME'];?>/resources/<?=$filename . '.' . $extension;?>" download><?=$this->transEsc('Download')?></a>
+
+                                <?'</div></td>';
+				else:
+                                if(strtolower($field['type'])=="image"):
+                                    echo '<td class="table-align"><div align="center"><img src="http' . (isset($_SERVER['HTTPS']) ? 's' : '')  . '://'.$_SERVER['SERVER_NAME'].'/resources/'.$filename.'.'.$extension.'" alt="Description" height="150" width="150" class="img-responsive"><input type="hidden" class="nodeid" value=""/><input type="hidden" class="filename" value=""/><input type="hidden" class="userid" value=""/><a onclick="insertStat(\''.$user->firstname.'\',\''.$user->lastname.'\',\''.$user->email.'\',\''.$field['path1'].'.'.$field['path2'].'\',\''.$field['filename'].'\',\''.$int_node_id.'\',\''.date('Y-m-d H:i:s').'\',\''.$dep.'\',\''.$dep_node_id.'\',\'V\',\''.$field['accessavailability'].'\',\''.strtolower($field['type']).'\',\''.$field['funding_body'].'\',\''.$field['size'].'\',\''.$field['duration'].'\')" href="http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://'.$_SERVER['SERVER_NAME'].'/resources/'.$filename.'.'.$extension.'" download  target="_blank">'.$this->transEsc('Download').'</a></div></td>';
+
+                                else:
+                                    echo '<td class="table-align"><input type="hidden" class="nodeid" value=""/><input type="hidden" class="filename" value=""/><input type="hidden" class="userid" value=""/><a onclick="insertStat(\''.$user->firstname.'\',\''.$user->lastname.'\',\''.$user->email.'\',\''.$field['path1'].'.'.$field['path2'].'\',\''.$field['filename'].'\',\''.$int_node_id.'\',\''.date('Y-m-d H:i:s').'\',\''.$dep.'\',\''.$dep_node_id.'\',\'V\',\''.$field['accessavailability'].'\',\''.strtolower($field['type']).'\',\''.$field['funding_body'].'\',\''.$field['size'].'\',\''.$field['duration'].'\')" href="http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://'.$_SERVER['SERVER_NAME'].'/resources/'.$filename.'.'.$extension.'" download>'.$this->transEsc('Download').'</a></td>';
+
+
+                                endif;
+                                endif;
+                                endif;
+				?>
+				<?}}?>
+				
+			<?else:
+
+			if($this->auth()->isLoggedIn()):
+                                {echo '<td class="font10 normal padding5 table-align">'.$this->transEsc('Privileges');
+                                echo '<input type="hidden" class="nodeid" value="'.$field['nodeid'].'"/>';
+                                echo '<input type="hidden" class="filename" value="'.$field['filename'].'"/>';
+                                echo '<input type="hidden" class="userid" value="'.$user->cat_username.'"/>';
+                                echo '</br><a id="mail-record'. $resourceId .'" class="modal-link controller:Record" href="http://' . $_SERVER['SERVER_NAME'] . '/Record/'.$this->driver->getUniqueId().'/Email?nodeid='. $field['nodeid'].'&filename='. $field['filename'].'&userid='. $user->cat_username.'" title="'. $this->transEsc('Request access') . '" rel="nofollow"><i class="fa fa-envelope"></i> '. $this->transEsc('Request access') .'</a>';
+                                echo '</td>';
+
+                                }
+			else: 
+
+         			echo '<td class="font10 normal padding5 table-align">'.$this->transEsc('resource_access1').'<span id="loginOptions"><a href="/MyResearch/UserLogin" class="modal-link" title="Login">'.$this->transEsc('resource_access2').'</a></span>'.$this->transEsc('resource_access3').'<a href="https://lat1.lis.soas.ac.uk/ds/RRS_V1/RrsRegistration" target="_blank">'.$this->transEsc('resource_access4').'</a>'.$this->transEsc('resource_access5').'</td>';
+         		endif;
+			endif;
+         		endif;?>
+         		</tr>
+         	
+         	<? $resourceId=$resourceId +1; $count=$count +1;endforeach; ?>
+         		</tbody>
+		</table>
+
+         <?endif;?>
+         
+	<script type='text/javascript'>
+	
+	function insertStat(firstname, surname, email, path, filename, internal_node_id, date_stat, depositor_name, deposit_node_id, source, res_type, file_type, funding_body,size,duration) {
+	    /*console.log("-----");
+            console.log(firstname);
+            console.log(surname);
+            console.log(email);
+            console.log(path);
+            console.log(filename);
+            console.log(internal_node_id);
+            console.log(date_stat);
+            console.log(depositor_name);
+            console.log(deposit_node_id);
+            console.log(source);
+            console.log(res_type);
+            console.log(file_type);
+            console.log(funding_body);
+            console.log("-----");*/
+
+	    $.ajax({
+                    dataType: 'html',
+                    url: '/AJAX/addStat?user_id='+email+'&firstname='+firstname+'&surname='+surname+'&path='+path+'&filename='+filename+'&int_node_id='+internal_node_id+'&date_stat='+date_stat+'&dep_name='+depositor_name+'&dep_node_id='+deposit_node_id+'&source='+source+'&res_type='+res_type+'&f_type='+file_type+'&funding_body='+funding_body+'&size='+size+'&duration='+duration,
+                    data: {},
+                     success:function(data, textStatus, xhr) {
+                         //console.log(data);
+                         //console.log(textStatus);
+                         //console.log(xhr);
+                      },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                           //console.log(xhr.status);
+                           //console.log(xhr.responseText);
+                           //console.log(thrownError);
+                       }
+                  });
+
+	}
+	
+	</script>
+		            

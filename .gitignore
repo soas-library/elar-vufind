@@ -1,0 +1,37 @@
+# GNU Emacs temporary files
+
+ChangeLog
+\#*
+.\#*
+TAGS
+*~
+/vendor
+composer.lock
+composer.phar
+import/solrmarc.log
+node_modules
+
+#soas-library changes
+nohup.out
+
+#Local
+mysqldump/
+prueba/
+public/sitemap*
+local/cache/
+local/config/
+local/harvest/*
+local/httpd-vufind.conf
+local/import/solrmarc_core_3.0.6.jar
+local/import/sorted-callnumber.tmp
+import/solrmarc.log.1
+
+#Solr
+solr/vufind/alphabetical_browse/
+solr/vufind/authority/
+solr/vufind/summ/
+solr/vufind/toc/
+solr/vufind/biblio/index/
+solr/vufind/biblio/spellShingle/
+solr/vufind/biblio/spellchecker/
+solr/vufind/biblio/tlog/tlog*

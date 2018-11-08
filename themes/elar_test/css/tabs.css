@@ -1,0 +1,56 @@
+.nav-tabs > li {
+    float:none;
+    display:inline-block;
+    *display:inline; /* ie7 fix */
+     zoom:1; /* hasLayout ie7 trigger */
+}
+
+.nav-tabs {
+    text-align:center;
+}
+
+.nav-tabs > li > a{
+  border: medium none;
+}
+
+.nav-tabs > li > a:hover{
+    background-color: #666 !important;
+    border: medium none;
+    border-radius: 0;
+    color:#ffdd66;
+}
+
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:focus,
+.nav-tabs > li.active > a:hover{
+    background-color: #d3d3d3 !important;
+}
+
+#cite-record { 
+	background-color: #ededed;
+    	border: 1px dotted #a96;
+    	color: #06c;
+    	display: block;
+}
+
+#cite-record:hover { 
+	background-color: #d3d3d3 !important;
+	color: #09f;
+}
+
+.authorsTabs {
+	background-color: #ffdd66;
+}
+
+#authorsFields {
+	background-color:white;
+	margin:1%;
+	padding:1%;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #d3d3d3;
+}
+
+.tab {
+	background-color: darkgray;
+}

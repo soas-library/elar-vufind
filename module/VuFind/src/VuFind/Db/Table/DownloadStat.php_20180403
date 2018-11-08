@@ -1,0 +1,574 @@
+<?php
+/**
+ * Table Definition for tags
+ *
+ * PHP version 5
+ *
+ * Copyright (C) Villanova University 2010.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * @category VuFind2
+ * @package  Db_Table
+ * @author   Demian Katz <demian.katz@villanova.edu>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     http://vufind.org   Main Site
+ */
+namespace VuFind\Db\Table;
+use Zend\Db\Sql\Expression, Zend\Db\Sql\Select;
+
+/**
+ * Table Definition for donwload_stat
+ *
+ * @category VuFind2
+ * @package  Db_Table
+ * @author   Demian Katz <demian.katz@villanova.edu>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     http://vufind.org   Main Site
+ */
+class DownloadStat extends Gateway
+{
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct('download_stat', 'VuFind\Db\Row\DownloadStat');
+    }
+
+    /**
+     * 
+     */
+    public function insertStat($firstname, $surname, $userID, $path, $filename, $internaNodeID, $date, $depositorName, $depositNodeID, $source, $resource_type, $file_type)
+    {
+    	if ($userID=="") {$firstname= "Open"; $surname="Download";}
+        $row = $this->createRow();
+        $row->user_id = $userID;
+        $row->firstname = $firstname;
+        $row->surname = $surname;
+        $row->path = $path;
+        $row->filename = $filename;
+        $row->internal_node_id = $internaNodeID;
+        $row->date_stat = $date;
+        $row->depositor_name = $depositorName;
+        $row->deposit_node_id = $depositNodeID;
+        $row->source = $source;
+        $row->resource_type = $resource_type;
+        $row->file_type = $file_type;
+        $row->save();
+    }
+    
+
+    /**
+     * 
+     */
+
+    public function getStatsByDate($yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+      
+        //SCB Fix. Sanitize $depNodeId
+        $hasArguments = strpos($depNodeId,'?');
+        if ($hasArguments >0) {$depNodeId=substr($depNodeId,0,$hasArguments-1);}
+        
+        /*if($current_month == 0) {
+	        if($current_year == 0) {
+		        $sql ="select DATE(date_stat), TIME(date_stat), firstname, surname, path from "
+		        ."download_stat "
+		        ." order by firstname, surname ASC, date_stat DESC;";
+	        } else {
+		        $sql ="select DATE(date_stat), TIME(date_stat), firstname, surname, path from "
+		        ."download_stat "
+		        ."where YEAR(date_stat) = ".$current_year
+		        ." order by firstname, surname ASC, date_stat DESC;";
+	        }
+        } else {
+	        if($current_year == 0) {
+		        $sql ="select DATE(date_stat), TIME(date_stat), firstname, surname, path from "
+		        ."download_stat "
+		        ."where MONTH(date_stat) = ".$current_month
+		        ." order by firstname, surname ASC, date_stat DESC;";
+	        } else {
+		        $sql ="select DATE(date_stat), TIME(date_stat), firstname, surname, path from "
+		        ."download_stat "
+		        ."where YEAR(date_stat) = ".$current_year
+		        ." and MONTH(date_stat) = ".$current_month
+		        ." order by firstname, surname ASC, date_stat DESC;";
+	        }
+        }*/
+
+	$sql = 'select DATE(date_stat), TIME(date_stat), firstname, surname, path '
+	.'from download_stat '
+	.'where DATE(date_stat) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom . '" '
+	.'AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo . '" '
+	.'order by firstname, surname ASC, date_stat DESC;';
+
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	
+	$exa = array();
+	
+	foreach ($results as $row) {
+ 
+		$d = $row['DATE(date_stat)'];
+		$t = $row['TIME(date_stat)'];
+		$firstname = $row['firstname'];
+		$surname = $row['surname'];
+		$path = $row['path'];
+		
+		$exa[]=array('datetime'=>$d . ' - ' . $t,'name'=>$firstname . ' ' . $surname, 'path'=>$path);
+	        
+	}
+
+        return $exa;
+    }
+
+
+    /**
+     * 
+     */
+
+    public function getStatsFromDeposit($depNodeId, $yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+      
+        //SCB Fix. Sanitize $depNodeId
+        $hasArguments = strpos($depNodeId,'?');
+        if ($hasArguments >0) {$depNodeId=substr($depNodeId,0,$hasArguments-1);}
+
+ 	$sql = 'select DATE(date_stat), TIME(date_stat), firstname, surname, path '
+ 	.'from download_stat '
+ 	.'where deposit_node_id = "' . $depNodeId . '" '
+ 	.'AND DATE(date_stat) '
+ 	.'between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom . '" '
+ 	.'AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo . '" '
+ 	.'order by date_stat DESC;';
+
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	
+	$exa = array();
+	
+	foreach ($results as $row) {
+ 
+		$d = $row['DATE(date_stat)'];
+		$t = $row['TIME(date_stat)'];
+		$firstname = $row['firstname'];
+		$surname = $row['surname'];
+		$path = $row['path'];
+		
+	        
+	        $ex = $d . ' - ' . $t . ' - ' . $firstname . ' - ' . $surname . ' - ' . $path;
+	        
+	        $exa[] = $ex;
+	        
+	}
+        return $exa;
+    }
+
+     /**
+     * 
+     */
+
+    public function getStatsFromUser($deposit_node_id, $user_id, $yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+      
+        //SCB Fix. Sanitize $depNodeId
+        $hasArguments = strpos($deposit_node_id,'?');
+        if ($hasArguments >0) {$deposit_node_id=substr($deposit_node_id,0,$hasArguments-1);}
+        /*$sql="select user_id from download_stat where firstname='" . $firstname . "' and surname='" . $surname . "'";
+        
+        $statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+        
+        foreach ($results as $row) {
+		$user_id = $row['user_id'];
+	}*/
+        
+        //$sql="select * from download_stat where deposit_node_id=" . $deposit_node_id . " and user_id='" . $user_id . "'";
+
+	$sql = 'select DATE(date_stat), TIME(date_stat), firstname, surname, path '
+	.'from download_stat '
+	.'where deposit_node_id = "' . $deposit_node_id . '" '
+	.'AND DATE(date_stat) '
+	.'between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom . '" '
+	.'AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo . '" '
+	.'and user_id="' . $user_id . '" '
+	.'order by date_stat DESC;';
+
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	
+	$exa = array();
+	
+	foreach ($results as $row) {
+ 
+		$d = $row['DATE(date_stat)'];
+		$t = $row['TIME(date_stat)'];
+		$firstname = $row['firstname'];
+		$surname = $row['surname'];
+		$path = $row['path'];
+	        
+	        $ex = $d . ' - ' . $t . ' - ' . $firstname . ' - ' . $surname . ' - ' . $path;
+	        
+	        $exa[] = $ex;
+	        
+	}
+        return $exa;
+    }
+    
+     /**
+     *
+     */
+
+    public function getStatsFromLU($deposit_node_id, $yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+
+        //SCB Fix. Sanitize $depNodeId
+        $hasArguments = strpos($deposit_node_id,'?');
+        if ($hasArguments >0) {$deposit_node_id=substr($deposit_node_id,0,$hasArguments-1);}
+
+	$sql = 'select DATE(date_stat), TIME(date_stat), firstname, surname, path '
+	.'from download_stat '
+	.'where deposit_node_id = "' . $deposit_node_id . '" '
+	.'AND DATE(date_stat) '
+	.'between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom . '" '
+	.'AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo . '" '
+	.'and firstname="Lat" and surname="user" '
+	.'order by date_stat DESC;';
+
+        $statement = $this->adapter->query($sql);
+
+        $results = $statement->execute();
+
+        $exa = array();
+
+        foreach ($results as $row) {
+
+                $d = $row['DATE(date_stat)'];
+                $t = $row['TIME(date_stat)'];
+                $firstname = $row['firstname'];
+                $surname = $row['surname'];
+                $path = $row['path'];
+
+                $ex = $d . ' - ' . $t . ' - ' . $firstname . ' - ' . $surname . ' - ' . $path;
+
+                $exa[] = $ex;
+
+        }
+        return $exa;
+    }
+
+     /**
+     *
+     */
+
+    public function getStatsFromOD($deposit_node_id, $yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+
+        //SCB Fix. Sanitize $depNodeId
+        $hasArguments = strpos($deposit_node_id,'?');
+        if ($hasArguments >0) {$deposit_node_id=substr($deposit_node_id,0,$hasArguments-1);}
+
+	$sql = 'select DATE(date_stat), TIME(date_stat), firstname, surname, path '
+	.'from download_stat '
+	.'where deposit_node_id = "' . $deposit_node_id . '" '
+	.'AND DATE(date_stat) '
+	.'between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom . '" '
+	.'AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo . '" '
+	.'and firstname="Open" and surname="Download" '
+	.'order by date_stat DESC;';
+
+        $statement = $this->adapter->query($sql);
+
+        $results = $statement->execute();
+
+        $exa = array();
+
+        foreach ($results as $row) {
+
+                $d = $row['DATE(date_stat)'];
+                $t = $row['TIME(date_stat)'];
+                $firstname = $row['firstname'];
+                $surname = $row['surname'];
+                $path = $row['path'];
+
+                $ex = $d . ' - ' . $t . ' - ' . $firstname . ' - ' . $surname . ' - ' . $path;
+
+                $exa[] = $ex;
+
+        }
+        return $exa;
+    }
+
+     /**
+     *
+     */
+
+    public function getStatsFromSpecificUser($deposit_node_id, $firstname, $surname, $yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+
+        //SCB Fix. Sanitize $depNodeId
+        $hasArguments = strpos($deposit_node_id,'?');
+        if ($hasArguments >0) {$deposit_node_id=substr($deposit_node_id,0,$hasArguments-1);}
+
+	$sql = 'select DATE(date_stat), TIME(date_stat), firstname, surname, path '
+	.'from download_stat '
+	.'where deposit_node_id = "' . $deposit_node_id . '" '
+	.'AND DATE(date_stat) '
+	.'between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom . '" '
+	.'AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo . '" '
+	.'and firstname="' . $firstname . '" and surname="' . $surname . '" '
+	.'order by date_stat DESC;';
+
+	$statement = $this->adapter->query($sql);
+
+        $results = $statement->execute();
+
+        $exa = array();
+
+        foreach ($results as $row) {
+
+                $d = $row['DATE(date_stat)'];
+                $t = $row['TIME(date_stat)'];
+                $firstname = $row['firstname'];
+                $surname = $row['surname'];
+                $path = $row['path'];
+
+                $ex = $d . ' - ' . $t . ' - ' . $firstname . ' - ' . $surname . ' - ' . $path;
+
+                $exa[] = $ex;
+
+        }
+        return $exa;
+    }
+
+    /**
+     * 
+     */
+
+    public function getDepositStatisticsDisplay($deposit_node_id, $yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+
+        //SCB Fix. Sanitize $depNodeId
+        $hasArguments = strpos($deposit_node_id,'?');
+        if ($hasArguments >0) {$deposit_node_id=substr($deposit_node_id,0,$hasArguments-1);}
+        
+        /*if($current_month == 0) {
+	        if($current_year == 0) {
+		        $sql="SELECT count(*),firstname,surname,user_id, date_stat"
+		        ." FROM download_stat" 
+		        ." where deposit_node_id = ".$deposit_node_id
+		        ." group by user_id order by count(*) DESC;";
+		} else {
+		        $sql="SELECT count(*),firstname,surname,user_id, date_stat"
+		        ." FROM download_stat" 
+		        ." where deposit_node_id = ".$deposit_node_id
+		        ." and YEAR(date_stat) = ".$current_year
+		        ." group by user_id order by count(*) DESC;";
+		}
+	} else {
+	        if($current_year == 0) {
+			$sql="SELECT count(*),firstname,surname,user_id, date_stat"
+		        ." FROM download_stat" 
+		        ." where deposit_node_id = ".$deposit_node_id
+		        ." and MONTH(date_stat) = ".$current_month
+		        ." group by user_id order by count(*) DESC;";
+		} else {
+			$sql="SELECT count(*),firstname,surname,user_id, date_stat"
+		        ." FROM download_stat" 
+		        ." where deposit_node_id = ".$deposit_node_id
+		        ." and YEAR(date_stat) = ".$current_year
+		        ." and MONTH(date_stat) = ".$current_month
+		        ." group by user_id order by count(*) DESC;";
+		}
+	}*/
+		 
+	$sql = 'SELECT count(*),firstname,surname,user_id, date_stat '
+	.'FROM download_stat where deposit_node_id = "' . $deposit_node_id 
+	.'" AND DATE(date_stat) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom 
+	.'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo 
+	.'" group by user_id order by count(*) DESC;';
+	
+	
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	
+	$exa = array();
+	
+	foreach ($results as $row) {
+ 
+		$num = $row['count(*)'];
+		$firstname = $row['firstname'];
+		$surname = $row['surname'];
+		$email = $row['user_id'];
+		
+	        
+	        $ex = $num . ' - ' . $firstname . ' - ' . $surname . ' - ' . $email;
+	        
+	        $exa[] = $ex;
+	        
+	}
+        return $exa;
+    }
+    
+    /**
+     * 
+     */
+
+    public function getFilesStatisticsDisplay($deposit_node_id, $yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+        //SCB Fix. Sanitize $depNodeId
+        $hasArguments = strpos($deposit_node_id,'?');
+        if ($hasArguments >0) {$deposit_node_id=substr($deposit_node_id,0,$hasArguments-1);}
+        
+        /*if($current_month == 0) {
+	        if($current_year == 0) {
+		        $sql="SELECT resource_type, file_type, COUNT(resource_type) AS Count"
+			." FROM vufind.download_stat where resource_type in (SELECT resource_type"
+			." FROM vufind.download_stat group by resource_type)"
+			." and deposit_node_id = ".$deposit_node_id
+			." group by resource_type, file_type;";
+		} else {
+		        $sql="SELECT resource_type, file_type, COUNT(resource_type) AS Count"
+			." FROM vufind.download_stat where resource_type in (SELECT resource_type"
+			." FROM vufind.download_stat group by resource_type)"
+			." and deposit_node_id = ".$deposit_node_id
+			." and YEAR(date_stat) = ".$current_year
+			." group by resource_type, file_type;";
+		}
+	} else {
+		if($current_year == 0) {
+			$sql="SELECT resource_type, file_type, COUNT(resource_type) AS Count"
+			." FROM vufind.download_stat where resource_type in (SELECT resource_type"
+			." FROM vufind.download_stat group by resource_type)"
+			." and deposit_node_id = ".$deposit_node_id
+			." and MONTH(date_stat) = ".$current_month
+			." group by resource_type, file_type;";
+		} else {
+			$sql="SELECT resource_type, file_type, COUNT(resource_type) AS Count"
+			." FROM vufind.download_stat where resource_type in (SELECT resource_type"
+			." FROM vufind.download_stat group by resource_type)"
+			." and deposit_node_id = ".$deposit_node_id
+			." and YEAR(date_stat) = ".$current_year
+			." and MONTH(date_stat) = ".$current_month
+			." group by resource_type, file_type;";
+		}
+	}*/
+	
+	
+	$sql = 'SELECT resource_type, file_type, COUNT(resource_type) AS Count '
+	.'FROM vufind.download_stat where resource_type in '
+	.'(SELECT resource_type FROM vufind.download_stat group by resource_type) '
+	.'and deposit_node_id = "' . $deposit_node_id 
+	.'" AND DATE(date_stat) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom 
+	.'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo 
+	.'" group by resource_type, file_type;';
+	
+		
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	
+	$totalFiles = array();
+	
+	foreach ($results as $row) {
+ 
+		$res_type = $row['resource_type'];
+		$f_type = $row['file_type'];
+		$count = $row['Count'];
+		
+	        
+	        $f = $res_type . ' - ' . $f_type . ' - ' . $count;
+	        
+	        $totalFiles[] = $f;
+	        
+	}
+        return $totalFiles;
+    }
+    
+    /**
+     * 
+     */
+
+
+    
+    public function getAccessFilesWithResType($res_type, $yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+        /*if($current_month == 0) {
+	        if($current_year == 0) {
+		        $sql="SELECT count(*)"
+		        ." FROM vufind.download_stat"
+		        ." where resource_type = '".$res_type."'";
+		} else {
+		        $sql="SELECT count(*)"
+		        ." FROM vufind.download_stat"
+		        ." where resource_type = '".$res_type."'"
+		        ." and YEAR(date_stat) = ".$current_year.";";
+		}
+	} else {
+	        if($current_year == 0) {
+			 $sql="SELECT count(*)"
+		        ." FROM vufind.download_stat"
+		        ." where resource_type = '".$res_type."'"
+		        ." and MONTH(date_stat) = ".$current_month.";";
+		} else {
+			 $sql="SELECT count(*)"
+		        ." FROM vufind.download_stat"
+		        ." where resource_type = '".$res_type."'"
+		        ." and YEAR(date_stat) = ".$current_year
+		        ." and MONTH(date_stat) = ".$current_month.";";
+		}
+	}*/
+
+	$sql = 'SELECT count(*) '
+	.'FROM vufind.download_stat '
+	.'where resource_type = "' . $res_type 
+	.'" AND DATE(date_stat) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom 
+	.'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo .'";';
+
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	
+	foreach ($results as $row) {
+		$num = $row['count(*)'];
+	}
+        return $num;
+    }
+
+    /**
+     * Returns the years to use in the filters
+     *
+     * @return number
+     */
+     
+    public function getYears()
+    {
+        $filters = array();
+        
+        $sql="select distinct(year(date_stat)) as year from download_stat;";
+	$statement = $this->adapter->query($sql);
+	$results = $statement->execute();
+	
+	foreach ($results as $row) {
+		$filters[] = $row['year'];
+	}
+        return $filters;
+    }
+
+}

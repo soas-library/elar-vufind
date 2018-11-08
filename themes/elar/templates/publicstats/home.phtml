@@ -1,0 +1,479 @@
+<?
+  // Set page title.
+  $this->headTitle($this->translate('Public statistics'));
+
+  // Set up breadcrumbs:
+  $this->layout()->breadcrumbs = '<li class="active">' . $this->transEsc('Public statistics') . '</li>';
+?>
+
+<? /*SCB datepicker*/ ?>
+
+<script src="/themes/elar/js/bootstrap-datepicker.js"></script>
+<link href="/themes/elar/css/datepicker.css" rel="stylesheet">
+
+<? /*SCB datepicker*/ ?>
+
+<? /*SCB mapFocus Statistics*/ ?>
+
+<link rel="stylesheet" media="all" href="/themes/elar/css/mapFocus/jquery-jvectormap.css"/>
+
+<script src="/themes/elar/js/mapFocus/jquery-1.8.2.js"></script>
+<script src="/themes/elar/js/mapFocus/jquery-jvectormap.js"></script>
+<script src="/themes/elar/js/mapFocus/jquery-mousewheel.js"></script>
+<script src="/themes/elar/js/mapFocus/jvectormap.js"></script>
+<script src="/themes/elar/js/mapFocus/abstract-element.js"></script>
+<script src="/themes/elar/js/mapFocus/abstract-canvas-element.js"></script>
+<script src="/themes/elar/js/mapFocus/abstract-shape-element.js"></script>
+<script src="/themes/elar/js/mapFocus/svg-element.js"></script>
+
+<script src="/themes/elar/js/mapFocus/vml-group-element.js"></script>
+<script src="/themes/elar/js/mapFocus/svg-canvas-element.js"></script>
+<script src="/themes/elar/js/mapFocus/svg-shape-element.js"></script>
+<script src="/themes/elar/js/mapFocus/svg-path-element.js"></script>
+
+<script src="/themes/elar/js/mapFocus/svg-circle-element.js"></script>
+<script src="/themes/elar/js/mapFocus/svg-image-element.js"></script>
+<script src="/themes/elar/js/mapFocus/svg-text-element.js"></script>
+<script src="/themes/elar/js/mapFocus/vml-element.js"></script>
+<script src="/themes/elar/js/mapFocus/svg-group-element.js"></script>
+<script src="/themes/elar/js/mapFocus/vml-canvas-element.js"></script>
+<script src="/themes/elar/js/mapFocus/vml-circle-element.js"></script>
+<script src="/themes/elar/js/mapFocus/vml-image-element.js"></script>
+<script src="/themes/elar/js/mapFocus/map-object.js"></script>
+<script src="/themes/elar/js/mapFocus/region.js"></script>
+<script src="/themes/elar/js/mapFocus/marker.js"></script>
+<script src="/themes/elar/js/mapFocus/vector-canvas.js"></script>
+<script src="/themes/elar/js/mapFocus/simple-scale.js"></script>
+
+<script src="/themes/elar/js/mapFocus/ordinal-scale.js"></script>
+<script src="/themes/elar/js/mapFocus/numeric-scale.js"></script>
+<script src="/themes/elar/js/mapFocus/color-scale.js"></script>
+<script src="/themes/elar/js/mapFocus/legend.js"></script>
+<script src="/themes/elar/js/mapFocus/data-series.js"></script>
+<script src="/themes/elar/js/mapFocus/proj.js"></script>
+<script src="/themes/elar/js/mapFocus/map.js"></script>
+
+<script src="/themes/elar/js/mapFocus/jquery-jvectormap-world-mill-en.js"></script>
+
+<?
+	$s = $this->results;
+?>
+
+<script>
+    jQuery.noConflict();
+    jQuery(function(){
+    var $ = jQuery;
+    
+    var gdpData = '{<?php echo $s[7]; ?>}';
+    var gdpData = JSON.parse(gdpData.replace(/array\(/g, '{').replace(/\)/g, '}').replace(/=>/g, ':'));
+    
+    $('#map').vectorMap({
+        map: 'world_mill_en',
+        panOnDrag: true,
+        focusOn: {
+          x: 0.5,
+          y: 0.5,
+          scale: 2,
+          animate: true
+        },
+		
+        series: {
+          regions: [{
+            scale: ['#C8EEFF', '#0071A4'],
+            normalizeFunction: 'polynomial',
+            values: gdpData
+          }]
+        },
+        onRegionTipShow: function(e, el, code){
+        
+          if (typeof(gdpData[code])=='undefined')
+           {
+           	el.html(el.html() + '<p>Count: 0</p>');
+           } else {
+           	el.html(el.html() + '<p>Count: ' + gdpData[code] + '</p>');
+           }
+        }
+		
+      });
+      
+    });
+    
+  </script>
+  
+  <style>
+  
+  #map {
+  padding: 1%;
+  height:500px;
+  width:100%;
+}
+
+.jvectormap-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    touch-action: none;
+}
+  
+  </style>
+  
+
+<? /*SCB mapFocus Statistics*/ ?>
+
+<div class="row">
+		<div class="col-sm-3">
+
+			<div class="border-facet">
+				<p class="menuHeader">
+					<?=$this->transEsc('browsable collections')?>
+				</p>
+				<ul class="contentMenu">
+					<li>
+						<a href="/Search/Results?lookfor=Africa&type=DepositContinent"><?=$this->transEsc('africa')?></a>
+					</li>
+					<li>
+						<a href="/Search/Results?lookfor=Asia&type=DepositContinent"><?=$this->transEsc('asia')?></a>
+					</li>
+					<li>
+						<a href="/Search/Results?lookfor=Australia&type=DepositContinent"><?=$this->transEsc('australia')?></a>
+					</li>
+					<li>
+						<a href="/Search/Results?lookfor=Europe&type=DepositContinent"><?=$this->transEsc('europe')?></a>
+					</li>
+					<li>
+						<a href="/Search/Results?lookfor=Middle East&type=DepositContinent"><?=$this->transEsc('middle east')?></a>
+					</li>
+					<li>
+						<a href="/Search/Results?lookfor=North America&type=DepositContinent"><?=$this->transEsc('north america')?></a>
+					</li>
+					<li>
+						<a href="/Search/Results?lookfor=Pacific&type=DepositContinent"><?=$this->transEsc('pacific')?></a>
+					</li>
+					<li>
+						<a href="/Search/Results?lookfor=South America&type=DepositContinent"><?=$this->transEsc('south america')?></a>
+					</li>
+				</ul>
+				<p class="contentMenu">
+					<?=$this->transEsc('click')?>
+					<a href="/Search/Results?lookfor=&type=AllFields"><?=$this->transEsc('click search')?></a>
+					<?=$this->transEsc('click above')?>
+				</p>
+
+				<p class="menuHeader">
+					<?=$this->transEsc('find collection')?>
+				</p>
+				<ul class="contentMenu">
+					<li>
+						<a href="/Alphabrowse/Home?source=deposit_title&from="><?=$this->transEsc('browse')?></a>
+					</li>
+					<li>
+						<a href="/Search/Results?type=AllFields&limit=1000&view=brief&filter[]=format%3A%22Deposit%22&sort=clean_title"><?=$this->transEsc('list')?></a>
+					</li>
+					<li>
+						<a href="/Map/Home"><?=$this->transEsc('map')?></a>
+					</li>
+				</ul>
+				
+				<? if($this->request->get('PublicStats')== 1){ ?>
+				<p class="menuHeader">
+					<?=$this->transEsc('Public statistics')?>
+				</p>
+				<ul class="contentMenu">
+				  <li><a href="/PublicStats/Home"><?=$this->transEsc('Statistics')?></a></li>
+				</ul>
+				<? } ?>
+				
+				<p class="menuHeader">
+					<?=$this->transEsc('See also')?>
+				</p>
+				<ul class="contentMenu">
+				  <li><a href="http://www.soas.ac.uk/elar/"><?=$this->transEsc('ELAR at SOAS Library')?></a></li>
+				  <li><a href="https://www.soas.ac.uk/elar/using-elar/"><?=$this->transEsc('Using ELAR')?></a></li>
+				  <li><a href="https://www.soas.ac.uk/elar/depositing-with-elar/"><?=$this->transEsc('Depositing with ELAR')?></a></li>
+				  <li><a href="http://www.facebook.com/pages/ELAR-Archive/349631641775743"><?=$this->transEsc('ELAR on Facebook')?></a></li>
+				  <li><a href="http://twitter.com/ELARarchive"><?=$this->transEsc('ELAR on Twitter')?></a></li>
+				</ul>
+			</div>
+			
+		</div>
+		
+		<? if($this->request->get('PublicStats')== 1){ ?>
+		
+		<div class="col-sm-5">
+			<div class="border-facet">
+				<p class="menuHeader">
+					<?=$this->transEsc('statistics map')?>
+				</p>
+				<div id="map"></div>
+			</div>
+			<div class="contentMenu">
+				<div id="carouselImages">
+					<div class="inner hidden">
+						<img src="../../../themes/elar/images/arcadia_logo_n.gif" class="img-responsive" alt="Responsive image">
+					</div>
+					<div class="inner">
+						<img src="../../../themes/elar/images/soas_60h189w.png" class="img-responsive" alt="Responsive image">
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-sm-4">
+			<div class="border-facet">
+				<? $current_year = date("Y");
+				$current_month = date('m', strtotime('-1 month'))+1;
+				?>
+				<p class="menuHeader">
+					<?=$this->transEsc('elar web traffic')?>
+				</p>
+				
+				<div class="contentMenu">                
+					<div class="post-content-right">
+					
+					<?
+						$today = date('d/m/Y');
+						$year = date('Y');
+						$month = date('m');
+						$day = date('d');
+					?>
+					
+					<div class="form-group" align="center">
+						<label class="control-label" for="email_message"><?=$this->transEsc('From')?>:</label>
+						  <div>
+						    <input type="text" value="<?=$today;?>" data-date-format="dd/mm/yyyy" id="datepickerFrom" name="datefrom" style="text-align: center;">
+						  </div>
+						  <label class=" control-label" for="email_message"><?=$this->transEsc('To')?>:</label>
+						  <div>
+						    <input type="text" value="<?=$today;?>" data-date-format="dd/mm/yyyy" id="datepickerTo" name="dateto" style="text-align: center;">
+						  </div>
+					</div>
+					
+					<script>
+						$('#datepickerFrom').datepicker({
+						   weekStart: 1 // day of the week start. 0 for Sunday - 6 for Saturday
+						 });
+						$('#datepickerTo').datepicker({
+						   weekStart: 1 // day of the week start. 0 for Sunday - 6 for Saturday
+						 });
+					</script>
+					
+					
+					<style>
+						.datepicker{z-index:1151 !important;}
+					</style>
+					
+					
+						<? /*<div class="form-group" align="center">
+							<label for="sel1"><?=$this->transEsc('show data by year')?>:</label>
+								  <select class="form-control" id="years" name="year">
+								    <option value="0"><?=$this->transEsc('All'); ?></option>
+								    <? foreach ($s[9] as $y){?>
+								    	<? echo '<option value="';
+								    	echo $y;
+								    	echo '" ';
+								    	if($current_year == $y): 
+								    		echo 'selected="selected"';
+								    	endif;
+								    	echo '>';
+								    	echo $y;
+								    	echo '</option>'; ?>
+								    <?}?>
+								  </select>
+						</div>
+						<div class="form-group" align="center">
+							  <label for="sel1"><?=$this->transEsc('show data by month')?>:</label>
+								  <select class="form-control" id="months" name="month">
+								    <option value="0"><?=$this->transEsc('All'); ?></option>
+								    <option value="1" <? if($current_month == '1'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('January'); ?></option>
+								    <option value="2" <? if($current_month == '2'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('February'); ?></option>
+								    <option value="3" <? if($current_month == '3'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('March'); ?></option>
+								    <option value="4" <? if($current_month == '4'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('April'); ?></option>
+								    <option value="5" <? if($current_month == '5'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('May'); ?></option>
+								    <option value="6" <? if($current_month == '6'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('June'); ?></option>
+								    <option value="7" <? if($current_month == '7'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('July'); ?></option>
+								    <option value="8" <? if($current_month == '8'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('August'); ?></option>
+								    <option value="9" <? if($current_month == '9'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('September'); ?></option>
+								    <option value="10" <? if($current_month == '10'): echo 'selected="selected"'; endif; ?>><?= $this->transEsc('October'); ?></option>
+								    <option value="11" <? if($current_month == '11'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('November'); ?></option>
+								    <option value="12" <? if($current_month == '12'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('December'); ?></option>
+								  </select>
+						</div>*/?>
+						<div class="form-group" align="center">
+						  <? echo '<a class="btn btn-default" type="button" onclick="filterELARWebTrafficPublic();"><i class="fa fa-filter" aria-hidden="true"></i> Filter</a>';?>
+						</div>
+						
+						<div class="form-group" align="center">
+						<?
+						$dateObj   = DateTime::createFromFormat('!m', $month);
+						$monthNameFrom = $dateObj->format('F');
+						$dateObj   = DateTime::createFromFormat('!m', $month);
+						$monthNameTo = $dateObj->format('F');
+						?>
+						<? echo '<span><i>'.$this->transEsc('Data from').' </i></span><span class="labelPublicStatsResultsFrom"><i>' . $year . ' ' . $monthNameFrom . ' ' . $day . '</i></span><i> '.$this->transEsc('to').' </i><span class="labelPublicStatsResultsTo"><i>' . $year . ' ' . $monthNameTo . ' ' . $day . '</i></span>'; ?>
+						</div>
+						
+						<div class="stat_text">
+							<p>
+							<?
+							/*$pageHits = $this->driver->getHitsStat($deposit_node_id, $current_year, $current_month);*/
+							?>
+							<span><?=$this->transEsc('page hits')?></span>
+							<span class="data pageHitsResults"><?=$s[0]?></span>
+							</p>
+							<p>
+							<span><?=$this->transEsc('user logins')?></span>
+							<span class="data userLoginsResults"><?=$s[1]?></span>
+							</p>
+							<p>
+							<span><?=$this->transEsc('clics_per_visit')?></span>
+							<span class="data clicsPerVisitResults"><?=$s[5]?></span>
+							</p>
+							<p>
+							<span><?=$this->transEsc('duration_of_visit')?></span>
+							<span class="data clicsDurationPerVisit"><?=gmdate("H:i:s", $s[6])?></span>
+							</p>
+							<p>
+							<span><?=$this->transEsc('files with O access')?></span>
+							<span class="data OAccessResults"><?=$s[2]?></span>
+							</p>
+							<p>
+							<span><?=$this->transEsc('files with U access')?></span>
+							<span class="data UAccessResults"><?=$s[3]?></span>
+							</p>
+							<p>
+							<span><?=$this->transEsc('files with S access')?></span>
+							<span class="data SAccessResults"><?=$s[4]?></span>
+							</p>
+						</div>
+						<div class="form-group" align="center">
+						<br/><? echo '<span><i>'.$this->transEsc('Total number of resources').' </i></span>'; ?>
+						</div>
+						<div class="stat_text">
+							<?$countO=0;?>
+							<?$countS=0;?>
+							<?$countU=0;?>
+							<?
+								foreach ($s[8] as $subIndex=>$k){
+     									foreach ($k as $j=>$l) {
+     										//if ($subIndex=='O') print_r($l);
+     										//echo "nodo".$j."///". $l;
+     										if($j=='accessavailability') $tipo=$l;
+     										if($j=='num') {
+     											if ($tipo=='S') $countS=$l;
+     											if ($tipo=='O') $countO=$l;
+     											if ($tipo=='U') $countU=$l;
+     										}
+
+	        							}
+     								}
+     								
+							?>
+							<p>
+							<span><?=$this->transEsc('O resources')?></span>
+							<span class="data Oresources">
+							<?= $countO;?>
+							</span>
+							</p>
+							<p>
+							<span><?=$this->transEsc('U resources')?></span>
+							<span class="data Uresources">
+							<?= $countU;?>
+							</span>
+							</p>
+							<p>
+							<span><?=$this->transEsc('S resources')?></span>
+							<span class="data Sresources">
+							<?= $countS;?>
+							</span>
+							</p>
+						</div>
+				   </div>
+				</div>
+			</div>
+			
+			<? }else { ?>
+			    <div class="col-sm-9">
+			    	<?=$this->flashmessages();?>
+			    </div>
+			<? } ?>
+			
+		</div>
+	</div>
+	
+
+<? $facetList = is_object($this->results) ? $this->results->getFacetList() : array(); ?>
+<? if (isset($facetList) && is_array($facetList)): ?>
+  <div class="row">
+    <? foreach ($facetList as $field => $details): ?>
+      <? if (isset($this->hierarchicalFacets) && in_array($field, $this->hierarchicalFacets)): ?>
+        <? $this->headScript()->appendFile('vendor/jsTree/jstree.min.js'); ?>
+        <? $this->headScript()->appendFile('facets.js'); ?>
+        <? $sort = isset($this->hierarchicalFacetSortOptions[$field]) ? $this->hierarchicalFacetSortOptions[$field] : ''; ?>
+        <?
+        $script = <<<JS
+$(document).ready(function() {
+  initFacetTree($('#facet_{$this->escapeHtml($field)}'), false);
+});
+JS;
+        ?>
+        <?=$this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, $script, 'SET'); ?>
+        <div class="facet <?=$field=='callnumber-first' ? 'col-sm-6' : 'col-sm-4' ?>">
+          <p class="lead"><?=$this->transEsc('home_browse') . ' ' . $this->transEsc($details['label'])?></p>
+          <div id="facet_<?=$this->escapeHtml($field)?>" class="jstree-facet"
+              data-facet="<?=$this->escapeHtml($field)?>"
+              data-path="<?=$this->url($basicSearch)?>"
+              data-exclude="0"
+              data-operator="AND"
+              data-exclude-title="<?=$this->transEsc('exclude_facet')?>"
+              data-sort="all">
+          </div>
+        </div>
+        <noscript>
+      <? endif; ?>
+      <? $sortedList = $this->sortFacetList($this->results, $field, $details['list'], $basicSearch); ?>
+      <div class="<?=$field=='callnumber-first' ? 'col-sm-6' : 'col-sm-4' ?>">
+        <p class="lead"><?=$this->transEsc('home_browse') . ' ' . $this->transEsc($details['label'])?></p>
+        <div class="row">
+          <ul class="list-unstyled <?=$field == "callnumber-first" ? 'col-sm-6' : 'col-sm-12' ?>">
+          <? /* Special case: two columns for LC call numbers... */ ?>
+          <? if ($field == "callnumber-first"): ?>
+            <? $i = 0; foreach ($sortedList as $url => $value): ?>
+              <? if (!empty($value)): ?>
+                <li><a href="<?=$url?>"><?=$this->escapeHtml($value)?></a></li>
+              <? else: $i--; ?>
+              <? endif; ?>
+              <? if (++$i == 10): ?>
+                </ul><ul class="list-unstyled col-sm-6">
+              <? endif; ?>
+            <? endforeach; ?>
+          <? /* Special case: collections */ ?>
+          <? elseif ($field == 'hierarchy_top_title'): ?>
+            <? $i = 0; foreach ($sortedList as $url => $value): ?>
+              <? if (++$i > 10): ?>
+                <li><a href="<?=$this->url('collections-home')?>"><strong><?=$this->transEsc("More options")?>...</strong></a></li>
+                <? break; ?>
+              <? else: ?>
+                <li><a href="<?=$this->url('collections-bytitle')?>?title=<?=urlencode($value)?>"><?=$this->escapeHtml($value)?></a></li>
+              <? endif; ?>
+            <? endforeach; ?>
+          <? else: ?>
+            <? $i = 0; foreach ($sortedList as $url => $value): ?>
+              <? if (++$i > 10): ?>
+                <li><a href="<?=$this->url($advSearch)?>"><strong><?=$this->transEsc("More options")?>...</strong></a></li>
+                <? break; ?>
+              <? elseif (!empty($value)): ?>
+                <li><a href="<?=$url?>"><?=$this->escapeHtml($value)?></a></li>
+              <? else: $i--; ?>
+              <? endif; ?>
+            <? endforeach; ?>
+          <? endif; ?>
+          </ul>
+        </div>
+      </div>
+      <? if (isset($this->hierarchicalFacets) && in_array($field, $this->hierarchicalFacets)): ?>
+        </noscript>
+      <? endif; ?>
+    <? endforeach; ?>
+  </div>
+<? endif; ?>

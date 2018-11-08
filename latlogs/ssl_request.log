@@ -1,0 +1,2 @@
+[25/Sep/2016:02:35:46 +0100] 127.0.0.1 - - - TLSv1 ECDHE-RSA-AES128-SHA "GET /corpora/ELAR/kimbom-childs-0152/Media/080508_45.wav HTTP/1.1" 260
+[25/Sep/2016:02:35:46 +0100] 127.0.0.1 - - - TLSv1 ECDHE-RSA-AES128-SHA "GET /corpora/ELAR/kimbom-childs-0152/Annotations/080508_00_TCjrn_00058.pdf HTTP/1.1" 278

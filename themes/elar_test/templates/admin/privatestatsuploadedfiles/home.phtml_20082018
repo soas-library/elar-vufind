@@ -1,0 +1,282 @@
+<?
+    // Set page title.
+    $this->headTitle($this->translate('VuFind Administration - Private Statistics'));
+?>
+
+<? /*SCB datepicker*/ ?>
+
+<script src="/themes/elar/js/bootstrap-datepicker.js"></script>
+<link href="/themes/elar/css/datepicker.css" rel="stylesheet">
+<script src="/themes/elar/js/admin/privatestatsuploadedfiles.js"></script>
+
+<? /*SCB datepicker*/ ?>
+
+<? /*SCB mapFocus Statistics*/ ?>
+
+
+<?
+	$s = $this->results;
+?>
+
+<? /*SCB mapFocus Statistics*/ ?>
+
+<div class="row">
+  <div class="sidebar col-sm-2">
+  	<?=$this->render("admin/menu.phtml")?>
+  </div>
+  <div class="col-sm-10">
+  <? if($this->request->get('PrivateStats')== 1){ ?>
+
+  <div class="col-sm-5">
+  <div class="border-facet">
+				<? 
+				//$current_year = date("Y");
+				//$current_month = date('m', strtotime('-1 month'))+1;
+				//$month = $_GET['month'];
+                                //$year = $_GET['year'];
+
+				//if (empty($year)) $year = $current_year;
+				//if (empty($month)) $month = $current_month;
+				
+				$today = date('d/m/Y');
+				$year = date('Y');
+				$month = date('m');
+				$day = date('d');
+				
+				?>
+				<p class="menuHeader">
+					<?=$this->transEsc('Private Statistics')?>
+				</p>
+				
+				<div class="contentMenu">                
+					<div class="post-content-right">
+					
+					<div class="form-group" align="center">
+						<label class="control-label" for="email_message"><?=$this->transEsc('From')?>:</label>
+						  <div>
+						    <input type="text" value="<?=$today;?>" data-date-format="dd/mm/yyyy" id="datepickerFrom" name="datefrom" style="text-align: center;">
+						  </div>
+						  <label class=" control-label" for="email_message"><?=$this->transEsc('To')?>:</label>
+						  <div>
+						    <input type="text" value="<?=$today;?>" data-date-format="dd/mm/yyyy" id="datepickerTo" name="dateto" style="text-align: center;">
+						  </div>
+					</div>
+					
+					<script>
+						$('#datepickerFrom').datepicker({
+						   weekStart: 1 // day of the week start. 0 for Sunday - 6 for Saturday
+						 });
+						$('#datepickerTo').datepicker({
+						   weekStart: 1 // day of the week start. 0 for Sunday - 6 for Saturday
+						 });
+					</script>
+					
+					
+					<style>
+						.datepicker{z-index:1151 !important;}
+					</style>
+					
+					
+						<? /*<div class="form-group" align="center">
+							<label for="sel1"><?=$this->transEsc('show data by year')?>:</label>
+								  <select class="form-control" id="years" name="year">
+								    <option value="0"><?=$this->transEsc('All'); ?></option>
+								    <? foreach ($s[9] as $y){?>
+								    	<? echo '<option value="';
+								    	echo $y;
+								    	echo '" ';
+								    	if($current_year == $y): 
+								    		echo 'selected="selected"';
+								    	endif;
+								    	echo '>';
+								    	echo $y;
+								    	echo '</option>'; ?>
+								    <?}?>
+								  </select>
+						</div>
+						<div class="form-group" align="center">
+							  <label for="sel1"><?=$this->transEsc('show data by month')?>:</label>
+								  <select class="form-control" id="months" name="month">
+								    <option value="0"><?=$this->transEsc('All'); ?></option>
+								    <option value="1" <? if($month == '1'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('January'); ?></option>
+								    <option value="2" <? if($month == '2'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('February'); ?></option>
+								    <option value="3" <? if($month == '3'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('March'); ?></option>
+								    <option value="4" <? if($month == '4'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('April'); ?></option>
+								    <option value="5" <? if($month == '5'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('May'); ?></option>
+								    <option value="6" <? if($month == '6'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('June'); ?></option>
+								    <option value="7" <? if($month == '7'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('July'); ?></option>
+								    <option value="8" <? if($month == '8'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('August'); ?></option>
+								    <option value="9" <? if($month == '9'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('September'); ?></option>
+								    <option value="10" <? if($month == '10'): echo 'selected="selected"'; endif; ?>><?= $this->transEsc('October'); ?></option>
+								    <option value="11" <? if($month == '11'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('November'); ?></option>
+								    <option value="12" <? if($month == '12'): echo 'selected="selected"'; endif; ?>><?=$this->transEsc('December'); ?></option>
+								  </select>
+						</div>*/ ?>
+						<div class="form-group" align="center">
+						  <? echo '<a class="btn btn-default" type="button" onclick="filterELARWebTrafficUploadedfilesPrivate(0);"><i class="fa fa-filter" aria-hidden="true"></i> Filter</a>';?>
+						</div>
+						
+						<div class="form-group" align="center">
+						<?
+						$dateObj   = DateTime::createFromFormat('!m', $month);
+						$monthNameFrom = $dateObj->format('F');
+						$dateObj   = DateTime::createFromFormat('!m', $month);
+						$monthNameTo = $dateObj->format('F');
+						?>
+						<? echo '<span><i>'.$this->transEsc('Data from').' </i></span><span class="labelPublicStatsResultsFrom"><i>' . $year . ' ' . $monthNameFrom . ' ' . $day . '</i></span><i> '.$this->transEsc('to').' </i><span class="labelPublicStatsResultsTo"><i>' . $year . ' ' . $monthNameTo . ' ' . $day . '</i></span>'; ?>
+						</div>
+
+						<div class="stat_text_checkbox" align="left">
+							<label><input type="checkbox"  value="All deposits" id="fundingbodyAll" name="fundingbody"  checked="yes"/><?=$this->transEsc('All deposits')?></label>
+						<?
+							$fundingBodies = $this->fundingbodies;
+							foreach ($fundingBodies as $fb=>$k){
+							echo '<label><input type="checkbox"  value="'.$k.'" id="fundingbody" name="fundingbody" class="fundingbody" disabled="true"/>'.$k.'</label>';
+							}
+						?>
+
+						<script>
+						    // Si se hace click sobre el input de tipo checkbox con id checkb
+						    $('#fundingbodyAll').click(function() {
+						        // Si esta seleccionado (si la propiedad checked es igual a true)
+						        if ($(this).prop('checked')) {
+						            // Selecciona cada input que tenga la clase .checar
+						            $('.fundingbody').prop('checked', true);
+						            $(".fundingbody").attr("disabled", true);
+						        } else {
+						            // Deselecciona cada input que tenga la clase .checar
+						            $('.fundingbody').prop('checked', false);
+						            $(".fundingbody").attr("disabled", false);
+						        }
+						    });
+						</script>
+
+
+
+						</div>
+
+						<div class="stat_text_checkbox" align="left">
+							<label style="display: inline-flex;"><input type="checkbox" value="Current" checked="yes" id="current_or_superseded" name="current_or_superseded"  checked="yes"/><?=$this->transEsc('Current')?></label>
+							<label style="display: inline-flex;"><input type="checkbox" value="Superseded" id="current_or_superseded" name="current_or_superseded" /><?=$this->transEsc('Superseded')?></label>
+						</div>
+
+						<?
+							$s = $this->results;
+						?>
+						
+
+				   	</div>
+				</div>
+			</div>
+		</div>
+		
+
+  <div class="col-sm-12">
+  	<div class="border-facet">
+				<p class="menuHeader">
+					<?=$this->transEsc('Uploaded files')?>
+				</p>
+				
+				
+				<form id="statisticsFormUploadedFiles" name="statisticsFormUploadedFiles" action='PrivateStatsUploadedfiles?yearFrom=<?=$year?>&monthFrom=<?=$month?>&dayFrom=<?=$day?>&yearTo=<?=$year?>&monthTo=<?=$month?>&dayTo=<?=$day?>' method="post">
+				    <input type="hidden" name="btnExportarExcelUploadedFiles" value="Exportar" />
+				    <p class="contentMenu">
+				    <?
+				    echo $this->transEsc('CSV download info');
+				    ?>
+				    
+				    <a class="csvlink" href="#" onclick="document.getElementById('statisticsFormUploadedFiles').submit();" style="text-decoration: underline;">
+				    <?
+				    echo $this->transEsc('CSV file');
+				    ?>
+				    </a>
+				    </p>
+				<div id="limit_alert" class="alert alert-warning" style="text-align: center; display: none;">
+					<?
+                                    		echo $this->transEsc('The result is too big. Only the last 10000 uploaded files are shown.');
+                                    	?>
+				</div>
+				
+				</form>
+				     <div id="example3_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+
+
+         	<table id="example3" class="table table-striped table-bordered" cellspacing="0" width="auto">
+         		<thead>
+		            <tr>
+                                <th class="col-sm-2 table-align"><?=$this->transEsc('Deposit ID')?></th>
+                                <th class="col-sm-2 table-align"><?=$this->transEsc('Deposit Title')?></th>
+		                <th class="col-sm-2 table-align"><?=$this->transEsc('Uploaded date')?></th>
+		                <th class="col-sm-2 table-align"><?=$this->transEsc('bundle ID')?></th>
+		                <? /*<th class="col-sm-2 table-align"><?=$this->transEsc('Bundle Title')?></th>*/ ?>
+				<th class="col-sm-2 table-align"><?=$this->transEsc('File Name')?></th>
+                                <th class="col-sm-2 table-align"><?=$this->transEsc('Access')?></th>
+                                <th class="col-sm-2 table-align"><?=$this->transEsc('Size (bytes)')?></th>
+                                <th class="col-sm-2 table-align"><?=$this->transEsc('Duration (seconds)')?></th>
+                                <th class="col-sm-2 table-align"><?=$this->transEsc('File type')?></th>
+		            </tr>
+		        </thead>
+		        <tbody class="ajaxinner">
+
+
+
+		  <?
+
+
+     foreach( $this->uploadedfiles as  $item=>$index ){
+     	echo "<tr>";
+	echo "<td>".$index['deposit_id']."</td>";
+        echo "<td>".$index['deposit_title']."</td>";
+     	echo "<td>".$index['datetime']."</td>";
+     	//echo "<td>".$index['id']."</td>";
+	echo "<td><a href='/Record/" . $index['id'] . "' target='_blank'>" . $index['id'] . "</a></td>";
+     	//echo "<td>".$index['bundle_title']."</td>";
+	//echo "<td>".$index['name']."</td>";
+	echo "<td>".end(explode('/',$index['name']))."</td>";	
+        echo "<td>".$index['accessavailability']."</td>";
+        echo "<td>".$index['size']."</td>";
+        echo "<td>".$index['duration']."</td>";
+        echo "<td>".$index['file_type']."</td>";
+     	echo "</tr>";
+     }
+	          ?>
+	          </tbody>
+         	</table>
+			</div>
+                               <div id="pageUpload" class="alert alert-warning" style="text-align: center; display: none;">
+                                </div>
+
+			</div>
+			</div>
+
+
+
+
+
+
+
+
+
+			<div class="contentMenu col-sm-12">
+				<div id="carouselImages">
+					<div class="inner hidden">
+						<img src="../../../themes/elar/images/arcadia_logo_n.gif" class="img-responsive" alt="Responsive image">
+					</div>
+					<div class="inner">
+						<img src="../../../themes/elar/images/soas_60h189w.png" class="img-responsive" alt="Responsive image">
+					</div>
+				</div>
+			</div>
+  </div>
+
+
+
+</div>
+    <? }else { ?>
+    
+    <?=$this->flashmessages();?>
+    
+    <? } ?>
+</div>
+  
+</div>

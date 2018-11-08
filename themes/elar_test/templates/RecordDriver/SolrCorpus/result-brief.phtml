@@ -1,0 +1,53 @@
+<tr>
+    <!-- SCB TITLE -->
+	<td>
+        	<a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title">
+        	<?
+          	$summHighlightedTitle = $this->driver->getHighlightedTitle();
+          	$bundleTitle = $this->driver->getBundleTitle();
+          	$depositTitle = $this->driver->getDepositTitle();
+          	if (!empty($summHighlightedTitle)) {
+            	echo $this->highlight($this->addEllipsis($summHighlightedTitle, $summTitle));
+          	} else if (!empty($bundleTitle)) {
+            	echo $this->escapeHtml($this->truncate($bundleTitle, 180));
+          	} else if (!empty($depositTitle)) {
+            	echo $this->escapeHtml($this->truncate($depositTitle, 180));
+          	} else {
+            	echo $this->transEsc('Title not available');
+         	 }
+        	?>
+        	</a>
+	</td>
+  <!-- SCB TITLE -->
+  <!-- SCB DEPOSITOR NAME-->
+    	<td>
+		<? $depositor = $this->driver->getDepositor(); if (!empty($depositor[0])): ?>
+			  <? foreach ($depositor as $field): ?>
+				  <?=$this->escapeHtml($field)?>
+			  <? endforeach; ?>
+		<? endif; ?>
+	</td>
+	  <!-- SCB DEPOSITOR NAME-->
+
+	  <!-- SCB DEPOSITOR LANGUAGE-->
+	<td>
+	  <? $lang = $this->driver->getDepositLanguage(); if (!empty($lang[0])): ?>
+			  <? $contLang=0; ?>
+			  <? foreach ($lang as $field): ?>
+				  <?if($contLang>0):?>, <? endif; ?><?=$this->escapeHtml($field)?>
+				  <? $contLang=$contLang+1;?>
+			  <? endforeach; ?>
+	  <? endif; ?>
+	</td>
+	  <!-- SCB DEPOSITOR LANGUAGE-->
+
+	  <!-- SCB DEPOSITOR COUNTRY-->
+	<td>
+	  <? $country = $this->driver->getDepositCountry(); if (!empty($country[0])): ?>
+	    <? foreach ($country as $field): ?>
+              <?=$this->escapeHtml($field)?>
+          <? endforeach; ?>
+	 <? endif; ?>
+	</td>
+  <!-- SCB DEPOSITOR COUNTRY-->
+</tr>

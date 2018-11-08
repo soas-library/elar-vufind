@@ -1,0 +1,598 @@
+INFO  - 2017-01-27 12:44:45.494; org.eclipse.jetty.server.Server; jetty-8.1.8.v20121106
+INFO  - 2017-01-27 12:44:46.052; org.eclipse.jetty.deploy.providers.ScanningAppProvider; Deployment monitor /usr/local/vufind2/solr/jetty/contexts at interval 0
+INFO  - 2017-01-27 12:44:46.057; org.eclipse.jetty.deploy.DeploymentManager; Deployable added: /usr/local/vufind2/solr/jetty/contexts/solr-jetty-context.xml
+INFO  - 2017-01-27 12:44:46.106; org.eclipse.jetty.webapp.WebInfConfiguration; Extract jar:file:/usr/local/vufind2/solr/jetty/webapps/solr.war!/ to /usr/local/vufind2/solr/jetty/work/jetty-0.0.0.0-8080-solr.war-_solr-any-/webapp
+INFO  - 2017-01-27 12:45:20.217; org.eclipse.jetty.webapp.StandardDescriptorProcessor; NO JSP Support for /solr, did not find org.apache.jasper.servlet.JspServlet
+INFO  - 2017-01-27 12:45:20.253; org.eclipse.jetty.server.handler.ContextHandler; started o.e.j.w.WebAppContext{/solr,file:/usr/local/vufind2/solr/jetty/work/jetty-0.0.0.0-8080-solr.war-_solr-any-/webapp/},/usr/local/vufind2/solr/jetty/webapps/solr.war
+INFO  - 2017-01-27 12:45:20.254; org.eclipse.jetty.server.handler.ContextHandler; started o.e.j.w.WebAppContext{/solr,file:/usr/local/vufind2/solr/jetty/work/jetty-0.0.0.0-8080-solr.war-_solr-any-/webapp/},/usr/local/vufind2/solr/jetty/webapps/solr.war
+INFO  - 2017-01-27 12:45:20.950; org.apache.solr.servlet.SolrDispatchFilter; SolrDispatchFilter.init()
+INFO  - 2017-01-27 12:45:20.978; org.apache.solr.core.SolrResourceLoader; JNDI not configured for solr (NoInitialContextEx)
+INFO  - 2017-01-27 12:45:20.978; org.apache.solr.core.SolrResourceLoader; using system property solr.solr.home: /usr/local/vufind2/solr
+INFO  - 2017-01-27 12:45:20.979; org.apache.solr.core.SolrResourceLoader; new SolrResourceLoader for directory: '/usr/local/vufind2/solr/'
+INFO  - 2017-01-27 12:45:20.981; org.apache.solr.core.SolrResourceLoader; Adding 'file:/usr/local/vufind2/solr/lib/MarcImporter.jar' to classloader
+INFO  - 2017-01-27 12:45:20.982; org.apache.solr.core.SolrResourceLoader; Adding 'file:/usr/local/vufind2/solr/lib/browse-handler.jar' to classloader
+INFO  - 2017-01-27 12:45:20.982; org.apache.solr.core.SolrResourceLoader; Adding 'file:/usr/local/vufind2/solr/lib/icu4j-53.1.jar' to classloader
+INFO  - 2017-01-27 12:45:20.982; org.apache.solr.core.SolrResourceLoader; Adding 'file:/usr/local/vufind2/solr/lib/lucene-analyzers-icu-4.10.4.jar' to classloader
+INFO  - 2017-01-27 12:45:20.983; org.apache.solr.core.SolrResourceLoader; Adding 'file:/usr/local/vufind2/solr/lib/lucene-analyzers-smartcn-4.10.4.jar' to classloader
+INFO  - 2017-01-27 12:45:20.987; org.apache.solr.core.SolrResourceLoader; Adding 'file:/usr/local/vufind2/solr/lib/lucene-analyzers-stempel-4.10.4.jar' to classloader
+INFO  - 2017-01-27 12:45:20.990; org.apache.solr.core.SolrResourceLoader; Adding 'file:/usr/local/vufind2/solr/lib/solr-analysis-extras-4.10.4.jar' to classloader
+INFO  - 2017-01-27 12:45:20.992; org.apache.solr.core.SolrResourceLoader; Adding 'file:/usr/local/vufind2/solr/lib/solr-core-4.10.4.jar' to classloader
+INFO  - 2017-01-27 12:45:20.994; org.apache.solr.core.SolrResourceLoader; Adding 'file:/usr/local/vufind2/solr/lib/sqlite-jdbc-3.7.15-SNAPSHOT.jar' to classloader
+INFO  - 2017-01-27 12:45:21.958; org.apache.solr.core.ConfigSolr; Loading container configuration from /usr/local/vufind2/solr/solr.xml
+INFO  - 2017-01-27 12:45:22.126; org.apache.solr.core.CorePropertiesLocator; Config-defined core root directory: /usr/local/vufind2/solr
+INFO  - 2017-01-27 12:45:22.211; org.apache.solr.core.CoreContainer; New CoreContainer 1556239796
+INFO  - 2017-01-27 12:45:22.213; org.apache.solr.core.CoreContainer; Loading cores into CoreContainer [instanceDir=/usr/local/vufind2/solr/]
+INFO  - 2017-01-27 12:45:22.215; org.apache.solr.core.CoreContainer; loading shared library: /usr/local/vufind2/solr/solr/lib"
+WARN  - 2017-01-27 12:45:22.221; org.apache.solr.core.SolrResourceLoader; Can't find (or read) directory to add to classloader: solr/lib" (resolved as: /usr/local/vufind2/solr/solr/lib").
+INFO  - 2017-01-27 12:45:22.281; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting socketTimeout to: 0
+INFO  - 2017-01-27 12:45:22.283; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting urlScheme to: null
+INFO  - 2017-01-27 12:45:22.290; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting connTimeout to: 0
+INFO  - 2017-01-27 12:45:22.292; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting maxConnectionsPerHost to: 20
+INFO  - 2017-01-27 12:45:22.294; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting corePoolSize to: 0
+INFO  - 2017-01-27 12:45:22.296; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting maximumPoolSize to: 2147483647
+INFO  - 2017-01-27 12:45:22.298; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting maxThreadIdleTime to: 5
+INFO  - 2017-01-27 12:45:22.300; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting sizeOfQueue to: -1
+INFO  - 2017-01-27 12:45:22.302; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting fairnessPolicy to: false
+INFO  - 2017-01-27 12:45:22.304; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting useRetries to: false
+INFO  - 2017-01-27 12:45:23.281; org.apache.solr.update.UpdateShardHandler; Creating UpdateShardHandler HTTP client with params: socketTimeout=0&connTimeout=0&retry=true
+INFO  - 2017-01-27 12:45:23.285; org.apache.solr.logging.LogWatcher; SLF4J impl is org.slf4j.impl.Log4jLoggerFactory
+INFO  - 2017-01-27 12:45:23.288; org.apache.solr.logging.LogWatcher; Registering Log Listener [Log4j (org.slf4j.impl.Log4jLoggerFactory)]
+INFO  - 2017-01-27 12:45:23.291; org.apache.solr.core.CoreContainer; Host Name: null
+INFO  - 2017-01-27 12:45:23.336; org.apache.solr.core.CorePropertiesLocator; Looking for core definitions underneath /usr/local/vufind2/solr
+INFO  - 2017-01-27 12:45:23.348; org.apache.solr.core.CorePropertiesLocator; Found core authority in /usr/local/vufind2/solr/authority/
+INFO  - 2017-01-27 12:45:23.350; org.apache.solr.core.CorePropertiesLocator; Found core biblio in /usr/local/vufind2/solr/biblio/
+INFO  - 2017-01-27 12:45:23.363; org.apache.solr.core.CorePropertiesLocator; Found core stats in /usr/local/vufind2/solr/stats/
+INFO  - 2017-01-27 12:45:23.366; org.apache.solr.core.CorePropertiesLocator; Found core website in /usr/local/vufind2/solr/website/
+INFO  - 2017-01-27 12:45:23.369; org.apache.solr.core.CorePropertiesLocator; Found 4 core definitions
+INFO  - 2017-01-27 12:45:23.372; org.apache.solr.servlet.SolrDispatchFilter; user.dir=/usr/local/vufind2/solr/biblio
+INFO  - 2017-01-27 12:45:23.374; org.apache.solr.servlet.SolrDispatchFilter; SolrDispatchFilter.init() done
+INFO  - 2017-01-27 12:45:23.404; org.eclipse.jetty.server.AbstractConnector; Started SocketConnector@0.0.0.0:8080
+INFO  - 2017-01-27 12:46:47.419; org.eclipse.jetty.server.Server; Graceful shutdown SocketConnector@0.0.0.0:8080
+INFO  - 2017-01-27 12:46:47.428; org.eclipse.jetty.server.Server; Graceful shutdown o.e.j.w.WebAppContext{/solr,file:/usr/local/vufind2/solr/jetty/work/jetty-0.0.0.0-8080-solr.war-_solr-any-/webapp/},/usr/local/vufind2/solr/jetty/webapps/solr.war
+INFO  - 2017-01-27 12:46:48.436; org.apache.solr.core.CoreContainer; Shutting down CoreContainer instance=1556239796
+INFO  - 2017-01-27 12:46:48.449; org.eclipse.jetty.server.handler.ContextHandler; stopped o.e.j.w.WebAppContext{/solr,file:/usr/local/vufind2/solr/jetty/work/jetty-0.0.0.0-8080-solr.war-_solr-any-/webapp/},/usr/local/vufind2/solr/jetty/webapps/solr.war
+INFO  - 2017-01-27 12:46:48.540; org.eclipse.jetty.util.thread.ShutdownThread; shutdown already commenced
+INFO  - 2017-01-27 12:52:21.336; org.eclipse.jetty.server.Server; jetty-8.1.8.v20121106
+INFO  - 2017-01-27 12:52:21.394; org.eclipse.jetty.deploy.providers.ScanningAppProvider; Deployment monitor /usr/local/vufind2/solr/jetty/contexts at interval 0
+INFO  - 2017-01-27 12:52:21.407; org.eclipse.jetty.deploy.DeploymentManager; Deployable added: /usr/local/vufind2/solr/jetty/contexts/solr-jetty-context.xml
+INFO  - 2017-01-27 12:52:21.565; org.eclipse.jetty.webapp.WebInfConfiguration; Extract jar:file:/usr/local/vufind2/solr/jetty/webapps/solr.war!/ to /usr/local/vufind2/solr/jetty/work/jetty-0.0.0.0-8080-solr.war-_solr-any-/webapp
+INFO  - 2017-01-27 12:52:24.848; org.eclipse.jetty.webapp.StandardDescriptorProcessor; NO JSP Support for /solr, did not find org.apache.jasper.servlet.JspServlet
+INFO  - 2017-01-27 12:52:24.883; org.eclipse.jetty.server.handler.ContextHandler; started o.e.j.w.WebAppContext{/solr,file:/usr/local/vufind2/solr/jetty/work/jetty-0.0.0.0-8080-solr.war-_solr-any-/webapp/},/usr/local/vufind2/solr/jetty/webapps/solr.war
+INFO  - 2017-01-27 12:52:24.897; org.eclipse.jetty.server.handler.ContextHandler; started o.e.j.w.WebAppContext{/solr,file:/usr/local/vufind2/solr/jetty/work/jetty-0.0.0.0-8080-solr.war-_solr-any-/webapp/},/usr/local/vufind2/solr/jetty/webapps/solr.war
+INFO  - 2017-01-27 12:52:24.986; org.apache.solr.servlet.SolrDispatchFilter; SolrDispatchFilter.init()
+INFO  - 2017-01-27 12:52:25.010; org.apache.solr.core.SolrResourceLoader; JNDI not configured for solr (NoInitialContextEx)
+INFO  - 2017-01-27 12:52:25.012; org.apache.solr.core.SolrResourceLoader; using system property solr.solr.home: /usr/local/vufind2/solr
+INFO  - 2017-01-27 12:52:25.014; org.apache.solr.core.SolrResourceLoader; new SolrResourceLoader for directory: '/usr/local/vufind2/solr/'
+INFO  - 2017-01-27 12:52:25.018; org.apache.solr.core.SolrResourceLoader; Adding 'file:/usr/local/vufind2/solr/lib/MarcImporter.jar' to classloader
+INFO  - 2017-01-27 12:52:25.020; org.apache.solr.core.SolrResourceLoader; Adding 'file:/usr/local/vufind2/solr/lib/browse-handler.jar' to classloader
+INFO  - 2017-01-27 12:52:25.022; org.apache.solr.core.SolrResourceLoader; Adding 'file:/usr/local/vufind2/solr/lib/icu4j-53.1.jar' to classloader
+INFO  - 2017-01-27 12:52:25.024; org.apache.solr.core.SolrResourceLoader; Adding 'file:/usr/local/vufind2/solr/lib/lucene-analyzers-icu-4.10.4.jar' to classloader
+INFO  - 2017-01-27 12:52:25.026; org.apache.solr.core.SolrResourceLoader; Adding 'file:/usr/local/vufind2/solr/lib/lucene-analyzers-smartcn-4.10.4.jar' to classloader
+INFO  - 2017-01-27 12:52:25.030; org.apache.solr.core.SolrResourceLoader; Adding 'file:/usr/local/vufind2/solr/lib/lucene-analyzers-stempel-4.10.4.jar' to classloader
+INFO  - 2017-01-27 12:52:25.032; org.apache.solr.core.SolrResourceLoader; Adding 'file:/usr/local/vufind2/solr/lib/solr-analysis-extras-4.10.4.jar' to classloader
+INFO  - 2017-01-27 12:52:25.034; org.apache.solr.core.SolrResourceLoader; Adding 'file:/usr/local/vufind2/solr/lib/solr-core-4.10.4.jar' to classloader
+INFO  - 2017-01-27 12:52:25.036; org.apache.solr.core.SolrResourceLoader; Adding 'file:/usr/local/vufind2/solr/lib/sqlite-jdbc-3.7.15-SNAPSHOT.jar' to classloader
+INFO  - 2017-01-27 12:52:25.229; org.apache.solr.core.ConfigSolr; Loading container configuration from /usr/local/vufind2/solr/solr.xml
+INFO  - 2017-01-27 12:52:25.308; org.apache.solr.core.CorePropertiesLocator; Config-defined core root directory: /usr/local/vufind2/solr
+INFO  - 2017-01-27 12:52:25.317; org.apache.solr.core.CoreContainer; New CoreContainer 2145070977
+INFO  - 2017-01-27 12:52:25.319; org.apache.solr.core.CoreContainer; Loading cores into CoreContainer [instanceDir=/usr/local/vufind2/solr/]
+INFO  - 2017-01-27 12:52:25.321; org.apache.solr.core.CoreContainer; loading shared library: /usr/local/vufind2/solr/solr/lib"
+WARN  - 2017-01-27 12:52:25.323; org.apache.solr.core.SolrResourceLoader; Can't find (or read) directory to add to classloader: solr/lib" (resolved as: /usr/local/vufind2/solr/solr/lib").
+INFO  - 2017-01-27 12:52:25.341; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting socketTimeout to: 0
+INFO  - 2017-01-27 12:52:25.343; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting urlScheme to: null
+INFO  - 2017-01-27 12:52:25.349; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting connTimeout to: 0
+INFO  - 2017-01-27 12:52:25.351; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting maxConnectionsPerHost to: 20
+INFO  - 2017-01-27 12:52:25.352; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting corePoolSize to: 0
+INFO  - 2017-01-27 12:52:25.354; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting maximumPoolSize to: 2147483647
+INFO  - 2017-01-27 12:52:25.356; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting maxThreadIdleTime to: 5
+INFO  - 2017-01-27 12:52:25.358; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting sizeOfQueue to: -1
+INFO  - 2017-01-27 12:52:25.360; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting fairnessPolicy to: false
+INFO  - 2017-01-27 12:52:25.362; org.apache.solr.handler.component.HttpShardHandlerFactory; Setting useRetries to: false
+INFO  - 2017-01-27 12:52:25.562; org.apache.solr.update.UpdateShardHandler; Creating UpdateShardHandler HTTP client with params: socketTimeout=0&connTimeout=0&retry=true
+INFO  - 2017-01-27 12:52:25.566; org.apache.solr.logging.LogWatcher; SLF4J impl is org.slf4j.impl.Log4jLoggerFactory
+INFO  - 2017-01-27 12:52:25.569; org.apache.solr.logging.LogWatcher; Registering Log Listener [Log4j (org.slf4j.impl.Log4jLoggerFactory)]
+INFO  - 2017-01-27 12:52:25.572; org.apache.solr.core.CoreContainer; Host Name: null
+INFO  - 2017-01-27 12:52:25.612; org.apache.solr.core.CorePropertiesLocator; Looking for core definitions underneath /usr/local/vufind2/solr
+INFO  - 2017-01-27 12:52:25.624; org.apache.solr.core.CorePropertiesLocator; Found core authority in /usr/local/vufind2/solr/authority/
+INFO  - 2017-01-27 12:52:25.626; org.apache.solr.core.CorePropertiesLocator; Found core biblio in /usr/local/vufind2/solr/biblio/
+INFO  - 2017-01-27 12:52:25.639; org.apache.solr.core.CorePropertiesLocator; Found core stats in /usr/local/vufind2/solr/stats/
+INFO  - 2017-01-27 12:52:25.641; org.apache.solr.core.CorePropertiesLocator; Found core website in /usr/local/vufind2/solr/website/
+INFO  - 2017-01-27 12:52:25.644; org.apache.solr.core.CorePropertiesLocator; Found 4 core definitions
+INFO  - 2017-01-27 12:52:25.647; org.apache.solr.servlet.SolrDispatchFilter; user.dir=/usr/local/vufind2/solr/biblio
+INFO  - 2017-01-27 12:52:25.650; org.apache.solr.servlet.SolrDispatchFilter; SolrDispatchFilter.init() done
+INFO  - 2017-01-27 12:52:25.682; org.eclipse.jetty.server.AbstractConnector; Started SocketConnector@0.0.0.0:8080
+INFO  - 2017-01-27 12:52:30.172; org.apache.solr.core.SolrResourceLoader; new SolrResourceLoader for directory: '/usr/local/vufind2/solr/biblio/'
+INFO  - 2017-01-27 12:52:30.399; org.apache.solr.core.SolrConfig; Using Lucene MatchVersion: 4.10.4
+INFO  - 2017-01-27 12:52:30.694; org.apache.solr.core.SolrConfig; Loaded SolrConfig: solrconfig.xml
+INFO  - 2017-01-27 12:52:30.714; org.apache.solr.schema.IndexSchema; Reading Solr Schema from /usr/local/vufind2/solr/biblio/conf/schema.xml
+INFO  - 2017-01-27 12:52:30.800; org.apache.solr.schema.IndexSchema; [biblio] Schema name=VuFind Bibliographic Index
+INFO  - 2017-01-27 12:52:31.020; org.apache.solr.schema.IndexSchema; default search field in schema is allfields
+INFO  - 2017-01-27 12:52:31.026; org.apache.solr.schema.IndexSchema; query parser default operator is AND
+INFO  - 2017-01-27 12:52:31.031; org.apache.solr.schema.IndexSchema; unique key field: id
+INFO  - 2017-01-27 12:52:31.235; org.apache.solr.core.CoreContainer; Creating SolrCore 'biblio' using configuration from instancedir /usr/local/vufind2/solr/biblio/
+INFO  - 2017-01-27 12:52:31.274; org.apache.solr.core.SolrCore; solr.NRTCachingDirectoryFactory
+INFO  - 2017-01-27 12:52:31.281; org.apache.solr.core.SolrCore; [biblio] Opening new SolrCore at /usr/local/vufind2/solr/biblio/, dataDir=/usr/local/vufind2/solr/biblio/
+INFO  - 2017-01-27 12:52:31.284; org.apache.solr.core.JmxMonitoredMap; No JMX servers found, not exposing Solr information with JMX.
+INFO  - 2017-01-27 12:52:31.291; org.apache.solr.core.SolrCore; [biblio] Added SolrEventListener for newSearcher: org.apache.solr.core.QuerySenderListener{queries=[{q=science art business engineering history,start=0,rows=10}]}
+INFO  - 2017-01-27 12:52:31.293; org.apache.solr.core.SolrCore; [biblio] Added SolrEventListener for firstSearcher: org.apache.solr.core.QuerySenderListener{queries=[{q=science art business engineering history,facet.field=format,fq=format:book}]}
+INFO  - 2017-01-27 12:52:31.312; org.apache.solr.core.CachingDirectoryFactory; return new directory for /usr/local/vufind2/solr/biblio
+INFO  - 2017-01-27 12:52:31.316; org.apache.solr.core.SolrCore; New index directory detected: old=null new=/usr/local/vufind2/solr/biblio/index/
+INFO  - 2017-01-27 12:52:31.347; org.apache.solr.core.CachingDirectoryFactory; return new directory for /usr/local/vufind2/solr/biblio/index
+INFO  - 2017-01-27 12:52:31.388; org.apache.solr.core.SolrCore; created xslt: org.apache.solr.response.XSLTResponseWriter
+INFO  - 2017-01-27 12:52:31.390; org.apache.solr.response.XSLTResponseWriter; xsltCacheLifetimeSeconds=5
+INFO  - 2017-01-27 12:52:31.551; org.apache.solr.core.SolrCore; no updateRequestProcessorChain defined as default, creating implicit default
+INFO  - 2017-01-27 12:52:31.563; org.apache.solr.core.RequestHandlers; created /update: org.apache.solr.handler.UpdateRequestHandler
+INFO  - 2017-01-27 12:52:31.565; org.apache.solr.core.RequestHandlers; created /update/json: org.apache.solr.handler.UpdateRequestHandler
+INFO  - 2017-01-27 12:52:31.567; org.apache.solr.core.RequestHandlers; created /update/csv: org.apache.solr.handler.UpdateRequestHandler
+INFO  - 2017-01-27 12:52:31.569; org.apache.solr.core.RequestHandlers; created /update/json/docs: org.apache.solr.handler.UpdateRequestHandler
+INFO  - 2017-01-27 12:52:31.575; org.apache.solr.core.RequestHandlers; created standard: solr.StandardRequestHandler
+INFO  - 2017-01-27 12:52:31.582; org.apache.solr.core.RequestHandlers; created dismax: solr.SearchHandler
+INFO  - 2017-01-27 12:52:31.584; org.apache.solr.core.RequestHandlers; created edismax: solr.SearchHandler
+INFO  - 2017-01-27 12:52:31.589; org.apache.solr.core.RequestHandlers; created morelikethis: solr.MoreLikeThisHandler
+INFO  - 2017-01-27 12:52:31.594; org.apache.solr.core.RequestHandlers; created /browse: org.vufind.solr.handler.BrowseRequestHandler
+INFO  - 2017-01-27 12:52:31.596; org.apache.solr.core.RequestHandlers; created /search: org.apache.solr.handler.component.SearchHandler
+INFO  - 2017-01-27 12:52:31.598; org.apache.solr.core.RequestHandlers; created /term: org.apache.solr.handler.component.SearchHandler
+INFO  - 2017-01-27 12:52:31.600; org.apache.solr.core.RequestHandlers; adding lazy requestHandler: org.apache.solr.handler.component.SearchHandler
+INFO  - 2017-01-27 12:52:31.603; org.apache.solr.core.RequestHandlers; created /elevate: org.apache.solr.handler.component.SearchHandler
+INFO  - 2017-01-27 12:52:31.606; org.apache.solr.core.RequestHandlers; adding lazy requestHandler: solr.FieldAnalysisRequestHandler
+INFO  - 2017-01-27 12:52:31.608; org.apache.solr.core.RequestHandlers; created /analysis/field: solr.FieldAnalysisRequestHandler
+INFO  - 2017-01-27 12:52:31.610; org.apache.solr.core.RequestHandlers; adding lazy requestHandler: solr.DocumentAnalysisRequestHandler
+INFO  - 2017-01-27 12:52:31.613; org.apache.solr.core.RequestHandlers; created /analysis/document: solr.DocumentAnalysisRequestHandler
+INFO  - 2017-01-27 12:52:31.616; org.apache.solr.core.RequestHandlers; created /admin/: org.apache.solr.handler.admin.AdminHandlers
+INFO  - 2017-01-27 12:52:31.620; org.apache.solr.core.RequestHandlers; created /admin/ping: PingRequestHandler
+INFO  - 2017-01-27 12:52:31.624; org.apache.solr.core.RequestHandlers; created /debug/dump: solr.DumpRequestHandler
+INFO  - 2017-01-27 12:52:31.644; org.apache.solr.handler.loader.XMLLoader; xsltCacheLifetimeSeconds=60
+INFO  - 2017-01-27 12:52:31.648; org.apache.solr.handler.loader.XMLLoader; xsltCacheLifetimeSeconds=60
+INFO  - 2017-01-27 12:52:31.651; org.apache.solr.handler.loader.XMLLoader; xsltCacheLifetimeSeconds=60
+INFO  - 2017-01-27 12:52:31.654; org.apache.solr.handler.loader.XMLLoader; xsltCacheLifetimeSeconds=60
+INFO  - 2017-01-27 12:52:31.684; org.apache.solr.update.CommitTracker; Hard AutoCommit: if uncommited for 15000ms; 
+INFO  - 2017-01-27 12:52:31.686; org.apache.solr.update.CommitTracker; Soft AutoCommit: disabled
+INFO  - 2017-01-27 12:52:32.033; org.apache.solr.core.SolrDeletionPolicy; SolrDeletionPolicy.onInit: commits: num=1
+	commit{dir=NRTCachingDirectory(MMapDirectory@/usr/local/vufind2/solr/biblio/index lockFactory=NativeFSLockFactory@/usr/local/vufind2/solr/biblio/index; maxCacheMB=48.0 maxMergeSizeMB=4.0),segFN=segments_4hjr,generation=209367}
+INFO  - 2017-01-27 12:52:32.038; org.apache.solr.core.SolrDeletionPolicy; newest commit generation = 209367
+INFO  - 2017-01-27 12:52:34.218; org.apache.solr.search.SolrIndexSearcher; Opening Searcher@33f9c025[biblio] main
+INFO  - 2017-01-27 12:52:34.230; org.apache.solr.rest.ManagedResourceStorage$FileStorageIO; File-based storage initialized to use dir: /usr/local/vufind2/solr/biblio/conf
+INFO  - 2017-01-27 12:52:34.232; org.apache.solr.rest.RestManager; Initializing RestManager with initArgs: {storageDir=/usr/local/vufind2/solr/biblio/conf}
+INFO  - 2017-01-27 12:52:34.245; org.apache.solr.rest.ManagedResourceStorage; Reading _rest_managed.json using file:dir=/usr/local/vufind2/solr/biblio/conf
+INFO  - 2017-01-27 12:52:34.251; org.apache.solr.rest.ManagedResourceStorage; Loaded LinkedHashMap at path _rest_managed.json using file:dir=/usr/local/vufind2/solr/biblio/conf
+INFO  - 2017-01-27 12:52:34.253; org.apache.solr.rest.ManagedResource; Loaded initArgs {} for /rest/managed
+INFO  - 2017-01-27 12:52:34.255; org.apache.solr.rest.RestManager; Initializing 0 registered ManagedResources
+INFO  - 2017-01-27 12:52:34.257; org.apache.solr.handler.component.SpellCheckComponent; Initializing spell checkers
+INFO  - 2017-01-27 12:52:34.272; org.apache.solr.handler.component.SpellCheckComponent; Registering newSearcher listener for spellchecker: default
+INFO  - 2017-01-27 12:52:34.275; org.apache.solr.handler.component.SpellCheckComponent; Registering newSearcher listener for spellchecker: basicSpell
+INFO  - 2017-01-27 12:52:34.280; org.apache.solr.handler.component.QueryElevationComponent; Loading QueryElevation from: /usr/local/vufind2/solr/biblio/conf/elevate.xml
+INFO  - 2017-01-27 12:52:34.306; org.apache.solr.core.QuerySenderListener; QuerySenderListener sending requests to Searcher@33f9c025[biblio] main{StandardDirectoryReader(segments_4hjr:839865:nrt _66rz(4.10.4):C73258/31457:delGen=901 _6734(4.10.4):C10200/1:delGen=1 _67l7(4.10.4):C15259/1:delGen=1 _67sf(4.10.4):C5931/1:delGen=1 _67sg(4.10.4):C31 _67sh(4.10.4):C36/1:delGen=1 _67si(4.10.4):C1 _67sj(4.10.4):C34/1:delGen=1 _67sk(4.10.4):C1 _67sl(4.10.4):C37/4:delGen=1)}
+INFO  - 2017-01-27 12:52:34.308; org.apache.solr.core.CoreContainer; registering core: biblio
+INFO  - 2017-01-27 12:52:34.488; org.apache.solr.core.SolrCore; [biblio] webapp=null path=null params={event=firstSearcher&q=science+art+business+engineering+history&distrib=false&facet.field=format&fq=format:book} hits=0 status=0 QTime=171 
+INFO  - 2017-01-27 12:52:34.491; org.apache.solr.core.QuerySenderListener; QuerySenderListener done.
+INFO  - 2017-01-27 12:52:34.492; org.apache.solr.handler.component.SpellCheckComponent$SpellCheckerListener; Loading spell index for spellchecker: default
+INFO  - 2017-01-27 12:52:34.499; org.apache.solr.handler.component.SpellCheckComponent$SpellCheckerListener; Loading spell index for spellchecker: basicSpell
+INFO  - 2017-01-27 12:52:34.502; org.apache.solr.core.SolrCore; [biblio] Registered new searcher Searcher@33f9c025[biblio] main{StandardDirectoryReader(segments_4hjr:839865:nrt _66rz(4.10.4):C73258/31457:delGen=901 _6734(4.10.4):C10200/1:delGen=1 _67l7(4.10.4):C15259/1:delGen=1 _67sf(4.10.4):C5931/1:delGen=1 _67sg(4.10.4):C31 _67sh(4.10.4):C36/1:delGen=1 _67si(4.10.4):C1 _67sj(4.10.4):C34/1:delGen=1 _67sk(4.10.4):C1 _67sl(4.10.4):C37/4:delGen=1)}
+INFO  - 2017-01-27 12:52:34.515; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI663234"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=199 
+INFO  - 2017-01-27 12:52:37.955; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=deposit_language_name&indent=true&q=id:MPI192279&wt=xml&rows=1} hits=1 status=0 QTime=149 
+INFO  - 2017-01-27 12:52:38.061; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=title&indent=true&q=id:MPI192279&wt=xml&rows=1} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:52:39.092; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI55247"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=2 
+INFO  - 2017-01-27 12:52:55.807; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=2 
+INFO  - 2017-01-27 12:52:55.906; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI55247"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:53:22.891; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI648379"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=3 
+INFO  - 2017-01-27 12:53:30.128; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:53:30.904; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=deposit_language_name&indent=true&q=id:MPI648101&wt=xml&rows=1} hits=1 status=0 QTime=31 
+INFO  - 2017-01-27 12:53:31.186; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=title&indent=true&q=id:MPI648101&wt=xml&rows=1} hits=1 status=0 QTime=0 
+INFO  - 2017-01-27 12:53:36.801; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI55247"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=0 
+INFO  - 2017-01-27 12:53:43.278; org.apache.solr.request.UnInvertedField; UnInverted multi-valued field {field=topic_facet,memSize=4288,tindexSize=0,time=0,phase1=0,nTerms=0,bigTerms=0,termInstances=0,uses=0}
+INFO  - 2017-01-27 12:53:43.519; org.apache.solr.request.UnInvertedField; UnInverted multi-valued field {field=format,memSize=423584,tindexSize=46,time=83,phase1=78,nTerms=2,bigTerms=1,termInstances=421,uses=0}
+INFO  - 2017-01-27 12:53:49.370; org.apache.solr.request.UnInvertedField; UnInverted multi-valued field {field=project_id,memSize=423484,tindexSize=44,time=1961,phase1=1959,nTerms=2,bigTerms=0,termInstances=421,uses=0}
+INFO  - 2017-01-27 12:53:51.844; org.apache.solr.request.UnInvertedField; UnInverted multi-valued field {field=deposit_status_string,memSize=423480,tindexSize=40,time=2,phase1=2,nTerms=4,bigTerms=0,termInstances=421,uses=0}
+INFO  - 2017-01-27 12:53:53.861; org.apache.solr.request.UnInvertedField; UnInverted multi-valued field {field=country_name,memSize=424089,tindexSize=49,time=1933,phase1=1933,nTerms=101,bigTerms=6,termInstances=33632,uses=0}
+INFO  - 2017-01-27 12:53:58.985; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:54:01.381; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:54:01.442; org.apache.solr.request.UnInvertedField; UnInverted multi-valued field {field=bundle_language_name_string,memSize=447323,tindexSize=153,time=2458,phase1=2448,nTerms=951,bigTerms=2,termInstances=57284,uses=0}
+INFO  - 2017-01-27 12:54:09.458; org.apache.solr.request.UnInvertedField; UnInverted multi-valued field {field=resource_type_string,memSize=424074,tindexSize=50,time=7973,phase1=7972,nTerms=13,bigTerms=6,termInstances=5857,uses=0}
+INFO  - 2017-01-27 12:54:12.877; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI55247"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:54:12.905; org.apache.solr.request.UnInvertedField; UnInverted multi-valued field {field=bundle_genre_string,memSize=429616,tindexSize=248,time=64,phase1=63,nTerms=1195,bigTerms=0,termInstances=32215,uses=0}
+INFO  - 2017-01-27 12:54:15.925; org.apache.solr.request.UnInvertedField; UnInverted multi-valued field {field=resource_keyword_string,memSize=448853,tindexSize=598,time=3007,phase1=3006,nTerms=3367,bigTerms=0,termInstances=14512,uses=0}
+INFO  - 2017-01-27 12:54:15.981; org.apache.solr.request.UnInvertedField; UnInverted multi-valued field {field=bundle_tag_string,memSize=4288,tindexSize=0,time=0,phase1=0,nTerms=0,bigTerms=0,termInstances=0,uses=0}
+INFO  - 2017-01-27 12:54:18.294; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI106093"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=3 
+INFO  - 2017-01-27 12:54:18.329; org.apache.solr.request.UnInvertedField; UnInverted multi-valued field {field=bundle_participant,memSize=566508,tindexSize=1635,time=2341,phase1=2331,nTerms=9026,bigTerms=0,termInstances=96276,uses=0}
+INFO  - 2017-01-27 12:54:22.630; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:54:22.897; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:54:35.374; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={spellcheck=true&facet=true&sort=format_sort+desc,clean_title+asc&facet.mincount=1&spellcheck.q=&facet.limit=3000&hl.simple.pre={{{{START_HILITE}}}}&json.nl=arrarr&hl.fl=*&wt=json&hl=true&rows=10&fl=*,score&start=0&facet.sort=count&q=*:*&spellcheck.dictionary=default&hl.simple.post={{{{END_HILITE}}}}&facet.field=topic_facet&facet.field=format&facet.field=project_id&facet.field=deposit_status_string&facet.field=country_name&facet.field=bundle_language_name_string&facet.field=resource_type_string&facet.field=bundle_genre_string&facet.field=resource_keyword_string&facet.field=bundle_tag_string&facet.field=bundle_participant&fq=NOT+deletion_message:"deleted"} hits=72335 status=0 QTime=52392 
+INFO  - 2017-01-27 12:54:35.380; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={spellcheck=true&facet=true&sort=format_sort+desc,clean_title+asc&facet.mincount=1&spellcheck.q=&facet.limit=3000&hl.simple.pre={{{{START_HILITE}}}}&json.nl=arrarr&hl.fl=*&wt=json&hl=true&rows=10&fl=*,score&start=0&facet.sort=count&q=*:*&spellcheck.dictionary=default&hl.simple.post={{{{END_HILITE}}}}&facet.field=topic_facet&facet.field=format&facet.field=project_id&facet.field=deposit_status_string&facet.field=country_name&facet.field=bundle_language_name_string&facet.field=resource_type_string&facet.field=bundle_genre_string&facet.field=resource_keyword_string&facet.field=bundle_tag_string&facet.field=bundle_participant&fq=NOT+deletion_message:"deleted"} hits=72335 status=0 QTime=74395 
+ERROR - 2017-01-27 12:54:35.466; org.apache.solr.common.SolrException; null:org.eclipse.jetty.io.EofException
+	at org.eclipse.jetty.server.HttpOutput.write(HttpOutput.java:142)
+	at org.eclipse.jetty.server.HttpOutput.write(HttpOutput.java:107)
+	at sun.nio.cs.StreamEncoder.writeBytes(StreamEncoder.java:221)
+	at sun.nio.cs.StreamEncoder.implWrite(StreamEncoder.java:282)
+	at sun.nio.cs.StreamEncoder.write(StreamEncoder.java:125)
+	at java.io.OutputStreamWriter.write(OutputStreamWriter.java:207)
+	at org.apache.solr.util.FastWriter.flush(FastWriter.java:141)
+	at org.apache.solr.util.FastWriter.flushBuffer(FastWriter.java:155)
+	at org.apache.solr.response.TextResponseWriter.close(TextResponseWriter.java:83)
+	at org.apache.solr.response.JSONResponseWriter.write(JSONResponseWriter.java:63)
+	at org.apache.solr.servlet.SolrDispatchFilter.writeResponse(SolrDispatchFilter.java:765)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:426)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:207)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1307)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:453)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:560)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1072)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:382)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1006)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:255)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:365)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:485)
+	at org.eclipse.jetty.server.BlockingHttpConnection.handleRequest(BlockingHttpConnection.java:53)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:926)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:988)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:635)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.BlockingHttpConnection.handle(BlockingHttpConnection.java:72)
+	at org.eclipse.jetty.server.bio.SocketConnector$ConnectorEndPoint.run(SocketConnector.java:264)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:745)
+
+ERROR - 2017-01-27 12:54:35.466; org.apache.solr.common.SolrException; null:org.eclipse.jetty.io.EofException
+	at org.eclipse.jetty.server.HttpOutput.write(HttpOutput.java:142)
+	at org.eclipse.jetty.server.HttpOutput.write(HttpOutput.java:107)
+	at sun.nio.cs.StreamEncoder.writeBytes(StreamEncoder.java:221)
+	at sun.nio.cs.StreamEncoder.implWrite(StreamEncoder.java:282)
+	at sun.nio.cs.StreamEncoder.write(StreamEncoder.java:125)
+	at java.io.OutputStreamWriter.write(OutputStreamWriter.java:207)
+	at org.apache.solr.util.FastWriter.flush(FastWriter.java:141)
+	at org.apache.solr.util.FastWriter.flushBuffer(FastWriter.java:155)
+	at org.apache.solr.response.TextResponseWriter.close(TextResponseWriter.java:83)
+	at org.apache.solr.response.JSONResponseWriter.write(JSONResponseWriter.java:63)
+	at org.apache.solr.servlet.SolrDispatchFilter.writeResponse(SolrDispatchFilter.java:765)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:426)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:207)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1307)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:453)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:560)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1072)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:382)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1006)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:255)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:365)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:485)
+	at org.eclipse.jetty.server.BlockingHttpConnection.handleRequest(BlockingHttpConnection.java:53)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:926)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:988)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:635)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.BlockingHttpConnection.handle(BlockingHttpConnection.java:72)
+	at org.eclipse.jetty.server.bio.SocketConnector$ConnectorEndPoint.run(SocketConnector.java:264)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:745)
+
+ERROR - 2017-01-27 12:54:35.529; org.apache.solr.common.SolrException; null:org.eclipse.jetty.io.EofException
+	at org.eclipse.jetty.server.HttpOutput.write(HttpOutput.java:142)
+	at org.eclipse.jetty.server.HttpOutput.write(HttpOutput.java:107)
+	at sun.nio.cs.StreamEncoder.writeBytes(StreamEncoder.java:221)
+	at sun.nio.cs.StreamEncoder.implWrite(StreamEncoder.java:282)
+	at sun.nio.cs.StreamEncoder.write(StreamEncoder.java:125)
+	at java.io.OutputStreamWriter.write(OutputStreamWriter.java:207)
+	at org.apache.solr.util.FastWriter.flush(FastWriter.java:141)
+	at org.apache.solr.util.FastWriter.flushBuffer(FastWriter.java:155)
+	at org.apache.solr.response.TextResponseWriter.close(TextResponseWriter.java:83)
+	at org.apache.solr.response.JSONResponseWriter.write(JSONResponseWriter.java:63)
+	at org.apache.solr.servlet.SolrDispatchFilter.writeResponse(SolrDispatchFilter.java:765)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:426)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:207)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1307)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:453)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:560)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1072)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:382)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1006)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:255)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:365)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:485)
+	at org.eclipse.jetty.server.BlockingHttpConnection.handleRequest(BlockingHttpConnection.java:53)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:926)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:988)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:635)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.BlockingHttpConnection.handle(BlockingHttpConnection.java:72)
+	at org.eclipse.jetty.server.bio.SocketConnector$ConnectorEndPoint.run(SocketConnector.java:264)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:745)
+
+ERROR - 2017-01-27 12:54:35.577; org.apache.solr.common.SolrException; null:org.eclipse.jetty.io.EofException
+	at org.eclipse.jetty.server.HttpOutput.write(HttpOutput.java:142)
+	at org.eclipse.jetty.server.HttpOutput.write(HttpOutput.java:107)
+	at sun.nio.cs.StreamEncoder.writeBytes(StreamEncoder.java:221)
+	at sun.nio.cs.StreamEncoder.implWrite(StreamEncoder.java:282)
+	at sun.nio.cs.StreamEncoder.write(StreamEncoder.java:125)
+	at java.io.OutputStreamWriter.write(OutputStreamWriter.java:207)
+	at org.apache.solr.util.FastWriter.flush(FastWriter.java:141)
+	at org.apache.solr.util.FastWriter.flushBuffer(FastWriter.java:155)
+	at org.apache.solr.response.TextResponseWriter.close(TextResponseWriter.java:83)
+	at org.apache.solr.response.JSONResponseWriter.write(JSONResponseWriter.java:63)
+	at org.apache.solr.servlet.SolrDispatchFilter.writeResponse(SolrDispatchFilter.java:765)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:426)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:207)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1307)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:453)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:560)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1072)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:382)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1006)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:255)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:365)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:485)
+	at org.eclipse.jetty.server.BlockingHttpConnection.handleRequest(BlockingHttpConnection.java:53)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:926)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:988)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:635)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.BlockingHttpConnection.handle(BlockingHttpConnection.java:72)
+	at org.eclipse.jetty.server.bio.SocketConnector$ConnectorEndPoint.run(SocketConnector.java:264)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:745)
+
+WARN  - 2017-01-27 12:54:35.628; org.eclipse.jetty.server.Response; Committed before 500 {trace=org.eclipse.jetty.io.EofException
+	at org.eclipse.jetty.server.HttpOutput.write(HttpOutput.java:142)
+	at org.eclipse.jetty.server.HttpOutput.write(HttpOutput.java:107)
+	at sun.nio.cs.StreamEncoder.writeBytes(StreamEncoder.java:221)
+	at sun.nio.cs.StreamEncoder.implWrite(StreamEncoder.java:282)
+	at sun.nio.cs.StreamEncoder.write(StreamEncoder.java:125)
+	at java.io.OutputStreamWriter.write(OutputStreamWriter.java:207)
+	at org.apache.solr.util.FastWriter.flush(FastWriter.java:141)
+	at org.apache.solr.util.FastWriter.flushBuffer(FastWriter.java:155)
+	at org.apache.solr.response.TextResponseWriter.close(TextResponseWriter.java:83)
+	at org.apache.solr.response.JSONResponseWriter.write(JSONResponseWriter.java:63)
+	at org.apache.solr.servlet.SolrDispatchFilter.writeResponse(SolrDispatchFilter.java:765)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:426)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:207)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1307)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:453)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:560)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1072)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:382)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1006)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:255)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:365)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:485)
+	at org.eclipse.jetty.server.BlockingHttpConnection.handleRequest(BlockingHttpConnection.java:53)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:926)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:988)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:635)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.BlockingHttpConnection.handle(BlockingHttpConnection.java:72)
+	at org.eclipse.jetty.server.bio.SocketConnector$ConnectorEndPoint.run(SocketConnector.java:264)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:745)
+,code=500}
+WARN  - 2017-01-27 12:54:36.714; org.eclipse.jetty.server.Response; Committed before 500 {trace=org.eclipse.jetty.io.EofException
+	at org.eclipse.jetty.server.HttpOutput.write(HttpOutput.java:142)
+	at org.eclipse.jetty.server.HttpOutput.write(HttpOutput.java:107)
+	at sun.nio.cs.StreamEncoder.writeBytes(StreamEncoder.java:221)
+	at sun.nio.cs.StreamEncoder.implWrite(StreamEncoder.java:282)
+	at sun.nio.cs.StreamEncoder.write(StreamEncoder.java:125)
+	at java.io.OutputStreamWriter.write(OutputStreamWriter.java:207)
+	at org.apache.solr.util.FastWriter.flush(FastWriter.java:141)
+	at org.apache.solr.util.FastWriter.flushBuffer(FastWriter.java:155)
+	at org.apache.solr.response.TextResponseWriter.close(TextResponseWriter.java:83)
+	at org.apache.solr.response.JSONResponseWriter.write(JSONResponseWriter.java:63)
+	at org.apache.solr.servlet.SolrDispatchFilter.writeResponse(SolrDispatchFilter.java:765)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:426)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:207)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1307)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:453)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:560)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1072)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:382)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1006)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:255)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:365)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:485)
+	at org.eclipse.jetty.server.BlockingHttpConnection.handleRequest(BlockingHttpConnection.java:53)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:926)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:988)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:635)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.BlockingHttpConnection.handle(BlockingHttpConnection.java:72)
+	at org.eclipse.jetty.server.bio.SocketConnector$ConnectorEndPoint.run(SocketConnector.java:264)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:745)
+,code=500}
+WARN  - 2017-01-27 12:54:39.102; org.eclipse.jetty.servlet.ServletHandler; /solr/biblio/select
+java.lang.IllegalStateException: Committed
+	at org.eclipse.jetty.server.Response.resetBuffer(Response.java:1136)
+	at org.eclipse.jetty.server.Response.sendError(Response.java:314)
+	at org.apache.solr.servlet.SolrDispatchFilter.sendError(SolrDispatchFilter.java:821)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:434)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:207)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1307)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:453)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:560)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1072)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:382)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1006)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:255)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:365)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:485)
+	at org.eclipse.jetty.server.BlockingHttpConnection.handleRequest(BlockingHttpConnection.java:53)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:926)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:988)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:635)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.BlockingHttpConnection.handle(BlockingHttpConnection.java:72)
+	at org.eclipse.jetty.server.bio.SocketConnector$ConnectorEndPoint.run(SocketConnector.java:264)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:745)
+WARN  - 2017-01-27 12:54:39.169; org.eclipse.jetty.servlet.ServletHandler; /solr/biblio/select
+java.lang.IllegalStateException: Committed
+	at org.eclipse.jetty.server.Response.resetBuffer(Response.java:1136)
+	at org.eclipse.jetty.server.Response.sendError(Response.java:314)
+	at org.apache.solr.servlet.SolrDispatchFilter.sendError(SolrDispatchFilter.java:821)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:434)
+	at org.apache.solr.servlet.SolrDispatchFilter.doFilter(SolrDispatchFilter.java:207)
+	at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1307)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:453)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:560)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1072)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:382)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1006)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)
+	at org.eclipse.jetty.server.handler.ContextHandlerCollection.handle(ContextHandlerCollection.java:255)
+	at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)
+	at org.eclipse.jetty.server.Server.handle(Server.java:365)
+	at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:485)
+	at org.eclipse.jetty.server.BlockingHttpConnection.handleRequest(BlockingHttpConnection.java:53)
+	at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:926)
+	at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:988)
+	at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:635)
+	at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)
+	at org.eclipse.jetty.server.BlockingHttpConnection.handle(BlockingHttpConnection.java:72)
+	at org.eclipse.jetty.server.bio.SocketConnector$ConnectorEndPoint.run(SocketConnector.java:264)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)
+	at java.lang.Thread.run(Thread.java:745)
+INFO  - 2017-01-27 12:54:51.004; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI55247"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:54:52.975; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=0 
+INFO  - 2017-01-27 12:54:53.834; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:55:20.949; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI55247"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:55:25.886; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=0 
+INFO  - 2017-01-27 12:55:29.138; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=2147 
+INFO  - 2017-01-27 12:55:44.010; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI64241"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=3 
+INFO  - 2017-01-27 12:55:44.396; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI55247"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:56:09.066; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:56:43.845; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:58:42.320; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:58:44.935; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI76855"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:59:00.332; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI510746"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=4 
+INFO  - 2017-01-27 12:59:10.559; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=deposit_language_name&indent=true&q=id:MPI64241&wt=xml&rows=1} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:59:10.568; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:59:10.599; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=title&indent=true&q=id:MPI64241&wt=xml&rows=1} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 12:59:54.761; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=0 
+INFO  - 2017-01-27 13:00:08.866; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=0 
+INFO  - 2017-01-27 13:00:58.403; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 13:01:02.803; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI80292"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=3 
+INFO  - 2017-01-27 13:01:16.361; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 13:01:43.433; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI80292"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 13:01:43.923; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI58467"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=3 
+INFO  - 2017-01-27 13:02:28.032; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI86392"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 13:02:29.702; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI80292"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 13:02:54.529; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI201072"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=2 
+INFO  - 2017-01-27 13:02:56.066; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI80292"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=0 
+INFO  - 2017-01-27 13:03:12.476; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={spellcheck=true&facet=true&sort=format_sort+desc,clean_title+asc&facet.mincount=1&spellcheck.q=&facet.limit=3000&hl.simple.pre={{{{START_HILITE}}}}&json.nl=arrarr&hl.fl=*&wt=json&hl=true&rows=10&fl=*,score&start=0&facet.sort=count&q=*:*&spellcheck.dictionary=default&hl.simple.post={{{{END_HILITE}}}}&facet.field=topic_facet&facet.field=format&facet.field=project_id&facet.field=deposit_status_string&facet.field=country_name&facet.field=bundle_language_name_string&facet.field=resource_type_string&facet.field=bundle_genre_string&facet.field=resource_keyword_string&facet.field=bundle_tag_string&facet.field=bundle_participant&fq=NOT+deletion_message:"deleted"} hits=72335 status=0 QTime=696 
+INFO  - 2017-01-27 13:03:12.660; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={spellcheck=true&fl=*,score&start=0&q=*:*&spellcheck.q=&spellcheck.dictionary=basicSpell&json.nl=arrarr&wt=json&rows=0} hits=73322 status=0 QTime=16 
+INFO  - 2017-01-27 13:03:28.040; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI80292"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=2 
+INFO  - 2017-01-27 13:03:28.883; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={spellcheck=true&facet=true&sort=format_sort+desc,clean_title+asc&facet.mincount=1&spellcheck.q=&facet.limit=3000&hl.simple.pre={{{{START_HILITE}}}}&json.nl=arrarr&hl.fl=*&wt=json&hl=true&rows=10&fl=*,score&start=0&facet.sort=count&q=*:*&spellcheck.dictionary=default&hl.simple.post={{{{END_HILITE}}}}&facet.field=topic_facet&facet.field=format&facet.field=project_id&facet.field=deposit_status_string&facet.field=country_name&facet.field=bundle_language_name_string&facet.field=resource_type_string&facet.field=bundle_genre_string&facet.field=resource_keyword_string&facet.field=bundle_tag_string&facet.field=bundle_participant&fq=NOT+deletion_message:"deleted"} hits=72335 status=0 QTime=2471 
+INFO  - 2017-01-27 13:03:28.965; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={spellcheck=true&fl=*,score&start=0&q=*:*&spellcheck.q=&spellcheck.dictionary=basicSpell&json.nl=arrarr&wt=json&rows=0} hits=73322 status=0 QTime=1 
+INFO  - 2017-01-27 13:03:29.488; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={spellcheck=true&facet=true&sort=last_indexed+desc,last_indexed+desc&facet.mincount=1&spellcheck.q=&facet.limit=3000&hl.simple.pre={{{{START_HILITE}}}}&json.nl=arrarr&hl.fl=*&wt=json&hl=true&rows=12&fl=*,score&start=0&facet.sort=count&q=format:Deposit&spellcheck.dictionary=default&hl.simple.post={{{{END_HILITE}}}}&facet.field=topic_facet&facet.field=format&facet.field=project_id&facet.field=deposit_status_string&facet.field=country_name&facet.field=bundle_language_name_string&facet.field=resource_type_string&facet.field=bundle_genre_string&facet.field=resource_keyword_string&facet.field=bundle_tag_string&facet.field=bundle_participant&fq=NOT+deletion_message:"deleted"} hits=421 status=0 QTime=13902 
+INFO  - 2017-01-27 13:03:30.534; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={spellcheck=true&fl=*,score&start=0&q=*:*&spellcheck.q=&spellcheck.dictionary=basicSpell&json.nl=arrarr&wt=json&rows=0} hits=73322 status=0 QTime=0 
+INFO  - 2017-01-27 13:03:40.271; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={spellcheck=true&facet=true&sort=last_indexed+desc,last_indexed+desc&facet.mincount=1&spellcheck.q=&facet.limit=3000&hl.simple.pre={{{{START_HILITE}}}}&json.nl=arrarr&hl.fl=*&wt=json&hl=true&rows=12&fl=*,score&start=0&facet.sort=count&q=format:Deposit&spellcheck.dictionary=default&hl.simple.post={{{{END_HILITE}}}}&facet.field=topic_facet&facet.field=format&facet.field=project_id&facet.field=deposit_status_string&facet.field=country_name&facet.field=bundle_language_name_string&facet.field=resource_type_string&facet.field=bundle_genre_string&facet.field=resource_keyword_string&facet.field=bundle_tag_string&facet.field=bundle_participant&fq=NOT+deletion_message:"deleted"} hits=421 status=0 QTime=1269 
+INFO  - 2017-01-27 13:03:40.506; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={spellcheck=true&fl=*,score&start=0&q=*:*&spellcheck.q=&spellcheck.dictionary=basicSpell&json.nl=arrarr&wt=json&rows=0} hits=73322 status=0 QTime=2 
+INFO  - 2017-01-27 13:03:46.856; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 13:04:21.520; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 13:04:53.618; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI78647"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=2 
+INFO  - 2017-01-27 13:05:34.780; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=0 
+INFO  - 2017-01-27 13:06:56.247; org.apache.solr.core.SolrCore; [biblio] webapp=/solr path=/select params={fl=*,score&q=id:"MPI97667"&json.nl=arrarr&wt=json} hits=1 status=0 QTime=1 
+INFO  - 2017-01-27 13:06:56.555; org.eclipse.jetty.server.Server; Graceful shutdown SocketConnector@0.0.0.0:8080
+INFO  - 2017-01-27 13:06:56.558; org.eclipse.jetty.server.Server; Graceful shutdown o.e.j.w.WebAppContext{/solr,file:/usr/local/vufind2/solr/jetty/work/jetty-0.0.0.0-8080-solr.war-_solr-any-/webapp/},/usr/local/vufind2/solr/jetty/webapps/solr.war
+INFO  - 2017-01-27 13:06:58.228; org.apache.solr.core.CoreContainer; Shutting down CoreContainer instance=2145070977
+INFO  - 2017-01-27 13:06:58.244; org.apache.solr.core.SolrCore; [biblio]  CLOSING SolrCore org.apache.solr.core.SolrCore@5fa2004b
+INFO  - 2017-01-27 13:06:58.247; org.apache.solr.update.DirectUpdateHandler2; closing DirectUpdateHandler2{commits=0,autocommit maxTime=15000ms,autocommits=0,soft autocommits=0,optimizes=0,rollbacks=0,expungeDeletes=0,docsPending=0,adds=0,deletesById=0,deletesByQuery=0,errors=0,cumulative_adds=0,cumulative_deletesById=0,cumulative_deletesByQuery=0,cumulative_errors=0,transaction_logs_total_size=71078,transaction_logs_total_number=4}
+INFO  - 2017-01-27 13:06:58.275; org.apache.solr.update.SolrCoreState; Closing SolrCoreState
+INFO  - 2017-01-27 13:06:58.277; org.apache.solr.update.DefaultSolrCoreState; SolrCoreState ref count has reached 0 - closing IndexWriter
+INFO  - 2017-01-27 13:06:58.279; org.apache.solr.update.DefaultSolrCoreState; closing IndexWriter with IndexWriterCloser
+ERROR - 2017-01-27 13:06:58.389; org.apache.solr.update.SolrIndexWriter; Error closing IndexWriter
+org.apache.lucene.store.NoSuchDirectoryException: directory '/usr/local/vufind2/solr/biblio/index' does not exist
+	at org.apache.lucene.store.FSDirectory.listAll(FSDirectory.java:213)
+	at org.apache.lucene.store.FSDirectory.listAll(FSDirectory.java:237)
+	at org.apache.lucene.store.NRTCachingDirectory.listAll(NRTCachingDirectory.java:105)
+	at org.apache.lucene.index.IndexFileDeleter.refresh(IndexFileDeleter.java:426)
+	at org.apache.lucene.index.IndexFileDeleter.refresh(IndexFileDeleter.java:462)
+	at org.apache.lucene.index.IndexWriter.rollbackInternal(IndexWriter.java:2149)
+	at org.apache.lucene.index.IndexWriter.shutdown(IndexWriter.java:917)
+	at org.apache.lucene.index.IndexWriter.close(IndexWriter.java:987)
+	at org.apache.lucene.index.IndexWriter.close(IndexWriter.java:957)
+	at org.apache.solr.update.SolrIndexWriter.close(SolrIndexWriter.java:129)
+	at org.apache.solr.update.DirectUpdateHandler2.closeWriter(DirectUpdateHandler2.java:797)
+	at org.apache.solr.update.DefaultSolrCoreState.closeIndexWriter(DefaultSolrCoreState.java:75)
+	at org.apache.solr.update.DefaultSolrCoreState.close(DefaultSolrCoreState.java:379)
+	at org.apache.solr.update.SolrCoreState.decrefSolrCoreState(SolrCoreState.java:73)
+	at org.apache.solr.core.SolrCore.close(SolrCore.java:1073)
+	at org.apache.solr.core.SolrCores.close(SolrCores.java:117)
+	at org.apache.solr.core.CoreContainer.shutdown(CoreContainer.java:347)
+	at org.apache.solr.servlet.SolrDispatchFilter.destroy(SolrDispatchFilter.java:200)
+	at org.eclipse.jetty.servlet.FilterHolder.destroyInstance(FilterHolder.java:153)
+	at org.eclipse.jetty.servlet.FilterHolder.doStop(FilterHolder.java:131)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.stop(AbstractLifeCycle.java:89)
+	at org.eclipse.jetty.servlet.ServletHandler.doStop(ServletHandler.java:204)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.stop(AbstractLifeCycle.java:89)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.doStop(HandlerWrapper.java:107)
+	at org.eclipse.jetty.security.SecurityHandler.doStop(SecurityHandler.java:395)
+	at org.eclipse.jetty.security.ConstraintSecurityHandler.doStop(ConstraintSecurityHandler.java:463)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.stop(AbstractLifeCycle.java:89)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.doStop(HandlerWrapper.java:107)
+	at org.eclipse.jetty.server.session.SessionHandler.doStop(SessionHandler.java:136)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.stop(AbstractLifeCycle.java:89)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.doStop(HandlerWrapper.java:107)
+	at org.eclipse.jetty.server.handler.ContextHandler.doStop(ContextHandler.java:805)
+	at org.eclipse.jetty.servlet.ServletContextHandler.doStop(ServletContextHandler.java:160)
+	at org.eclipse.jetty.webapp.WebAppContext.doStop(WebAppContext.java:516)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.stop(AbstractLifeCycle.java:89)
+	at org.eclipse.jetty.server.handler.HandlerCollection.doStop(HandlerCollection.java:250)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.stop(AbstractLifeCycle.java:89)
+	at org.eclipse.jetty.server.handler.HandlerCollection.doStop(HandlerCollection.java:250)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.stop(AbstractLifeCycle.java:89)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.doStop(HandlerWrapper.java:107)
+	at org.eclipse.jetty.server.Server.doStop(Server.java:338)
+	at org.eclipse.jetty.util.component.AbstractLifeCycle.stop(AbstractLifeCycle.java:89)
+	at org.eclipse.jetty.util.thread.ShutdownThread.run(ShutdownThread.java:131)

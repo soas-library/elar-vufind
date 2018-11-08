@@ -1,0 +1,326 @@
+<?php
+/**
+ * CLI Controller Module
+ *
+ * PHP version 5
+ *
+ * Copyright (C) Villanova University 2010.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * @category VuFind2
+ * @package  Controller
+ * @author   Chris Hallberg <challber@villanova.edu>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     http://vufind.org/wiki/vufind2:building_a_controller Wiki
+ */
+namespace VuFindConsole\Controller;
+use Zend\Console\Console,
+
+PDO, PDOException, VuFind\Exception\ILS as ILSException;
+/**
+ * This controller handles various command-line tools
+ *
+ * @category VuFind2
+ * @package  Controller
+ * @author   Chris Hallberg <challber@villanova.edu>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     http://vufind.org/wiki/vufind2:building_a_controller Wiki
+ */
+class UpdateController extends AbstractBase
+{
+    /**
+     * Load LAT resources into VuFind database
+     *
+     * @return empty
+     */
+    public function updatestartAction()
+    {
+
+        Console::writeLine("Proccess started " . date('l jS \of F Y h:i:s A'));
+
+        $mainArray = parse_ini_file('/usr/local/vufind/local/config/vufind/Ams.ini', true);
+        $host= $mainArray['CatalogStructure']['host'];
+        $port= $mainArray['CatalogStructure']['port'];
+        $username= $mainArray['CatalogStructure']['username'];
+        $password= $mainArray['CatalogStructure']['password'];
+        $database= $mainArray['CatalogStructure']['database'];
+        $final = array();
+
+        $db = new PDO(
+            'pgsql:host=' . $host .
+            ';port=' . $port .
+            ';dbname=' . $database,
+            $username,
+            $password
+        );
+
+
+	$latDeposits=array();
+	$latBundles=array();
+        $sql = "select corpusstructure.nodeid as nodeid  ".
+        "from corpusstructure, corpusnodes  ".
+        "where vpath='/MPI0#/MPI43292#' and ".
+        "corpusnodes.nodeid=corpusstructure.nodeid";
+	//echo $sql ."\n";
+
+	
+        try {
+            $itemSqlStmt = $db->prepare($sql);
+            $itemSqlStmt->execute();
+            foreach ($itemSqlStmt->fetchAll() as $rowItem1) {
+            $nodeId= $rowItem1['nodeid'];
+            $latDeposits[]=$nodeId;
+            }
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+
+        $sql = "select distinct(nodeid) as vpath ".
+        "from corpusstructure ".
+        "where vpath like'/MPI0#/MPI43292#%' ".
+        "and vpath like '%MPI%MPI%MPI%'".
+        "and vpath not like '%MPI%MPI%MPI%MPI%'";
+
+
+        $sql = "select nodeid as vpath  ".
+        "from corpusstructure ".
+        "where vpath like '/MPI0#/MPI43292#%'  ".
+        "and vpath like '%MPI%MPI%MPI%' ".
+        "and vpath not like '%MPI%MPI%MPI%MPI%'";
+
+
+        $sql = "select vpath ".
+        "from corpusstructure ".
+        "where vpath like '/MPI0#/MPI43292#%' ".
+        "and vpath like '%MPI%MPI%MPI%MPI%' ".
+        "and vpath2=845898;"; 
+	//"order by vpath asc;";
+
+        $primera = 1;
+	$vpathAnterior="";
+        $vpathEntero="";
+	$num = 0;
+        $graba = 0;
+        $unica=0;
+        $vpathAux="";
+
+
+        try {
+            $itemSqlStmt = $db->prepare($sql);
+            $itemSqlStmt->execute();
+            $prueba = array();
+            $prueba[] = array('vpath'=>'/MPI0#/MPI43292#/MPI845898#');           
+            $prueba[] = array('vpath'=>'/MPI0#/MPI43292#/MPI845898#/MPI945270#');
+            $prueba[] = array('vpath'=>'/MPI0#/MPI43292#/MPI845877#');           
+            $prueba[] = array('vpath'=>'/MPI0#/MPI43292#/MPI843463#');           
+            $prueba[] = array('vpath'=>'/MPI0#/MPI43292#/MPI843463#/MPI945276#');
+            $prueba[] = array('vpath'=>'/MPI0#/MPI43292#/MPI811111#');
+
+
+      
+            foreach ($itemSqlStmt->fetchAll() as $rowItem1) {
+            //foreach ($prueba as $rowItem1) {
+                
+	    	//$vpath= $rowItem1['vpath'];
+            	//$vpathEntero=str_replace("/MPI0#/MPI43292#/","",$vpathEntero);
+            	if ($primera==1){
+                        $vpathAux=$vpathEntero;
+			$primera = 0;
+			$vpathAnterior=$rowItem1['vpath'];
+            	}
+                $vpathEntero= $rowItem1['vpath'];
+
+
+		echo $vpathAnterior."\n";
+		echo $vpathEntero."\n";
+
+            	if (strpos($vpathEntero,$vpathAnterior)=== false){
+                	
+			//echo "Cambio de registro: ".$vpathAnterior."\n";
+	                //echo "Actual: ".$vpathEntero."\n";
+
+			$num++;
+			$vpath=str_replace("/MPI0#/MPI43292#/MPI","",$vpathAnterior);
+                	$pos=strrpos($vpath, '#/');
+                	if ($pos > 0 ) $vpath=substr($vpath,$pos,99999999);
+                	$vpath=str_replace("/","",$vpath);
+                	$vpath=str_replace("#","",$vpath);
+                	$vpath=str_replace("MPI","",$vpath);
+			$primera = 1;
+			$latBundles[]=$vpath;
+                        $graba=1;
+                        $unica=1;
+                        //echo $vpath."\n";
+                        //echo "pone". $primera. " ant". $vpathAnterior."--ent". $vpathEntero."// graba = ".$graba. "aux". $vpathAux."\n";
+
+		} else if (strcmp($vpathAnterior,$vpathEntero)==0 && strcmp($vpathAux,"")!==0 ) {
+                            //$num++;
+                            $vpath=str_replace("/MPI0#/MPI43292#/MPI","",$vpathAux);
+                            $pos=strrpos($vpath, '#/');
+                            if ($pos > 0 ) $vpath=substr($vpath,$pos,99999999);
+                            $vpath=str_replace("/","",$vpath);
+                            $vpath=str_replace("#","",$vpath);
+                            $vpath=str_replace("MPI","",$vpath);
+                            $primera = 1;
+                            $latBundles[]=$vpath;
+                            $graba=1;
+                            $unica=1;
+                            //echo "pone". $primera. " ant". $vpathAnterior."--ent". $vpathEntero."// graba = ".$graba. "aux". $vpathAux."\n";
+                            //echo $vpath."\n";
+                            $vpathAnterior="";
+                       } else {
+                           $vpathAnterior=$vpathEntero;
+                            $graba=0;
+                            $unica=1;
+                            //echo "pasa".$primera. " ant". $vpathAnterior."--ent". $vpathEntero."// graba = ".$graba. "aux". $vpathAux."\n";
+
+                       }
+
+            }
+		echo $num."\n";
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+        //print_r($latBundles);
+        
+        
+        $urlSolr = 'http://localhost:8080/solr/biblio/select?q=format%3A%22Deposit%22&rows=9999999&fl=id&wt=xml&indent=true';
+        //$urlSolr = 'http://soas:8080/solr/biblio/select?q=format%3A%22Deposit%22&rows=10&fl=id&wt=xml&indent=true';
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,$urlSolr);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        $depositList = curl_exec($ch);
+        curl_close($ch);
+        $xml = simplexml_load_string($depositList, 'SimpleXMLElement', LIBXML_NOCDATA);
+	
+	$vufindDeposits = array();
+
+	//print_r($xml);
+	
+	$listCount=0;
+     	foreach( $xml->result->doc  as $result ) {
+		foreach( $result->str as $str ) {
+			if($str['name'] == 'id') {
+				$listId= $str."";
+				$vufindDeposits[] = str_replace("MPI","",$listId);
+			}
+		}
+        }
+        //print_r($vufindDeposits);
+
+        $urlSolr = 'http://localhost:8080/solr/biblio/select?q=format%3A%22Bundle%22&rows=999999999&fl=id&wt=xml&indent=true';
+	$urlSolr = 'http://localhost:8080/solr/biblio/select?q=hierarchy_top_id%3AMPI845898+AND+format%3ABundle&wt=xml&indent=true&rows=999999999&fl=id';
+        //$urlSolr = 'http://soas:8080/solr/biblio/select?q=format%3A%22Deposit%22&rows=10&fl=id&wt=xml&indent=true';
+
+	$ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,$urlSolr);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 100);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 100);
+        $bundleList = curl_exec($ch);
+        curl_close($ch);
+        $xml = simplexml_load_string($bundleList, 'SimpleXMLElement', LIBXML_NOCDATA);
+	
+	$vufindBundles = array();
+
+	$listCount=0;
+     	foreach( $xml->result->doc as $result ) {
+		foreach( $result->str as $str ) {
+			if($str['name'] == 'id') {
+				$listId= $str."";
+				$vufindBundles[] = str_replace("MPI","",$listId);
+			}
+		}
+        }
+        //print_r($vufindBundles);
+
+        
+        Console::writeLine("Proccess finished." . date('l jS \of F Y h:i:s A'));
+        
+        $depositDiferences = array_diff ( $vufindDeposits , $latDeposits );
+        //print_r($vufindDeposits);
+        //print_r($latDeposits);
+        //print_r($depositDiferences);
+        	//print_r($latBundles);
+        	//print_r($vufindBundles);
+        $bundleDiferences = array_diff ( $vufindBundles , $latBundles );
+        //print_r($depositDiferences);
+        	//print_r($bundleDiferences);
+        //echo count($latBundles);
+
+
+        return "";
+    }
+
+
+    /**
+     * Get the identifier
+     *
+     * @return string
+     */	
+     public function getId($setSpec) {
+     	$output=$setSpec;
+     	$pos=strrpos($setSpec,"#/");
+     	
+     	if ($pos>0) $output=substr($setSpec,$pos);
+     	$output=str_replace("/","",$output);
+     	$output=str_replace("#","",$output);
+     	return $output;
+     }
+    /**
+     * Get the parent id
+     *
+     * @return string
+     */
+     /*public function getParentId($setSpec) {
+     	$output=$setSpec;
+     	$son=$this->getId($setSpec);
+     	$newString = str_replace($son,"",$setSpec);
+     	$newString= str_replace("#/#","", $newString);
+     	$output=$this->getId($newString);
+     	return $output;
+     	
+
+     }*/
+
+
+    /**
+     * Get the parent id
+     *
+     * @return string
+     */
+    public static function getParentId($setSpec)
+    {
+
+        $parent="";
+        $setSpec=str_replace("#/",":",$setSpec);
+        $firstPos=strpos($setSpec,":");
+        $aux=substr($setSpec,$firstPos+1,strlen($setSpec));
+        $secondPos = strpos($aux, ":");
+        $aux2=substr($aux,$secondPos+1,strlen($aux));
+        $hasDot=strpos($aux2,":");
+        if ($hasDot>0) $parent=substr($aux2,0,$hasDot);
+        else $parent=$aux2;
+
+        return $parent;
+    }
+
+
+
+}

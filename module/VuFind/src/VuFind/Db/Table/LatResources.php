@@ -1,0 +1,1149 @@
+<?php
+/**
+ * Table Definition for resource
+ *
+ * PHP version 5
+ *
+ * Copyright (C) Villanova University 2010.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * @category VuFind2
+ * @package  Db_Table
+ * @author   Demian Katz <demian.katz@villanova.edu>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     http://vufind.org   Main Site
+ */
+namespace VuFind\Db\Table;
+use Zend\Db\Sql\Expression;
+
+/**
+ * Table Definition for resource
+ *
+ * @category VuFind2
+ * @package  Db_Table
+ * @author   Demian Katz <demian.katz@villanova.edu>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     http://vufind.org   Main Site
+ */
+class LatResources extends Gateway
+{
+    /**
+     * Date converter
+     *
+     * @var \VuFind\Date\Converter
+     */
+    protected $dateConverter;
+
+    /**
+     * Constructor
+     *
+     * @param \VuFind\Date\Converter $converter Date converter
+     */
+    public function __construct()
+    {
+        ini_set('memory_limit', '2048M');
+        parent::__construct('lat_resources', 'VuFind\Db\Row\LatResources');
+    }
+
+    /**
+     * Look up a row for the specified resource.
+     *
+     * @param string                            $id     Record ID to look up
+     * @param string                            $source Source of record to look up
+     * @param bool                              $create If true, create the row if it
+     * does not
+     * yet exist.
+     * @param \VuFind\RecordDriver\AbstractBase $driver A record driver for the
+     * resource being created (optional -- improves efficiency if provided, but will
+     * be auto-loaded as needed if left null).
+     *
+     * @return \VuFind\Db\Row\Resource|null Matching row if found or created, null
+     * otherwise.
+     */
+    public function saveResource($id,$accessavailability, $datestamp, $name, $depositId, $size, $duration, $type, $bundle_title, $deposit_title,$fundingBody) {
+
+
+            $matches = $this->select(array('id' => $id));
+            if (count($matches) > 0 && ($row = $matches->current())) {
+	            $row->delete(); 
+            }
+            $result = $this->createRow();
+            $result->id = $id;
+            $result->accessavailability = $accessavailability;
+            $result->name = $name;
+            $result->deposit_id = $depositId;
+            $result->datestamp = $datestamp;
+            $result->size = $size;
+            $result->duration = $duration;
+	    $result->file_type = $type;
+            $result->processed=1;
+            $result->bundle_title = $bundle_title;
+ 	    $result->deposit_title = $deposit_title;
+            $result->funding_body  = $fundingBody;
+            $result->superseded_or_current = 'Current';
+		/*print_r($id. "\n");
+		print_r($accessavailability. "\n");
+                print_r($datestamp. "\n");
+                print_r($name. "\n");
+                print_r($depositId. "\n");
+                print_r($size. "\n");
+                print_r($duration. ":\n");
+                print_r($type. "\n");
+                print_r($bundle_title. "\n");
+                print_r($deposit_title. "\n");*/
+            $result->save();
+            //echo "poner". $id. "\n";
+            return $result->id;
+    }
+
+    /**
+     * Initialize processed to 0
+     *
+     * @return void
+     */
+    public function setInitial()
+    {
+        $sql = "update lat_resources set processed='0';";
+        $statement = $this->adapter->query($sql);
+
+        $results = $statement->execute();
+        return $results;
+    }
+
+
+    /**
+     * Initialize supersed_or_current
+     *
+     * @return void
+     */
+    public function setInitialCurrent()
+    {
+        $sql = "update lat_resources set superseded_or_current='Superseded';";
+        $statement = $this->adapter->query($sql);
+
+        $results = $statement->execute();
+        return $results;
+    }
+
+    /**
+     * Initialize supersed_or_current
+     *
+     * @return void
+     */
+    public function updateCurrent($id, $status)
+    {
+        $sql = "update lat_resources set superseded_or_current='".$status. "' where id = '". $id. "'";
+        $statement = $this->adapter->query($sql);
+
+        $results = $statement->execute();
+        return $results;
+    }
+
+
+    /**
+     * Initialize supersed_or_current
+     *
+     * @return void
+     */
+    public function updateCurrentBundle($id, $status)
+    {
+        $sql = "update lat_resources set superseded_or_current='".$status. "' where id like '%-". $id. "-%'";
+        $statement = $this->adapter->query($sql);
+
+        $results = $statement->execute();
+        return $results;
+    }
+
+
+    /**
+     * Delete all the non processed linkes
+     *
+     * @return void
+     */
+    public function clear()
+    {
+        //$sql = "delete from lat_resources where processed='0';";
+        $sql = "update lat_resources set superseded_or_current = 'Superseded' where processed='0'";
+        $statement = $this->adapter->query($sql);
+
+        $results = $statement->execute();
+        return $results;
+    }
+
+
+
+
+    /**
+     * Delete all the entries
+     *
+     * @return void
+     */
+    public function truncate()
+    {
+        $sql = "delete from lat_resources";
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	return $results;
+    }
+
+    /**
+     * Returns the count of number of page hits
+     *
+     * @param date $current_year Year to use in the query
+     * date $current_month Month to use in the query
+     *
+     * @return number
+     */
+    public function getNumberOfResources($yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+    	//$current_month="1";
+        $num=array();
+	$sql = 'select accessavailability, count(*) as num '
+	.'from lat_resources '
+	.'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom . '" '
+	.'AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo . '" '
+	.'group by accessavailability;';
+
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	
+	foreach ($results as $row) {
+		$num[] = array('accessavailability'=>$row['accessavailability'],'num'=>$row['num'] );
+	}
+        return $num;
+    }
+
+    /**
+     * Returns the distinct number of bundles
+     *
+     * @param date $current_year Year to use in the query
+     * date $current_month Month to use in the query
+     *
+     * @return number
+     */
+    public function getDistintBundles()
+    {
+        $num=array();
+	$sql = 'select distinct(SUBSTRING_INDEX(replace(replace(id,"mf-",""),"wr-",""), "-", 1)) as bundle_id '.
+        'from lat_resources';
+
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	
+	foreach ($results as $row) {
+		$num[] = array('bundle_id'=>$row['bundle_id']);
+	}
+        return $num;
+    }
+
+
+    /**
+     * Returns the count of number of page hits
+     *
+     * @param date $current_year Year to use in the query
+     * date $current_month Month to use in the query
+     *
+     * @return number
+     */
+    public function getNumberOfResourcesByDeposit($yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo,$depositId)
+    {
+    	//$current_month="1";
+        /*if($current_month == 0) {
+        	if($current_year == 0) {
+		        $sql="select accessavailability, count(*) as num ".
+		        "from lat_resources ".
+		        "where deposit_id = ".$depositId. " ".
+		        "group by accessavailability ";
+	        } else {
+		        $sql="select accessavailability, count(*) as num ".
+		        "from lat_resources ".
+		        "where YEAR(datestamp) = ".$current_year . " ".
+		        "and deposit_id = ".$depositId. " ".
+		        "group by accessavailability ";
+	        }
+        } else {
+        	if($current_year == 0) {
+		        $sql="select accessavailability, count(*) as num ".
+		        "from lat_resources ".
+		        "where MONTH(datestamp) = ".$current_month. " ".
+		        "and deposit_id = ".$depositId. " ".
+		        "group by accessavailability ";
+	        } else {
+		        $sql="select accessavailability, count(*) as num ".
+		        "from lat_resources ".
+		        "where YEAR(datestamp) = ".$current_year . " ".
+		        "and MONTH(datestamp) = ".$current_month. " ".
+		        "and deposit_id = ".$depositId. " ".
+		        "group by accessavailability ";
+	        }
+        }*/
+        
+        $sql='select accessavailability, count(*) as num '
+	.'from lat_resources '
+	.'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom . '" '
+	.'AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo . '" '
+	.'and deposit_id = '.$depositId
+	.' group by accessavailability;';
+        
+	//echo $sql;
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	
+	foreach ($results as $row) {
+		$num[] = array('accessavailability'=>$row['accessavailability'],'num'=>$row['num'] );
+	}
+        return $num;
+    }
+
+
+    /**
+     * Returns the count of number of page hits
+     *
+     * @param date $current_year Year to use in the query
+     * date $current_month Month to use in the query
+     *
+     * @return number
+     */
+    public function getDistinctFundingBody()
+    {
+        $sql = 'SELECT distinct(funding_body) '
+        .'FROM lat_resources '.
+        ' where funding_body is not null';
+        $output=array();
+        $output2=array();
+
+
+        $statement = $this->adapter->query($sql);
+
+        $results = $statement->execute();
+
+        foreach ($results as $row) {
+                //$num[] = array('deposit_id'=> $row['deposit_id'], 'accessavailability'=>$row['accessavailability'],'num'=>$row['count'] );
+                $output[] = $fundingBody;
+                $fundingBody=$row['funding_body'];
+                $fundingBody = ltrim($fundingBody,"{");
+                $fundingBody = rtrim($fundingBody,"}");
+                $stringList = explode(",", $fundingBody);
+                foreach ($stringList as $row2){
+                    $cleanStr = trim($row2,'"');
+                    $output2[] = $cleanStr;
+                }
+        }
+        $output2=array_unique($output2);
+        sort($output2);
+        //echo "<pre>";
+        //print_r($output2);
+        //echo "</pre>";
+        return $output2;
+
+    	
+    }
+
+
+
+    /**
+     * Returns the count of number of page hits
+     *
+     * @param date $current_year Year to use in the query
+     * date $current_month Month to use in the query
+     *
+     * @return number
+     */
+    public function getAllResourcesByDeposit($yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo, $fundingBody, $currentSupersed)
+    {
+	if ($currentSupersed=="Current") $currentSupersed = array("Current");
+	
+        if (!($fundingBody[0]=='All deposits')) {
+                $ores = "";
+                foreach($fundingBody as $k => $fb) {
+                    if ($k==0) {
+                      if (strpos($fb, ' ') !== false)
+                          $ores = "funding_body like '%\"".$fb.'"%';
+                      else
+                          $ores = "funding_body like '%".$fb.'%';
+
+                      //$ores = "funding_body = '".$fb;
+                    }
+                    else
+                      if (strpos($fb, ' ') !== false)
+                          $ores = $ores. "' or funding_body like '%\"".$fb.'"%';
+
+                      else
+                          $ores = $ores. "' or funding_body like '%".$fb.'%';
+
+
+                      //$ores = $ores. "' or funding_body = '".$fb;
+                }
+                if (strlen($ores)>0) $ores = $ores . "'";
+        }
+
+
+        if (strlen($ores)>0){
+	    if (count($currentSupersed)==2 || count($currentSupersed)==0){
+	        $sql = 'SELECT deposit_id, accessavailability, COUNT(accessavailability) AS count '
+	        .'FROM lat_resources '
+	        .'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom . '" '
+	        .'AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo . '" '
+	        .'AND (' . $ores . ') '
+	        .'and accessavailability in '
+	        .'(SELECT accessavailability '
+	        .'FROM vufind.lat_resources '
+	        .'group by accessavailability) '
+	        .'group by accessavailability, deposit_id;';
+	    }
+	    else{
+	        $sql = 'SELECT deposit_id, accessavailability, COUNT(accessavailability) AS count '
+	        .'FROM lat_resources '
+	        .'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom . '" '
+	        .'AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo . '" '
+	        .'AND (' . $ores . ') '
+	        .'and superseded_or_current =  "'.$currentSupersed[0]. '" '
+	        .'and accessavailability in '
+	        .'(SELECT accessavailability '
+	        .'FROM vufind.lat_resources '
+	        .'group by accessavailability) '
+	        .'group by accessavailability, deposit_id;';
+	    }
+	}
+        else {
+	    if (count($currentSupersed)==2||count($currentSupersed)==0){
+	        $sql = 'SELECT deposit_id, accessavailability, COUNT(accessavailability) AS count '
+	        .'FROM lat_resources '
+	        .'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom . '" '
+	        .'AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo . '" '
+	        .'and accessavailability in '
+	        .'(SELECT accessavailability '
+	        .'FROM vufind.lat_resources '
+	        .'group by accessavailability) '
+	        .'group by accessavailability, deposit_id;';
+	    }
+	    else {
+	        $sql = 'SELECT deposit_id, accessavailability, COUNT(accessavailability) AS count '
+	        .'FROM lat_resources '
+	        .'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom . '" '
+	        .'AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo . '" '
+	        .'and superseded_or_current =  "'.$currentSupersed[0]. '" '
+	        .'and accessavailability in '
+	        .'(SELECT accessavailability '
+	        .'FROM vufind.lat_resources '
+	        .'group by accessavailability) '
+	        .'group by accessavailability, deposit_id;';
+	   }
+	}
+	
+	
+	//echo $sql;
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	
+	foreach ($results as $row) {
+		//$num[] = array('deposit_id'=> $row['deposit_id'], 'accessavailability'=>$row['accessavailability'],'num'=>$row['count'] );
+		$depositId=$row['deposit_id'];
+		$accesavailability= $row['accessavailability'];
+		$num[$depositId][$accesavailability] = array('num'=>$row['count'] );
+	}
+	//print_r($num);
+        return $num;
+    }
+
+    /**
+     * Returns the years to use in the filters
+     *
+     * @return number
+     */
+     
+    public function getYears()
+    {
+        $filters = array();
+        
+        $sql="select distinct(year(datestamp)) as year from lat_resources;";
+	$statement = $this->adapter->query($sql);
+	$results = $statement->execute();
+	
+	foreach ($results as $row) {
+		$filters[] = $row['year'];
+	}
+        return $filters;
+    }
+
+    public function getDepositUploadedFilesStatisticsDisplay($deposit_node_id, $yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+
+        //SCB Fix. Sanitize $depNodeId
+        $hasArguments = strpos($deposit_node_id,'?');
+        if ($hasArguments >0) {$deposit_node_id=substr($deposit_node_id,0,$hasArguments-1);}
+	
+	$sql = 'SELECT file_type, count(*) FROM lat_resources '
+	.'where deposit_id = "MPI' . $deposit_node_id 
+	.'" AND DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom 
+	.'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo 
+	.'" group by file_type order by count(*) DESC;';
+	
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	
+	$exa = array();
+	
+	foreach ($results as $row) {
+ 
+		$num = $row['count(*)'];
+		$file_type = $row['file_type'];
+	        
+	        $ex = $num . ' - ' . $file_type;
+	        
+	        $exa[] = $ex;
+	        
+	}
+        return $exa;
+    }
+
+    public function getDepositUploadedFilesStatistics($deposit_node_id, $yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+
+        //SCB Fix. Sanitize $depNodeId
+        $hasArguments = strpos($deposit_node_id,'?');
+        if ($hasArguments >0) {$deposit_node_id=substr($deposit_node_id,0,$hasArguments-1);}
+
+        $sql = 'SELECT DATE(datestamp), TIME(datestamp), id, bundle_title, name, accessavailability, size, duration, file_type, deposit_id, deposit_title, superseded_or_current FROM lat_resources '
+        .'where deposit_id = "MPI' . $deposit_node_id
+        .'" AND DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+        .'" order by datestamp DESC;';
+	//echo $sql;
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	
+	$exa = array();
+	
+	foreach ($results as $row) {
+
+		$d = $row['DATE(datestamp)'];
+		$t = $row['TIME(datestamp)']; 
+		$id = $row['id'];
+        $bundle_title = $row['bundle_title'];
+		$name = $row['name'];
+		$accessavailability = $row['accessavailability'];
+		$size = $row['size'];
+		$duration = $row['duration'];
+        $file_type = $row['file_type'];
+	    $deposit_id = $row['deposit_id'];
+		$deposit_title = $row['deposit_title'];
+		$status = $row['superseded_or_current'];
+		# Added by sb174 for Supportworks call no. F0183052 2018-05-29
+		/*$status = "Current";
+		if ((strpos(file_get_contents('https://lat1.lis.soas.ac.uk/ds/oaiprovider/oai2?verb=GetRecord&metadataPrefix=imdi&identifier=' . explode("-", $id)[1]), "Found no records")) !== false) {
+			$status = "Superseded";
+		}*/
+		# End
+ 
+	        $ex = $d . ' % ' . $t . ' % ' . $id . ' % ' . $bundle_title . ' % ' . $name . ' % ' . $accessavailability . ' % ' . $size. ' % ' . $duration. ' % ' . $file_type. ' % ' . $deposit_id. ' % ' . $deposit_title. ' % ' . $status;
+	        
+	        $exa[] = $ex;
+	        
+	}
+        return $exa;
+    }
+
+
+    public function getByFileType($yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo,$fundingBody,$currentSupersed)
+    {
+    	
+        if (!($fundingBody[0]=='All deposits')) {
+                $ores = "";
+                foreach($fundingBody as $k => $fb) {
+                    if ($k==0) {
+                      if (strpos($fb, ' ') !== false)
+                          $ores = "funding_body like '%\"".$fb.'"%';
+                      else
+                          $ores = "funding_body like '%".$fb.'%';
+
+                      //$ores = "funding_body = '".$fb;
+                    }
+                    else
+                      if (strpos($fb, ' ') !== false)
+                          $ores = $ores. "' or funding_body like '%\"".$fb.'"%';
+
+                      else
+                          $ores = $ores. "' or funding_body like '%".$fb.'%';
+
+
+                      //$ores = $ores. "' or funding_body = '".$fb;
+                }
+                if (strlen($ores)>0) $ores = $ores . "'";
+        }
+
+
+	if ($currentSupersed=="Current") $currentSupersed = array("Current");
+        if (strlen($ores)>0){
+	    if (count($currentSupersed)==2 || count($currentSupersed)==0){
+
+	        $sql = 'SELECT file_type, count(*) as total, sum(size) as size, sum(duration) as duration , '
+	        .'COUNT(case when accessavailability ="O" then accessavailability end) as countO, '
+	        .'COUNT(case when accessavailability ="U" then accessavailability end) as countU, '
+	        .'COUNT(case when accessavailability ="S" then accessavailability end) as countS '
+	        .'FROM lat_resources '
+	        .'WHERE DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+	        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+	        .'" AND (' . $ores . ') '
+	        .' group by file_type order by datestamp DESC';
+	    }
+	    else{
+	        $sql = 'SELECT file_type, count(*) as total, sum(size) as size, sum(duration) as duration , '
+	        .'COUNT(case when accessavailability ="O" then accessavailability end) as countO, '
+	        .'COUNT(case when accessavailability ="U" then accessavailability end) as countU, '
+	        .'COUNT(case when accessavailability ="S" then accessavailability end) as countS '
+	        .'FROM lat_resources '
+	        .'WHERE DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+	        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+	        .'" AND (' . $ores . ') '
+	        .' and superseded_or_current =  "'.$currentSupersed[0]. '" '
+	        .' group by file_type order by datestamp DESC';
+
+	    }
+	}
+        else {
+	    if (count($currentSupersed)==2||count($currentSupersed)==0){
+	        $sql = 'SELECT file_type, count(*) as total, sum(size) as size, sum(duration) as duration , '
+	        .'COUNT(case when accessavailability ="O" then accessavailability end) as countO, '
+	        .'COUNT(case when accessavailability ="U" then accessavailability end) as countU, '
+	        .'COUNT(case when accessavailability ="S" then accessavailability end) as countS '
+	        .'FROM lat_resources '
+	        .'WHERE DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+	        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+	        .'" group by file_type order by datestamp DESC';
+	    	}
+	    else {
+	        $sql = 'SELECT file_type, count(*) as total, sum(size) as size, sum(duration) as duration , '
+	        .'COUNT(case when accessavailability ="O" then accessavailability end) as countO, '
+	        .'COUNT(case when accessavailability ="U" then accessavailability end) as countU, '
+	        .'COUNT(case when accessavailability ="S" then accessavailability end) as countS '
+	        .'FROM lat_resources '
+	        .'WHERE DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+	        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+	        .'" and superseded_or_current =  "'.$currentSupersed[0]. '" '
+	        .' group by file_type order by datestamp DESC';
+
+	   }
+	}
+
+	//$fichero = '/tmp/kk.txt';
+	//file_put_contents($fichero, "Fb".$fundingBody."\r\n",  FILE_APPEND);
+	//file_put_contents($fichero, "Super".$currentSupersed."\r\n",  FILE_APPEND);
+	//file_put_contents($fichero, $sql."\r\n",  FILE_APPEND);
+
+
+        $sql2 = 'SELECT file_type, count(*) as total, sum(size) as size, sum(duration) as duration , '
+        .'COUNT(case when accessavailability ="O" then accessavailability end) as countO, '
+        .'COUNT(case when accessavailability ="U" then accessavailability end) as countU, '
+        .'COUNT(case when accessavailability ="S" then accessavailability end) as countS '
+        .'FROM lat_resources '
+        .'WHERE DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+        .'" group by file_type order by datestamp DESC';
+
+
+
+	$statement = $this->adapter->query($sql);
+	$results = $statement->execute();
+	$exa = array();
+	$totalResults=0;
+	$totalCount=0;
+	$totalSize=0;
+	$totalDuration = 0;
+	$totalCountO =0;
+	$totalCountU =0;
+	$totalCountS =0;
+	
+	$totalPercentO = 0;
+	$totalPercentS = 0;
+	$totalPercentU = 0;
+	
+	foreach ($results as $row) {
+        	$file_type = $row['file_type'];
+		$count = $row['total'];
+		$totalCount = $totalCount + $count;
+		$size = $row['size'];
+		$totalSize = $totalSize + $size;
+		
+		if ($size > 1024*1024*1024*1024) $size = round($size/(1024*1024*1024*1024),2)." TB";
+		else if ($size > 1024*1024*1024) $size = round($size/(1024*1024*1024),2)." GB";
+		     else if ($size > 1024*1024) $size = round($size/(1024*1024),2)." MB";
+		          else if ($size > 1024) $size = round($size/(1024),2)." KB";
+		               else $size = round($size,2)." B";
+		
+		$duration = $row['duration'];
+		$totalDuration = $totalDuration + $duration;
+
+		$hours = floor($duration / 3600);
+		$minutes = floor(($duration - ($hours * 3600)) / 60);
+		$seconds = $duration - ($hours * 3600) - ($minutes * 60);
+		
+		$duration = $hours . 'h:' . $minutes . "m:" . round($seconds,0)."s";
+
+		$countO = $row['countO'];
+		$countS = $row['countS'];
+		$countU = $row['countU'];
+		$totalCountO = $totalCountO + $countO;
+		$totalCountS = $totalCountS + $countS;
+		$totalCountU = $totalCountU + $countU;
+		
+		$percentO = ($countO * 100)/$count;
+		$percentU = ($countU * 100)/$count;
+		$percentS = ($countS * 100)/$count;
+
+
+		$totalPercentO = ($totalCountO * 100)/$totalCount;
+		$totalPercentU = ($totalCountU * 100)/$totalCount;
+		$totalPercentS = ($totalCountS * 100)/$totalCount;
+
+
+		$totalResults++;
+	        $exa[] = array('file_type'=>$file_type, 'count'=>$count, 'size'=>$size, 'duration'=>$duration, 'countO'=>$countO, 'percentO'=>$percentO, 'countS'=>$countS, 'percentS'=>$percentS, 'countU'=>$countU, 'percentU'=>$percentU);
+	        
+	}
+	if ($totalSize > 1024*1024*1024*1024) $totalSize = round($totalSize/(1024*1024*1024*1024),2)." TB";
+	else if ($totalSize > 1024*1024*1024) $totalSize = round($totalSize/(1024*1024*1024),2)." GB";
+	     else if ($totalSize > 1024*1024) $totalSize = round($totalSize/(1024*1024),2)." MB";
+	          else if ($totalSize > 1024) $totalSize = round($totalSize/(1024),2)." KB";
+	               else $totalSize = round($totalSize,2)." B";
+
+
+	$totalHours = floor($totalDuration / 3600);
+	$totalMinutes = floor(($totalDuration - ($totalHours * 3600)) / 60);
+	$totalSeconds = $totalDuration - ($totalHours * 3600) - ($totalMinutes * 60);
+		
+	$totalDuration = $totalHours . 'h:' . $totalMinutes . "m:" . round($totalSeconds,0)."s";
+
+	$exa[] = array('file_type'=>"TOTAL", 'count'=>$totalCount, 'size'=>$totalSize, 'duration'=>$totalDuration, 'countO'=>$totalCountO, 'percentO'=>$totalPercentO, 'countS'=>$totalCountS, 'percentS'=>$totalPercentS, 'countU'=>$totalCountU, 'percentU'=>$totalPercentU);
+
+
+        //print_r($exa);
+
+        return $exa;
+    }
+
+
+    public function getByFileTypeDeposit($yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo,$fundingBody,$currentSupersed,$deposit)
+    {
+    	
+        if (!($fundingBody[0]=='All deposits')) {
+                $ores = "";
+                foreach($fundingBody as $k => $fb) {
+                    if ($k==0) {
+                      if (strpos($fb, ' ') !== false)
+                          $ores = "funding_body like '%\"".$fb.'"%';
+                      else
+                          $ores = "funding_body like '%".$fb.'%';
+
+                      //$ores = "funding_body = '".$fb;
+                    }
+                    else
+                      if (strpos($fb, ' ') !== false)
+                          $ores = $ores. "' or funding_body like '%\"".$fb.'"%';
+
+                      else
+                          $ores = $ores. "' or funding_body like '%".$fb.'%';
+
+
+                      //$ores = $ores. "' or funding_body = '".$fb;
+                }
+                if (strlen($ores)>0) $ores = $ores . "'";
+        }
+
+
+	if ($currentSupersed=="Current") $currentSupersed = array("Current");
+        if (strlen($ores)>0){
+	    if (count($currentSupersed)==2 || count($currentSupersed)==0){
+
+	        $sql = 'SELECT file_type, count(*) as total, sum(size) as size, sum(duration) as duration , '
+	        .'COUNT(case when accessavailability ="O" then accessavailability end) as countO, '
+	        .'COUNT(case when accessavailability ="U" then accessavailability end) as countU, '
+	        .'COUNT(case when accessavailability ="S" then accessavailability end) as countS '
+	        .'FROM lat_resources '
+	        .'WHERE DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+	        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+	        .'" AND (' . $ores . ') '
+	        .' AND deposit_id = "MPI'.$deposit.'" '
+	        .' group by file_type order by datestamp DESC';
+	    }
+	    else{
+	        $sql = 'SELECT file_type, count(*) as total, sum(size) as size, sum(duration) as duration , '
+	        .'COUNT(case when accessavailability ="O" then accessavailability end) as countO, '
+	        .'COUNT(case when accessavailability ="U" then accessavailability end) as countU, '
+	        .'COUNT(case when accessavailability ="S" then accessavailability end) as countS '
+	        .'FROM lat_resources '
+	        .'WHERE DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+	        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+	        .'" AND (' . $ores . ') '
+	        .' and superseded_or_current =  "'.$currentSupersed[0]. '" '
+	        .' AND deposit_id = "MPI'.$deposit.'" '
+	        .' group by file_type order by datestamp DESC';
+
+	    }
+	}
+        else {
+	    if (count($currentSupersed)==2||count($currentSupersed)==0){
+	        $sql = 'SELECT file_type, count(*) as total, sum(size) as size, sum(duration) as duration , '
+	        .'COUNT(case when accessavailability ="O" then accessavailability end) as countO, '
+	        .'COUNT(case when accessavailability ="U" then accessavailability end) as countU, '
+	        .'COUNT(case when accessavailability ="S" then accessavailability end) as countS '
+	        .'FROM lat_resources '
+	        .'WHERE DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+	        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+	        .'" AND deposit_id = "MPI'.$deposit.'" '
+	        .' group by file_type order by datestamp DESC';
+	    	}
+	    else {
+	        $sql = 'SELECT file_type, count(*) as total, sum(size) as size, sum(duration) as duration , '
+	        .'COUNT(case when accessavailability ="O" then accessavailability end) as countO, '
+	        .'COUNT(case when accessavailability ="U" then accessavailability end) as countU, '
+	        .'COUNT(case when accessavailability ="S" then accessavailability end) as countS '
+	        .'FROM lat_resources '
+	        .'WHERE DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+	        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+	        .'" and superseded_or_current =  "'.$currentSupersed[0]. '" '
+	        .' AND deposit_id = "MPI'.$deposit.'" '
+	        .' group by file_type order by datestamp DESC';
+
+	   }
+	}
+
+
+	$statement = $this->adapter->query($sql);
+	$results = $statement->execute();
+	$exa = array();
+	$totalResults=0;
+	$totalDuration=0;
+	$totalCount = 0;
+	$totalCountO = 0;
+	$totalCountS = 0;
+	$totalCountU = 0;
+	$totalPercentO = 0;
+	$totalPercentS = 0;
+	$totalPercentU = 0;
+	$totalSize = 0;
+	
+	foreach ($results as $row) {
+        	$file_type = $row['file_type'];
+		$count = $row['total'];
+		$totalCount = $totalCount + $count;
+		$size = $row['size'];
+		$totalSize = $totalSize + $size;
+
+		if ($size > 1024*1024*1024*1024) $size = round($size/(1024*1024*1024*1024),2)." TB";
+		else if ($size > 1024*1024*1024) $size = round($size/(1024*1024*1024),2)." GB";
+		     else if ($size > 1024*1024) $size = round($size/(1024*1024),2)." MB";
+		          else if ($size > 1024) $size = round($size/(1024),2)." KB";
+		               else $size = round($size,2)." B";
+		
+		$duration = $row['duration'];
+		$totalDuration = $totalDuration + $row['duration'];
+
+		$hours = floor($duration / 3600);
+		$minutes = floor(($duration - ($hours * 3600)) / 60);
+		$seconds = $duration - ($hours * 3600) - ($minutes * 60);
+		
+		$duration = $hours . 'h:' . $minutes . "m:" . round($seconds,0)."s";
+
+		$countO = $row['countO'];
+		$countS = $row['countS'];
+		$countU = $row['countU'];
+		
+		$totalCountO = $totalCountO + $countO;
+		$totalCountS = $totalCountS + $countS;
+		$totalCountU = $totalCountU + $countU;
+		
+		
+		$percentO = ($countO * 100)/$count;
+		$percentU = ($countU * 100)/$count;
+		$percentS = ($countS * 100)/$count;
+
+		$totalPercentO = ($totalCountO * 100)/$totalCount;
+		$totalPercentU = ($totalCountU * 100)/$totalCount;
+		$totalPercentS = ($totalCountS * 100)/$totalCount;
+
+
+
+		$totalResults++;
+	        $exa[] = array('file_type'=>$file_type, 'count'=>$count, 'size'=>$size, 'duration'=>$duration, 'countO'=>$countO, 'percentO'=>$percentO, 'countS'=>$countS, 'percentS'=>$percentS, 'countU'=>$countU, 'percentU'=>$percentU);
+	        
+	}
+
+	if ($totalSize > 1024*1024*1024*1024) $totalSize = round($totalSize/(1024*1024*1024*1024),2)." TB";
+	else if ($totalSize > 1024*1024*1024) $totalSize = round($totalSize/(1024*1024*1024),2)." GB";
+	     else if ($totalSize > 1024*1024) $totalSize = round($totalSize/(1024*1024),2)." MB";
+	          else if ($totalSize > 1024) $totalSize = round($totalSize/(1024),2)." KB";
+	               else $totalSize = round($totalSize,2)." B";
+
+
+	$totalHours = floor($totalDuration / 3600);
+	$totalMinutes = floor(($totalDuration - ($totalHours * 3600)) / 60);
+	$totalSeconds = $totalDuration - ($totalHours * 3600) - ($totalMinutes * 60);
+		
+	$totalDuration = $totalHours . 'h:' . $totalMinutes . "m:" . round($totalSeconds,0)."s";
+
+        $exa[] = array('file_type'=>"TOTAL", 'count'=>$totalCount, 'size'=>$totalSize, 'duration'=>$totalDuration, 'countO'=>$totalCountO, 'percentO'=>$totalPercentO, 'countS'=>$totalCountS, 'percentS'=>$totalPercentS, 'countU'=>$totalCountU, 'percentU'=>$totalPercentU);
+
+        //print_r($exa);
+
+        return $exa;
+    }
+
+
+
+
+
+     public function getCountDepositUploadedFilesStatistics($yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+        $sql = 'SELECT COUNT(*) as total FROM lat_resources '
+        .'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+        .'" order by datestamp DESC';
+
+        $statement = $this->adapter->query($sql);
+        $results = $statement->execute();
+        foreach ($results as $row) {
+                $total = $row['total'];
+        }
+        return $total;
+    }
+
+
+
+    public function getDepositUploadedFilesPrivateStatisticsSort($yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo, $page, $fundingBody, $currentSupersed,$type,$sort)
+    {
+
+
+      $field = "id";
+      if ($type=="deposit_id") $field = "deposit_id";
+      if ($type=="deposit_title") $field = "deposit_title";
+      if ($type=="uploaded_date") $field = "datestamp";
+      if ($type=="bundle_id") $field = "substring_index(substring_index(id,'-',-2),'-',1)";
+      if ($type=="file_name") $field = "substring_index(name,'/',-1)";
+      if ($type=="access") $field = "accessavailability";
+      if ($type=="size") $field = "size";
+      if ($type=="duration") $field = "duration";
+      if ($type=="file_type") $field = "file_type";
+      if ($type=="funding_body") $field = "funding_body";
+      if ($type=="cs") $field = "superseded_or_current";
+      if ($sort=="both") {$field = "id"; $sort="asc";}
+
+
+
+        if ($currentSupersed=="Current") $currentSupersed = array("Current");
+        //SCB Fix. Sanitize $depNodeId
+        $hasArguments = strpos($deposit_node_id,'?');
+        if ($hasArguments >0) {$deposit_node_id=substr($deposit_node_id,0,$hasArguments-1);}
+
+        ini_set('memory_limit', '2048M');
+        
+        
+        if (!($fundingBody[0]=='All deposits')) {
+                $ores = "";
+                foreach($fundingBody as $k => $fb) {
+                    if ($k==0) {
+                      if (strpos($fb, ' ') !== false)
+                          $ores = "funding_body like '%\"".$fb.'"%';
+                      else
+                          $ores = "funding_body like '%".$fb.'%';
+
+                      //$ores = "funding_body = '".$fb;
+                    }
+                    else
+                      if (strpos($fb, ' ') !== false)
+                          $ores = $ores. "' or funding_body like '%\"".$fb.'"%';
+
+                      else
+                          $ores = $ores. "' or funding_body like '%".$fb.'%';
+
+
+                      //$ores = $ores. "' or funding_body = '".$fb;
+                }
+                if (strlen($ores)>0) $ores = $ores . "'";
+        }
+
+	
+        if (strlen($ores)>0){
+	    if (count($currentSupersed)==2 || count($currentSupersed)==0){
+	        $sql = 'SELECT DATE(datestamp), TIME(datestamp), id, name, accessavailability, size, duration, file_type, deposit_id, deposit_title, superseded_or_current, funding_body FROM lat_resources '
+	        .'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+	        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+		.'" AND (' . $ores . ') '
+	        .' order by '.$field.' '. $sort .' limit 10 OFFSET '. $page*10;
+	    }
+	    else{
+	        $sql = 'SELECT DATE(datestamp), TIME(datestamp), id, name, accessavailability, size, duration, file_type, deposit_id, deposit_title, superseded_or_current, funding_body FROM lat_resources '
+	        .'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+	        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+	        .'" AND (' . $ores . ') '
+	        .' and superseded_or_current =  "'.$currentSupersed[0]. '" '
+	        .' order by '.$field.' '. $sort .' limit 10 OFFSET '. $page*10;
+	    }
+	}
+        else {
+	    if (count($currentSupersed)==2||count($currentSupersed)==0){
+
+	        $sql = 'SELECT DATE(datestamp), TIME(datestamp), id, name, accessavailability, size, duration, file_type, deposit_id, deposit_title, superseded_or_current, funding_body FROM lat_resources '
+	        .'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+	        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+	        .'" order by '.$field.' '. $sort .' limit 10 OFFSET '. $page*10;
+	}
+
+	    else {
+	        $sql = 'SELECT DATE(datestamp), TIME(datestamp), id, name, accessavailability, size, duration, file_type, deposit_id, deposit_title, superseded_or_current, funding_body FROM lat_resources '
+	        .'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+	        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+	        .'" and superseded_or_current =  "'.$currentSupersed[0]. '" '
+	        .' order by '.$field.' '. $sort .' limit 10 OFFSET '. $page*10;
+	   }
+	}
+	//echo $sql;
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+
+	$exa = array();
+	
+	foreach ($results as $row) {
+
+		$d = $row['DATE(datestamp)'];
+		$t = $row['TIME(datestamp)']; 
+		$id = $row['id'];
+        //$bundle_title = $row['bundle_title'];
+		$name = $row['name'];
+		$accessavailability = $row['accessavailability'];
+		$size = $row['size'];
+		$duration = $row['duration'];
+        $file_type = $row['file_type'];
+	    $deposit_id = $row['deposit_id'];
+		$deposit_title = $row['deposit_title'];
+	
+		$exa[]=array('datetime'=>$d . ' - ' . $t, 'id'=>explode("-", $id)[1],'name'=>$name,'accessavailability'=>$accessavailability,'size'=>$size,'duration'=>$duration,'file_type'=>$file_type,'deposit_id'=>$deposit_id,'deposit_title'=>$deposit_title,'funding_body'=>$row['funding_body'],'current_or_superseded'=> $row['superseded_or_current']);
+        
+	}
+        return $exa;
+    }
+
+
+
+
+    public function getDepositUploadedFilesPrivateStatisticsCsv($yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo, $fundingBody, $currentSupersed)
+    {
+
+        if ($currentSupersed=="Current") $currentSupersed = array("Current");
+        //SCB Fix. Sanitize $depNodeId
+        $hasArguments = strpos($deposit_node_id,'?');
+        if ($hasArguments >0) {$deposit_node_id=substr($deposit_node_id,0,$hasArguments-1);}
+
+        ini_set('memory_limit', '2048M');
+        
+        
+        if (!($fundingBody[0]=='All deposits')) {
+                $ores = "";
+                foreach($fundingBody as $k => $fb) {
+                    if ($k==0) {
+                      if (strpos($fb, ' ') !== false)
+                          $ores = "funding_body like '%\"".$fb.'"%';
+                      else
+                          $ores = "funding_body like '%".$fb.'%';
+
+                      //$ores = "funding_body = '".$fb;
+                    }
+                    else
+                      if (strpos($fb, ' ') !== false)
+                          $ores = $ores. "' or funding_body like '%\"".$fb.'"%';
+
+                      else
+                          $ores = $ores. "' or funding_body like '%".$fb.'%';
+
+
+                      //$ores = $ores. "' or funding_body = '".$fb;
+                }
+                if (strlen($ores)>0) $ores = $ores . "'";
+        }
+
+	
+        if (strlen($ores)>0){
+	    if (count($currentSupersed)==2 || count($currentSupersed)==0){
+	        $sql = 'SELECT DATE(datestamp), TIME(datestamp), id, name, accessavailability, size, duration, file_type, deposit_id, deposit_title, superseded_or_current, funding_body FROM lat_resources '
+	        .'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+	        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+		.'" AND (' . $ores . ') '
+	        .' order by datestamp DESC ';
+	    }
+	    else{
+	        $sql = 'SELECT DATE(datestamp), TIME(datestamp), id, name, accessavailability, size, duration, file_type, deposit_id, deposit_title, superseded_or_current, funding_body FROM lat_resources '
+	        .'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+	        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+	        .'" AND (' . $ores . ') '
+	        .' and superseded_or_current =  "'.$currentSupersed[0]. '" '
+	        .' order by datestamp DESC';
+	    }
+	}
+        else {
+	    if (count($currentSupersed)==2||count($currentSupersed)==0){
+
+	        $sql = 'SELECT DATE(datestamp), TIME(datestamp), id, name, accessavailability, size, duration, file_type, deposit_id, deposit_title, superseded_or_current, funding_body FROM lat_resources '
+	        .'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+	        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+	        .'" order by datestamp DESC';
+	}
+
+	    else {
+	        $sql = 'SELECT DATE(datestamp), TIME(datestamp), id, name, accessavailability, size, duration, file_type, deposit_id, deposit_title, superseded_or_current, funding_body FROM lat_resources '
+	        .'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+	        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+	        .'" and superseded_or_current =  "'.$currentSupersed[0]. '" '
+	        .' order by datestamp DESC';
+	   }
+	}
+
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+
+	$exa = array();
+	
+	foreach ($results as $row) {
+
+		$d = $row['DATE(datestamp)'];
+		$t = $row['TIME(datestamp)']; 
+		$id = $row['id'];
+        //$bundle_title = $row['bundle_title'];
+		$name = $row['name'];
+		$accessavailability = $row['accessavailability'];
+		$size = $row['size'];
+		$duration = $row['duration'];
+        $file_type = $row['file_type'];
+	    $deposit_id = $row['deposit_id'];
+		$deposit_title = $row['deposit_title'];
+
+	
+		$exa[]=array('datetime'=>$d . ' - ' . $t, 'id'=>explode("-", $id)[1],'name'=>$name,'accessavailability'=>$accessavailability,'size'=>$size,'duration'=>$duration,'file_type'=>$file_type,'deposit_id'=>$deposit_id,'deposit_title'=>$deposit_title,'funding_body'=>$row['funding_body'],'superseded_or_current'=> $row['superseded_or_current']);
+        
+	}
+        return $exa;
+    }
+
+
+
+}

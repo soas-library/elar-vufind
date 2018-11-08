@@ -1,0 +1,151 @@
+++ dirname /usr/local/vufind/index-alphabetic-browse.sh
++ cd /usr/local/vufind/import
++ CLASSPATH='browse-indexing.jar:../solr/lib/*'
++ locate_index bib_index ../solr/biblio
++ local targetVar=bib_index
++ local indexDir=../solr/biblio
++ local subDir=index
++ '[' -e ../solr/biblio/index.properties ']'
++ eval bib_index=../solr/biblio/index
+++ bib_index=../solr/biblio/index
++ locate_index auth_index ../solr/authority
++ local targetVar=auth_index
++ local indexDir=../solr/authority
++ local subDir=index
++ '[' -e ../solr/authority/index.properties ']'
++ eval auth_index=../solr/authority/index
+++ auth_index=../solr/authority/index
++ index_dir=../solr/alphabetical_browse
++ mkdir -p ../solr/alphabetical_browse
++ build_browse hierarchy hierarchy_browse
++ browse=hierarchy
++ field=hierarchy_browse
++ skip_authority=
++ extra_jvm_opts=
++ '[' '' = 1 ']'
++ java -Dfile.encoding=UTF-8 -Dfield.preferred=heading -Dfield.insteadof=use_for -cp 'browse-indexing.jar:../solr/lib/*' PrintBrowseHeadings ../solr/biblio/index hierarchy_browse ../solr/authority/index hierarchy.tmp
++ sort -T /var/tmp -u $'-t\001' -k1 hierarchy.tmp -o sorted-hierarchy.tmp
++ java -Dfile.encoding=UTF-8 -cp 'browse-indexing.jar:../solr/lib/*' CreateBrowseSQLite sorted-hierarchy.tmp hierarchy_browse.db
++ rm -f hierarchy.tmp sorted-hierarchy.tmp
++ mv hierarchy_browse.db ../solr/alphabetical_browse/hierarchy_browse.db-updated
++ touch ../solr/alphabetical_browse/hierarchy_browse.db-ready
++ build_browse title title_fullStr 1 '-Dbibleech=StoredFieldLeech -Dsortfield=title_sort -Dvaluefield=title_fullStr'
++ browse=title
++ field=title_fullStr
++ skip_authority=1
++ extra_jvm_opts='-Dbibleech=StoredFieldLeech -Dsortfield=title_sort -Dvaluefield=title_fullStr'
++ '[' 1 = 1 ']'
++ java -Dbibleech=StoredFieldLeech -Dsortfield=title_sort -Dvaluefield=title_fullStr -Dfile.encoding=UTF-8 -Dfield.preferred=heading -Dfield.insteadof=use_for -cp 'browse-indexing.jar:../solr/lib/*' PrintBrowseHeadings ../solr/biblio/index title_fullStr title.tmp
++ sort -T /var/tmp -u $'-t\001' -k1 title.tmp -o sorted-title.tmp
++ java -Dfile.encoding=UTF-8 -cp 'browse-indexing.jar:../solr/lib/*' CreateBrowseSQLite sorted-title.tmp title_browse.db
++ rm -f sorted-title.tmp title.tmp
++ mv title_browse.db ../solr/alphabetical_browse/title_browse.db-updated
++ touch ../solr/alphabetical_browse/title_browse.db-ready
++ build_browse topic topic_browse
++ browse=topic
++ field=topic_browse
++ skip_authority=
++ extra_jvm_opts=
++ '[' '' = 1 ']'
++ java -Dfile.encoding=UTF-8 -Dfield.preferred=heading -Dfield.insteadof=use_for -cp 'browse-indexing.jar:../solr/lib/*' PrintBrowseHeadings ../solr/biblio/index topic_browse ../solr/authority/index topic.tmp
++ sort -T /var/tmp -u $'-t\001' -k1 topic.tmp -o sorted-topic.tmp
++ java -Dfile.encoding=UTF-8 -cp 'browse-indexing.jar:../solr/lib/*' CreateBrowseSQLite sorted-topic.tmp topic_browse.db
++ rm -f sorted-topic.tmp topic.tmp
++ mv topic_browse.db ../solr/alphabetical_browse/topic_browse.db-updated
++ touch ../solr/alphabetical_browse/topic_browse.db-ready
++ build_browse author author_browse
++ browse=author
++ field=author_browse
++ skip_authority=
++ extra_jvm_opts=
++ '[' '' = 1 ']'
++ java -Dfile.encoding=UTF-8 -Dfield.preferred=heading -Dfield.insteadof=use_for -cp 'browse-indexing.jar:../solr/lib/*' PrintBrowseHeadings ../solr/biblio/index author_browse ../solr/authority/index author.tmp
++ sort -T /var/tmp -u $'-t\001' -k1 author.tmp -o sorted-author.tmp
++ java -Dfile.encoding=UTF-8 -cp 'browse-indexing.jar:../solr/lib/*' CreateBrowseSQLite sorted-author.tmp author_browse.db
++ rm -f author.tmp sorted-author.tmp
++ mv author_browse.db ../solr/alphabetical_browse/author_browse.db-updated
++ touch ../solr/alphabetical_browse/author_browse.db-ready
++ build_browse lcc callnumber-raw 1 -Dbrowse.normalizer=org.vufind.util.LCCallNormalizer
++ browse=lcc
++ field=callnumber-raw
++ skip_authority=1
++ extra_jvm_opts=-Dbrowse.normalizer=org.vufind.util.LCCallNormalizer
++ '[' 1 = 1 ']'
++ java -Dbrowse.normalizer=org.vufind.util.LCCallNormalizer -Dfile.encoding=UTF-8 -Dfield.preferred=heading -Dfield.insteadof=use_for -cp 'browse-indexing.jar:../solr/lib/*' PrintBrowseHeadings ../solr/biblio/index callnumber-raw lcc.tmp
++ sort -T /var/tmp -u $'-t\001' -k1 lcc.tmp -o sorted-lcc.tmp
++ java -Dfile.encoding=UTF-8 -cp 'browse-indexing.jar:../solr/lib/*' CreateBrowseSQLite sorted-lcc.tmp lcc_browse.db
++ rm -f lcc.tmp sorted-lcc.tmp
++ mv lcc_browse.db ../solr/alphabetical_browse/lcc_browse.db-updated
++ touch ../solr/alphabetical_browse/lcc_browse.db-ready
++ build_browse dewey dewey-raw 1 -Dbrowse.normalizer=org.vufind.util.DeweyCallNormalizer
++ browse=dewey
++ field=dewey-raw
++ skip_authority=1
++ extra_jvm_opts=-Dbrowse.normalizer=org.vufind.util.DeweyCallNormalizer
++ '[' 1 = 1 ']'
++ java -Dbrowse.normalizer=org.vufind.util.DeweyCallNormalizer -Dfile.encoding=UTF-8 -Dfield.preferred=heading -Dfield.insteadof=use_for -cp 'browse-indexing.jar:../solr/lib/*' PrintBrowseHeadings ../solr/biblio/index dewey-raw dewey.tmp
++ sort -T /var/tmp -u $'-t\001' -k1 dewey.tmp -o sorted-dewey.tmp
++ java -Dfile.encoding=UTF-8 -cp 'browse-indexing.jar:../solr/lib/*' CreateBrowseSQLite sorted-dewey.tmp dewey_browse.db
++ rm -f dewey.tmp sorted-dewey.tmp
++ mv dewey_browse.db ../solr/alphabetical_browse/dewey_browse.db-updated
++ touch ../solr/alphabetical_browse/dewey_browse.db-ready
++ build_browse deposit_title deposit_title 1 '-Dbibleech=StoredFieldLeech -Dsortfield=deposit_title -Dvaluefield=deposit_title'
++ browse=deposit_title
++ field=deposit_title
++ skip_authority=1
++ extra_jvm_opts='-Dbibleech=StoredFieldLeech -Dsortfield=deposit_title -Dvaluefield=deposit_title'
++ '[' 1 = 1 ']'
++ java -Dbibleech=StoredFieldLeech -Dsortfield=deposit_title -Dvaluefield=deposit_title -Dfile.encoding=UTF-8 -Dfield.preferred=heading -Dfield.insteadof=use_for -cp 'browse-indexing.jar:../solr/lib/*' PrintBrowseHeadings ../solr/biblio/index deposit_title deposit_title.tmp
++ sort -T /var/tmp -u $'-t\001' -k1 deposit_title.tmp -o sorted-deposit_title.tmp
++ java -Dfile.encoding=UTF-8 -cp 'browse-indexing.jar:../solr/lib/*' CreateBrowseSQLite sorted-deposit_title.tmp deposit_title_browse.db
++ rm -f deposit_title.tmp sorted-deposit_title.tmp
++ mv deposit_title_browse.db ../solr/alphabetical_browse/deposit_title_browse.db-updated
++ touch ../solr/alphabetical_browse/deposit_title_browse.db-ready
++ build_browse language language_browse
++ browse=language
++ field=language_browse
++ skip_authority=
++ extra_jvm_opts=
++ '[' '' = 1 ']'
++ java -Dfile.encoding=UTF-8 -Dfield.preferred=heading -Dfield.insteadof=use_for -cp 'browse-indexing.jar:../solr/lib/*' PrintBrowseHeadings ../solr/biblio/index language_browse ../solr/authority/index language.tmp
++ sort -T /var/tmp -u $'-t\001' -k1 language.tmp -o sorted-language.tmp
++ java -Dfile.encoding=UTF-8 -cp 'browse-indexing.jar:../solr/lib/*' CreateBrowseSQLite sorted-language.tmp language_browse.db
++ rm -f language.tmp sorted-language.tmp
++ mv language_browse.db ../solr/alphabetical_browse/language_browse.db-updated
++ touch ../solr/alphabetical_browse/language_browse.db-ready
++ build_browse participant participant_browse
++ browse=participant
++ field=participant_browse
++ skip_authority=
++ extra_jvm_opts=
++ '[' '' = 1 ']'
++ java -Dfile.encoding=UTF-8 -Dfield.preferred=heading -Dfield.insteadof=use_for -cp 'browse-indexing.jar:../solr/lib/*' PrintBrowseHeadings ../solr/biblio/index participant_browse ../solr/authority/index participant.tmp
++ sort -T /var/tmp -u $'-t\001' -k1 participant.tmp -o sorted-participant.tmp
++ java -Dfile.encoding=UTF-8 -cp 'browse-indexing.jar:../solr/lib/*' CreateBrowseSQLite sorted-participant.tmp participant_browse.db
++ rm -f participant.tmp sorted-participant.tmp
++ mv participant_browse.db ../solr/alphabetical_browse/participant_browse.db-updated
++ touch ../solr/alphabetical_browse/participant_browse.db-ready
++ build_browse location location_browse
++ browse=location
++ field=location_browse
++ skip_authority=
++ extra_jvm_opts=
++ '[' '' = 1 ']'
++ java -Dfile.encoding=UTF-8 -Dfield.preferred=heading -Dfield.insteadof=use_for -cp 'browse-indexing.jar:../solr/lib/*' PrintBrowseHeadings ../solr/biblio/index location_browse ../solr/authority/index location.tmp
++ sort -T /var/tmp -u $'-t\001' -k1 location.tmp -o sorted-location.tmp
++ java -Dfile.encoding=UTF-8 -cp 'browse-indexing.jar:../solr/lib/*' CreateBrowseSQLite sorted-location.tmp location_browse.db
++ rm -f location.tmp sorted-location.tmp
++ mv location_browse.db ../solr/alphabetical_browse/location_browse.db-updated
++ touch ../solr/alphabetical_browse/location_browse.db-ready
++ build_browse keyword keyword_browse
++ browse=keyword
++ field=keyword_browse
++ skip_authority=
++ extra_jvm_opts=
++ '[' '' = 1 ']'
++ java -Dfile.encoding=UTF-8 -Dfield.preferred=heading -Dfield.insteadof=use_for -cp 'browse-indexing.jar:../solr/lib/*' PrintBrowseHeadings ../solr/biblio/index keyword_browse ../solr/authority/index keyword.tmp
++ sort -T /var/tmp -u $'-t\001' -k1 keyword.tmp -o sorted-keyword.tmp
++ java -Dfile.encoding=UTF-8 -cp 'browse-indexing.jar:../solr/lib/*' CreateBrowseSQLite sorted-keyword.tmp keyword_browse.db
++ rm -f keyword.tmp sorted-keyword.tmp
++ mv keyword_browse.db ../solr/alphabetical_browse/keyword_browse.db-updated
++ touch ../solr/alphabetical_browse/keyword_browse.db-ready

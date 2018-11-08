@@ -1,0 +1,37 @@
+<?
+    // Set up page title:
+    $this->headTitle($this->translate('VuFind Administration - Settings'));
+
+?>
+
+<div class="row">
+  <div class="col-sm-5 col-sm-push-2">
+    <?=$this->flashmessages();?>
+    <div class="border-facet">
+    <p class="menuHeader">
+       <?=$this->transEsc('Settings')?>
+    </p>
+    <form method="post" action="<?= $this->url('admin/settings')?>" name="settingsForm" id="settingsForm">
+       <div id="divPublicByDepositStats">
+         <input type="checkbox" id="PublicByDepositStats" name="PublicByDepositStats" <? if($this->request->get('PublicByDepositStats')== 1) echo "checked"; ?> value="1"> <label for="PublicByDepositStats"><?=$this->transEsc('PublicByDepositStats')?></label>
+       </div>
+       <div id="divPublicStats">
+         <input type="checkbox" id="PublicStats" name="PublicStats" <? if($this->request->get('PublicStats')== 1) echo "checked"; ?> value="1"> <label for="PublicStats"><?=$this->transEsc('PublicStats')?></label>
+       </div>
+       <div id="divPrivateStats">
+         <input type="checkbox" id="PrivateStats" name="PrivateStats" <? if($this->request->get('PrivateStats')== 1) echo "checked"; ?> value="1"> <label for="PrivateStats"><?=$this->transEsc('PrivateStats')?></label>
+       </div>
+       <div id="divPrivateByDepositStats">
+         <input type="checkbox" id="PrivateByDepositStats" name="PrivateByDepositStats" <? if($this->request->get('PrivateByDepositStats')== 1) echo "checked"; ?> value="1"> <label for="PrivateByDepositStats"><?=$this->transEsc('PrivateByDepositStats')?></label>
+       </div>
+         <input type="submit" class="btn btn-primary" name="processSettings" value="<?=$this->transEsc('Confirm')?>"> 
+    </form>
+    </div>
+    
+
+  </div>
+  <div class="sidebar col-sm-2 col-sm-pull-5 hidden-print">
+    <?=$this->context($this)->renderInContext("admin/menu.phtml", array('active' => 'settings'))?>
+  </div>
+  
+</div>

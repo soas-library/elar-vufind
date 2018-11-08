@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+	
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+    <script>
+
+var currentInfoWindow = null; 
+var map;
+var markers = [];      
+var infowindows = [];
+
+function initialize() {
+     
+	var mapOptions = {
+        	zoom: 3,
+        	center: new google.maps.LatLng(0, 0),
+        	mapTypeId: google.maps.MapTypeId.TERRAIN
+     	};
+ 
+     	map = new google.maps.Map(document.getElementById('location-canvas'),
+mapOptions);
+
+}
+
+function addMarkers(points)
+  {
+
+     	initialize();
+	
+	// SCB - Create ours "tiny" marker icons
+        var blueIcon  = "http://maps.google.com/mapfiles/ms/icons/blue-dot.png";
+	var greenIcon = "http://maps.google.com/mapfiles/ms/icons/green-dot.png";
+	var purpleIcon = "http://maps.google.com/mapfiles/ms/icons/purple-dot.png";
+
+	for ( var i = 0; i < points.length; i++ ) {
+	
+		var latitude = points[i].latitude[0];
+		var longitude = points[i].longitude[0];
+		var position = new google.maps.LatLng(latitude, longitude);
+		var link = points[i].link;
+		var title = points[i].title;
+		var language = points[i].language;
+		var depositor = points[i].depositor;
+		var location = points[i].location[0];		
+		var category = points[i].category;		
+	
+		// SCB - Select the colour to show in the map	
+		var icon;
+		if (category == 1) {
+			icon = blueIcon;
+		} else if (category == 2) {
+			icon = greenIcon;
+		} else {
+			icon = purpleIcon;
+		}
+
+		var marker = new google.maps.Marker({
+            		position: position,
+            		map: map,
+            		dragable: false,
+            		title: title,
+			category: category,
+			icon: icon
+     		});
+
+		markers[i] = marker; 	
+		
+		var contentString = '<div id="content">'+
+      			'<div id="siteNotice">'+
+      			'</div>'+
+      			'<h1 id="firstHeading" class="firstHeading"> <a href="' + link + '" target="_blank">' + title + '</a> </h1>'+
+      			'<div id="bodyContent">'+
+      			'<p>Language: '+
+      			language + '</p>'+
+			'<p>Depositor: '+
+                        depositor + '</p>'+
+			'<p>Location: '+
+                        location + '</p>'+
+      			'</div>'+
+      			'</div>';
+		
+     		var infowindow = new google.maps.InfoWindow({
+       			content: contentString
+     		});
+	
+		infowindows[i] = infowindow;
+	
+		lis(i);
+
+	}
+
+}
+
+
+function lis(i) {
+	var m = markers[i];
+	var iw = infowindows[i];
+    	google.maps.event.addListener(m, 'click', function() {
+		if (currentInfoWindow != null) { currentInfoWindow.close(); }  
+		iw.open(map, this);
+		currentInfoWindow = iw; 
+	});
+}
+
+function filterCategories(check, category) {
+
+	 if (check.checked) {
+                for (i = 0; i < markers.length; i++) {
+                        mark = markers[i];
+                        if (mark.category == category) {
+                                mark.setVisible(true);
+                        }
+                }
+        } else {
+                for (i = 0; i < markers.length; i++) {
+                        mark = markers[i];
+                        if (mark.category == category) {
+                                mark.setVisible(false);
+                        }
+                }
+        }
+
+}
+
+
+    </script>
+  </head>
+  <body>
+    <div id='location-canvas' style='width:100%;height:600px;'></div>
+    <div id='filters'>
+   	<input type="checkbox" id="curatedbox" checked="checked" onclick="filterCategories(this,'1')" /> Curated
+   	&nbsp;&nbsp;<input type="checkbox" id="inprocessbox" checked="checked" onclick="filterCategories(this,'2')" /> In-proccess 
+   	&nbsp;&nbsp;<input type="checkbox" id="forthcomingbox" checked="checked" onclick="filterCategories(this,'3')" /> Forthcoming <br />
+    </div>
+ <?php
+
+     $url = 'http://golwg.lis.soas.ac.uk:8080/solr/biblio/select?q=*%3A*&fq=format%3A%22Deposit%22&rows=10000&fl=id%2C+deposit_title%2C+deposit_longitude%2C+deposit_latitude%2C+depositor%2C+deposit_country_name%2C+deposit_language_name&wt=xml&indent=true';
+
+     $ch = curl_init();
+     curl_setopt($ch, CURLOPT_URL,$url);
+     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+     curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+     $contentSerials = curl_exec($ch);  
+     curl_close($ch);
+     try {$xmlSerials= new SimpleXMLElement($contentSerials );} catch (Exception $e) {  }
+     $i = 0;
+
+class Pin
+{
+    public $latitude;
+    public $longitude;
+    public $link;
+    public $title;
+    public $language;
+    public $depositor;
+    public $location;
+    public $category;
+}
+
+$latitude = "";
+$longitude = "";
+$link = "";
+$title = "";
+$language = "";
+$depositor = "";
+$location = "";
+$category = "";
+
+     foreach( $xmlSerials->result->doc  as $result ) {
+	
+	foreach( $result->str as $str ) {
+		if($str['name'] == 'id') {
+			// SCB - Casting object to String
+			$link = "http://golwg.lis.soas.ac.uk/Collection/" . $str . "";
+		} else if($str['name'] == 'deposit_title'){
+			// SCB - Casting object to String
+                	$title = $str."";
+                }
+        }
+	
+	foreach( $result->arr as $arr ){
+		if($arr['name'] == 'deposit_longitude') {
+			$longitude = $arr->str;
+                } else if($arr['name'] == 'deposit_latitude'){
+			$latitude = $arr->str;
+                } else if($arr['name'] == 'deposit_language_name'){
+                        //SCB - More than one language
+			$language = "";
+			$languages = array();
+			$pos = 0;
+			foreach($arr->str as $lang){
+				$languages[$pos] = $lang;
+				$pos++;
+			}
+			$language = implode(", ", $languages);	
+                } else if($arr['name'] == 'depositor'){
+			//SCB - More than one depositor
+			$depositor = "";
+			$depositors = array();
+			$posi = 0;
+			foreach($arr->str as $dep){
+				$depositors[$posi] = $dep;
+				$posi++;
+			}
+			$depositor = implode(", ", $depositors);
+                } else if($arr['name'] == 'deposit_country_name'){
+			$location = $arr->str;
+                }
+        }
+	
+	// SCB - Examples to add categories DELETE
+	if ($i == 2){
+	$category = "2";
+	
+	} else if ($i == 3){
+	$category = "3";
+
+	} else {
+	$category = "1";
+	}
+
+	
+	$pin = new Pin();
+	$pin->latitude = $latitude;
+	$pin->longitude = $longitude;
+	$pin->link = $link;
+	$pin->title = $title;
+	$pin->language = $language;
+	$pin->depositor = $depositor;
+	$pin->location = $location;	
+	$pin->category = $category;
+
+	$pins[$i] = $pin;	
+	$i++;
+
+     }
+
+     	$p = json_encode($pins);
+     	echo "<script type=\"text/javascript\">addMarkers($p)</script>";
+
+ ?>
+
+  </body>
+</html>
+
+

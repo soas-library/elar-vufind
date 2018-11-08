@@ -1,0 +1,15 @@
+2016-09-06 10:37:50 INFO - ResourceStatisticsAccess startup.
+2016-09-06 10:37:51 INFO - Accessing resource MeatCooking.eaf: title='file:/lat/corpora/ELAR/0007-Linguistic_and_ethnographic_documentation_of_Baram/0007-Linguistic_and
+_ethnographic_documentation_of_Baram/0007-20120306/Final_Files_16_July_2009/ELAN_Files/Annotations/MeatCooking.eaf', type='text/x-eaf+xml', nodeId='MPI508661#', fromIP=
+'212.219.236.87', userId='vf4@soas.ac.uk'
+2016-09-08 17:35:29 INFO - ResourceStatisticsAccess startup.
+2016-09-08 17:35:30 INFO - Accessing resource ikaan480.eaf: title='file:/lat/corpora/ELAR/0259-00000000/0259-00000000/0259-20141127/photo_stories/childrens_games/Annota
+tions/ikaan480.eaf', type='text/x-eaf+xml', nodeId='MPI638780#', fromIP='94.175.139.210', userId='vf1977@soas.ac.uk'
+2016-09-15 13:33:29,145 INFO  nl.mpi.lat.ams.dao.SessionDao - AddSession: session=ADA8988ACAC8A7579ACF41EB4E63BEAE user=corpman@soas.ac.uk
+2016-09-06 10:37:50 INFO - ResourceStatisticsAccess startup.
+2016-09-06 10:37:51 INFO - Accessing resource MeatCooking.eaf: title='file:/lat/corpora/ELAR/0007-Linguistic_and_ethnographic_documentation_of_Baram/0007-Linguistic_and
+_ethnographic_documentation_of_Baram/0007-20120306/Final_Files_16_July_2009/ELAN_Files/Annotations/MeatCooking.eaf', type='text/x-eaf+xml', nodeId='MPI508661#', fromIP=
+'212.219.236.87', userId='vf4@soas.ac.uk'
+2016-09-08 17:35:29 INFO - ResourceStatisticsAccess startup.
+2016-09-08 17:35:30 INFO - Accessing resource ikaan480.eaf: title='file:/lat/corpora/ELAR/0259-00000000/0259-00000000/0259-20141127/photo_stories/childrens_games/Annota
+tions/ikaan480.eaf', type='text/x-eaf+xml', nodeId='MPI638780#', fromIP='94.175.139.210', userId='vf1977@soas.ac.uk'

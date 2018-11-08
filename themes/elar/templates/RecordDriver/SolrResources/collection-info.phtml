@@ -1,0 +1,374 @@
+<!--<? $this->headScript()->appendFile('collection_record.js'); ?>-->
+<div class="row">
+  <!--<div class="col-sm-3">
+    <div class="text-center">
+      <? /* Display thumbnail if appropriate: */ ?>
+      <? $mediumThumb = $this->record($this->driver)->getThumbnail('medium'); $largeThumb = $this->record($this->driver)->getThumbnail('large'); ?>
+      <? if ($mediumThumb): ?>
+        <? if ($largeThumb): ?><a href="<?=$this->escapeHtmlAttr($largeThumb)?>"><? endif; ?>
+          <img alt="<?=$this->transEsc('Cover Image')?>" class="recordcover" src="<?=$this->escapeHtmlAttr($mediumThumb);?>"/>
+        <? if ($largeThumb): ?></a><? endif; ?>
+      <? else: ?>
+        <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
+      <? endif; ?>
+
+      <? /* Display qrcode if appropriate: */ ?>
+      <? $QRCode = $this->record($this->driver)->getQRCode("core"); ?>
+      <? if($QRCode): ?>
+        <br/><img alt="<?=$this->transEsc('QR Code')?>" class="qrcode" src="<?=$this->escapeHtmlAttr($QRCode);?>"/>
+      <? endif; ?>
+    </div>
+
+    <?=$this->record($this->driver)->getPreviews()?>
+    
+  </div>-->
+  
+  <!--<div class="col-sm-9 title"><h3>TITLE</h3></div>-->
+	
+  <div class="col-sm-9 biblioDetails">
+  
+  <? $cover_image = $this->driver->getDepositCoverImage(); ?>
+  <? if (isset($cover_image) && !empty($cover_image)): ?>   
+  	<div>
+  <? else: ?>
+  	<div id="imagenTexto">
+  <? endif; ?>
+  
+    <div class="left">
+    </br>
+    <span class="titleResource"><?=$this->escapeHtml($this->driver->getDepositTitle() . ' ' . $this->driver->getSubtitle() . ' ' . $this->driver->getTitleSection())?></span>
+    <?=$this->record($this->driver)->getToolbar()?>
+    </br>
+    
+
+    <? /* Display the lists that this record is saved to */ ?>
+    <div class="savedLists hidden alert alert-info" id="savedLists">
+      <strong><?=$this->transEsc("Saved in")?>:</strong>
+    </div>
+
+    <!--<a id="moreInfoToggle" href="#" class="hidden"><?=$this->transEsc('more_info_toggle')?></a>-->
+  </div>
+  <!--ADDED FOR SOAS LIBRARY ELAR
+      @author Simon Barron sb174@soas.ac.uk-->
+  <? $cover_image = $this->driver->getDepositCoverImage(); ?>
+  <? if (isset($cover_image) && !empty($cover_image)): ?>   
+      <? $url = 'http://'.$_SERVER['SERVER_NAME']; ?>
+     <div class="col-sm-12 right" id="cover_image"><img src="<?=$url?>/deposit/<?=$this->escapeHtml($cover_image)?>"></div>
+  <? endif; ?>
+  <!--END-->
+</div>
+    <?/* Display Main Details */?>
+    <div id="bibliograficInfo">
+    <!--<table id="collectionInfo" class="table table-striped" summary="<?=$this->transEsc('Bibliographic Details')?>">-->
+    <!-- SCB Quito autores -->
+
+      <? if (count($summary) > 1): ?>
+        <tr>
+          <th><?=$this->transEsc('Summary')?> </th>
+          <td>
+            <? foreach (array_slice($summary, 1) as $field): ?>
+              <?=html_entity_decode($field)?><br/>
+            <? endforeach; ?>
+          </td>
+        </tr>
+      <? endif; ?>
+
+      <!-- SCB Lenguaje -->
+      <? $langs = $this->driver->getDepositLanguage(); if (!empty($langs)): ?>
+    
+          <span class="titleinfo"><?=$this->transEsc('Language')?> </span></br>
+          <?$i=0;?>
+          <span><? foreach ($langs as $lang): ?><?= $this->escapeHtml($lang)?><br/><?$i=$i+1;?><? endforeach; ?></span>
+  	  </br>	
+      <? endif; ?>
+      <!-- SCB Lenguaje -->
+
+
+      <!-- SCB Deposit Country -->
+      <? $countries = $this->driver->getDepositCountry(); if (!empty($countries) &&  count($countries)>"0"): ?>
+          <span class="titleinfo"><?=$this->transEsc('Country')?> </span></br>
+          <?$i=0;?>
+          <span><? foreach ($countries as $country): ?><?= html_entity_decode($country)?><br/><?$i=$i+1;?><? endforeach; ?></span>
+          </br>
+      <? endif; ?>
+      <!-- SCB Deposit Country -->
+
+
+
+      <? $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
+          <span class="titleinfo"><?=$this->transEsc('Level')?> </span></br>
+          <span><?=str_replace('class="', 'class="label label-info ', $this->record($this->driver)->getFormatList())?></span>
+          <br></br>
+      <? endif; ?>
+
+      <? $langs = $this->driver->getLanguages(); if (!empty($langs)): ?>
+          <span class="titleinfo"><?=$this->transEsc('Language')?> </span></br>
+          <span><? foreach ($langs as $lang): ?><?= html_entity_decode($lang)?><br/><? endforeach; ?></span>
+          </br>
+      <? endif; ?>
+
+      <? $publications = $this->driver->getPublicationDetails(); if (!empty($publications)): ?>
+        <span class="titleinfo"><?=$this->transEsc('Published')?> </span></br>
+        <span>
+          <? foreach ($publications as $field): ?>
+            <?=html_entity_decode($field)?><br/>
+          <? endforeach; ?>
+        </span></br>
+	</br>
+      <? endif; ?>
+
+      <? $edition = $this->driver->getEdition(); if (!empty($edition)): ?>
+        <span class="titleinfo"><?=$this->transEsc('Edition')?> </span></br>
+        <span><?=html_entity_decode($edition)?></span>
+        </br>
+      <? endif; ?>
+
+      <!--ADDED FOR SOAS LIBRARY ELAR
+          @author Simon Barron sb174@soas.ac.uk-->
+      <? $realsummary = $this->driver->getRealSummary(); if (!empty($realsummary)): ?>
+         <span class="titleinfo"><?=$this->transEsc('Summary of deposit')?>  </span></br>
+         <span>
+            <? foreach ($realsummary as $field): ?>
+               <?=html_entity_decode($field)?><br/>
+            <? endforeach; ?>
+         </span>
+ 	</br>
+      <? endif; ?>
+
+      <? $summary_of_deposit = $this->driver->getSummaryofDeposit(); if (!empty($summary_of_deposit)): ?>
+         <span class="titleinfo"><?=$this->transEsc('Summary of deposit')?> </span></br>
+         <span>
+            <? foreach ($summary_of_deposit as $field): ?>
+               <?=html_entity_decode($field)?><br/>
+            <? endforeach; ?>
+         </span>
+         </br>
+      <? endif; ?>
+
+  <? $group_represented = $this->driver->getGroupRepresented(); if (!empty($group_represented)): ?>
+      <span class="titleinfo"><?=$this->transEsc('Group represented')?> </span></br>
+      <span>
+        <? foreach ($group_represented as $field): ?>
+          <?=html_entity_decode($field)?><br/>
+        <? endforeach; ?>
+      </span>
+      </br>
+  <? endif; ?>
+
+
+      <!-- SCB Language information -->
+      <? $langInfs = $this->driver->getLanguageInformation(); if (!empty($langInfs[0])): ?>
+          <span class="titleinfo"><?=$this->transEsc('Language information')?> </span></br>
+          <?$i=0;?>
+          <span><? foreach ($langInfs as $langInf): ?><?= html_entity_decode($langInf)?><br/><?$i=$i+1;?><? endforeach; ?></span>
+          </br>
+      <? endif; ?>
+
+      <!-- SCB Language information -->
+
+  <? $characteristics = $this->driver->getCharacteristics(); if (!empty($characteristics)): ?>
+      <span class="titleinfo"><?=$this->transEsc('Characteristics')?> </span></br>
+      <span>
+        <? foreach ($characteristics as $field): ?>
+          <?=html_entity_decode($field)?><br/>
+        <? endforeach; ?>
+      </span>
+      </br>
+  <? endif; ?>
+
+  <? $SpecialCharacteristics = $this->driver->getSpecialCharacteristics(); if (!empty($SpecialCharacteristics)): ?>
+      <span class="titleinfo"><?=$this->transEsc('Special characteristics')?> </span></br>
+      <span>
+        <? foreach ($SpecialCharacteristics as $field): ?>
+          <?=html_entity_decode($field)?><br/>
+        <? endforeach; ?>
+      </span>
+      </br>
+  <? endif; ?>
+
+      <!-- SCB Deposit contents -->
+      <? $contents = $this->driver->getDepositContents(); if (!empty($contents)): ?>
+         <span class="titleinfo"><?=$this->transEsc('Deposit contents')?> </span></br>
+         <span>
+            <? foreach ($contents as $field): ?>
+               <?=html_entity_decode($field)?><br/>
+            <? endforeach; ?>
+         </span>
+         </br>
+      <? endif; ?>
+      <!-- SCB Deposit contents -->
+
+  <? $history = $this->driver->getHistory(); if (!empty($history)): ?>
+      <span class="titleinfo"><?=$this->transEsc('Deposit history')?> </span></br>
+      <span>
+        <? foreach ($history as $field): ?>
+          <?=html_entity_decode($field)?><br/>
+        <? endforeach; ?>
+      </span>
+      </br>
+  <? endif; ?>
+
+  <? $history_of_deposit = $this->driver->getHistoryofDeposit(); if (!empty($history_of_deposit)): ?>
+      <span class="titleinfo"><?=$this->transEsc('Deposit history')?> </span></br>
+      <span>
+        <? foreach ($history_of_deposit as $field): ?>
+          <?=html_entity_decode($field)?><br/>
+        <? endforeach; ?>
+      </span>
+      </br>
+  <? endif; ?>
+
+  <? $other = $this->driver->getOther(); if (!empty($other)): ?>
+      <span class="titleinfo"><?=$this->transEsc('Other information')?> </span></br>
+      <span>
+        <? foreach ($other as $field): ?>
+          <?=html_entity_decode($field)?><br/>
+        <? endforeach; ?>
+      </span>
+      </br>
+  <? endif; ?>
+
+      <? $other_information = $this->driver->getOtherInformation(); if (!empty($other_information)): ?>
+         <span class="titleinfo"><?=$this->transEsc('Other information')?> </span></br>
+         <span>
+            <? foreach ($other_information as $field): ?>
+               <?=html_entity_decode($field)?><br/>
+            <? endforeach; ?>
+         </span>
+         </br>
+      <? endif; ?>
+
+  <? $acknowledgement = $this->driver->getAcknowledgement(); if (!empty($acknowledgement)): ?>
+      <span class="titleinfo"><?=$this->transEsc('Acknowledgement')?> </span></br>
+      <span>
+        <? foreach ($acknowledgement as $field): ?>
+          <?=html_entity_decode($field)?><br/>
+        <? endforeach; ?>
+      </span>
+      </br>
+  <? endif; ?>
+  <!--END-->
+  
+      <? $subjects = $this->driver->getAllSubjectHeadings(); if (!empty($subjects)): ?>
+        <span class="titleinfo"><?=$this->transEsc('Subjects')?> </span></br>
+        <span>
+          <? foreach ($subjects as $field): ?>
+          <div class="subjectLine">
+            <? $subject = ''; ?>
+            <? $i = 0; foreach ($field as $subfield): ?>
+              <?=($i++ == 0) ? '' : ' &gt; '?>
+              <? $subject = trim($subject . ' ' . $subfield); ?>
+              <a title="<?=$this->escapeHtmlAttr($subject)?>" href="<?=$this->record($this->driver)->getLink('subject', $subject)?>" class="subjectHeading"><?=$this->escapeHtml($subfield)?></a>
+            <? endforeach; ?>
+          </div>
+          <? endforeach; ?>
+        </span>
+        </br>
+      <? endif; ?>
+
+      <?
+          $openUrl = $this->driver->openURLActive('record') ? $this->driver->getOpenURL() : false;
+          // Account for replace_other_urls setting
+          $urls = ($openUrl && $this->driver->replaceURLsWithOpenURL()) ? array() : $this->record($this->driver)->getLinkDetails();
+      ?>
+      <? if (!empty($urls) || $openUrl): ?>
+        <span class="titleinfo"><?=$this->transEsc('Online Access')?> </span></br>
+        <span>
+          <? foreach ($urls as $current): ?>
+            <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>"><?=$this->escapeHtml($current['desc'])?></a><br/>
+          <? endforeach; ?>
+          <? if ($openUrl): ?>
+            <?=$this->openUrl($openUrl)?><br/>
+          <? endif; ?>
+        </span>
+        </br>
+      <? endif; ?>
+
+      <? $notes = $this->driver->getGeneralNotes(); if (!empty($notes)): ?>
+          <span class="titleinfo"><?=$this->transEsc('Notes')?> </span></br>
+          <span>
+            <? foreach ($notes as $field): ?>
+              <?=html_entity_decode($field)?><br/>
+            <? endforeach; ?>
+          </span>
+          </br>
+      <? endif; ?>
+
+      <? $credits = $this->driver->getProductionCredits(); if (!empty($credits)): ?>
+          <span class="titleinfo"><?=$this->transEsc('Production Credits')?> </span></br>
+          <span>
+            <? foreach ($credits as $field): ?>
+              <?=html_entity_decode($field)?><br/>
+            <? endforeach; ?>
+          </span>
+          </br>
+      <? endif; ?>
+
+    <?/* End Main Details */?>
+    </div>
+  
+  </div>
+  
+
+  
+  <!--ADDED FOR SOAS LIBRARY ELAR
+      @author Simon Barron sb174@soas.ac.uk-->
+  <? $depositor = $this->driver->getDepositor(); if (!empty($depositor[0])): ?>
+  <? $depositor_id = $this->driver->getDepositorId(); ?>
+  <? $depositor_nationality = $this->driver->getDepositorNationality(); ?>
+  <? $depositor_affiliation = $this->driver->getDepositorAffiliation(); ?>
+  <? $depositor_image = $this->driver->getDepositorImage();?>
+
+  <div class="col-sm-3 hidden-print">
+  
+
+   <!--SCB Deposit Status-->
+  <? $depositStatus = $this->driver->getDepositStatus(); if (!empty($depositStatus[0]) || $depositStatus[0]!='0'): ?>
+    <div class="panel panel-default" id="depositor">
+
+    <div class="panel-heading"><h4 class="panel-title"><?=$this->transEsc('Status')?></h4></div>
+    <div class="panel-body">
+          <?$i=0;?>
+          <? foreach ($depositStatus as $field): ?>
+	              <span class="check<?=$field?>">&#10004;</span> <b><span class="center"><?=$this->transEsc('Status'.$field)?></span></b><br/>
+	              <span class="center"><?=$this->transEsc('StatusDescription'.$field)?></span><br/>
+              <?$i=$i + 1;?>
+          <? endforeach; ?>
+    </div>
+  </div>
+  <? endif; ?>
+  <!--SCB Deposit Status-->
+
+  
+  <div class="panel panel-default" id="depositor">
+    <div class="panel-heading"><h4 class="panel-title"><?=$this->transEsc('Depositor')?></h4></div>
+    <div class="panel-body">
+          <?$i=0;?>
+          <? foreach ($depositor as $field): ?>
+              <div class="panelImage">
+	              <span class="center"><a href="../Authority/Record?id=<?=$depositor_id[$i];?>"><?=$this->escapeHtml($field)?></a></span><br/>
+	               <? if (!empty($depositor_image[$i])): ?>
+	                  <div id="depositor_image">
+                              <? $url = 'http://'.$_SERVER['SERVER_NAME']; ?>
+	                      <img src="<?=$url?>/deposit/<?=$this->escapeHtml($depositor_image[$i])?>">
+	                  </div>
+	              <? endif; ?>
+	      </div>
+              <? if (!empty($depositor_nationality)): ?><b><?=$this->transEsc('Nationality')?></b>:<?=$depositor_nationality[$i];?><? endif; ?>
+              <? if (!empty($depositor_affiliation)): ?><b><?=$this->transEsc('Affiliation')?></b>:<?=$depositor_affiliation[$i];?><? endif; ?>             
+              <?$i=$i + 1;?>
+              <br/>
+          <? endforeach; ?>
+    </div>
+  </div>
+
+  <? $summary = $this->driver->getSummary(); $summary = isset($summary[0]) ? $summary[0] : false; ?>
+  <? if ($summary): ?>
+  <? $map_location = preg_replace('/^.*Location\:\s(.*)\Z/s', '$1', $summary); ?>
+  <iframe height=250 frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?zoom=3&q=<?=$this->escapeHtml($map_location)?>&key=AIzaSyBE-UdqhkNrsiHFtBLfLh2q8hRO-syzQwA"></iframe>
+  <? endif; ?>
+  </div>
+  <? endif; ?>
+
+  <!--END-->
+</div>

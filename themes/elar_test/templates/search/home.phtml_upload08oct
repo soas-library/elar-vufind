@@ -1,0 +1,401 @@
+<?
+  // Set page title.
+  $this->headTitle($this->translate('Search Home'));
+
+  // Disable top search box -- this page has a special layout.
+  $this->layout()->searchbox = false;
+
+  // Set default value if necessary:
+  if (!isset($this->searchClassId)) {
+    $this->searchClassId = 'Solr';
+  }
+
+  // Load search actions and settings (if any):
+  $options = $this->searchOptions($this->searchClassId);
+  $basicSearch = $options->getSearchAction();
+  $advSearch = $options->getAdvancedSearchAction();
+
+  $this->layout()->breadcrumbs = false;
+?>
+
+    <div class="row">
+		<div class="col-sm-3">
+
+			<div class="border-facet">
+				<p class="menuHeader">
+					<?=$this->transEsc('browsable collections')?>
+				</p>
+				<ul class="contentMenu">
+					<li>
+						<a href="/Search/Results?lookfor=Africa&type=DepositContinent"><?=$this->transEsc('africa')?></a>
+					</li>
+					<li>
+						<a href="/Search/Results?lookfor=Asia&type=DepositContinent"><?=$this->transEsc('asia')?></a>
+					</li>
+					<li>
+						<a href="/Search/Results?lookfor=Australia&type=DepositContinent"><?=$this->transEsc('australia')?></a>
+					</li>
+					<li>
+						<a href="/Search/Results?lookfor=Europe&type=DepositContinent"><?=$this->transEsc('europe')?></a>
+					</li>
+					<li>
+						<a href="/Search/Results?lookfor=Middle East&type=DepositContinent"><?=$this->transEsc('middle east')?></a>
+					</li>
+					<li>
+						<a href="/Search/Results?lookfor=North America&type=DepositContinent"><?=$this->transEsc('north america')?></a>
+					</li>
+					<li>
+						<a href="/Search/Results?lookfor=Pacific&type=DepositContinent"><?=$this->transEsc('pacific')?></a>
+					</li>
+					<li>
+						<a href="/Search/Results?lookfor=South America&type=DepositContinent"><?=$this->transEsc('south america')?></a>
+					</li>
+				</ul>
+				<p class="contentMenu">
+					<?=$this->transEsc('click')?>
+					<a href="/Search/Results?lookfor=&type=AllFields"><?=$this->transEsc('click search')?></a>
+					<?=$this->transEsc('click above')?>
+				</p>
+
+				<p class="menuHeader">
+					<?=$this->transEsc('find collection')?>
+				</p>
+				<ul class="contentMenu">
+					<li>
+						<a href="/Alphabrowse/Home?source=deposit_title&from="><?=$this->transEsc('browse')?></a>
+					</li>
+					<li>
+						<a href="/Search/Results?type=AllFields&limit=1000&view=brief&filter[]=format%3A%22Deposit%22&sort=clean_title"><?=$this->transEsc('list')?></a>
+					</li>
+					<li>
+						<a href="/Map/Home"><?=$this->transEsc('map')?></a>
+					</li>
+				</ul>
+				
+				<? if($this->request->get('PublicStats')== 1){ ?>
+				<p class="menuHeader">
+					<?=$this->transEsc('Public statistics')?>
+				</p>
+				<ul class="contentMenu">
+				  <li><a href="/PublicStats/Home"><?=$this->transEsc('Statistics')?></a></li>
+				</ul>
+				<? } ?>
+				
+				<p class="menuHeader">
+					<?=$this->transEsc('See also')?>
+				</p>
+				<ul class="contentMenu">
+				  <li><a href="http://www.soas.ac.uk/elar/"><?=$this->transEsc('ELAR at SOAS Library')?></a></li>
+				  <li><a href="https://www.soas.ac.uk/elar/using-elar/"><?=$this->transEsc('Using ELAR')?></a></li>
+				  <li><a href="https://www.soas.ac.uk/elar/helpsheets/"><?=$this->transEsc('Preparing materials for ELAR')?></a></li>
+				  <li><a href="https://www.soas.ac.uk/elar/depositing-with-elar/"><?=$this->transEsc('Depositing with ELAR')?></a></li>
+				  <? /*<li><a href="http://www.facebook.com/pages/ELAR-Archive/349631641775743"><?=$this->transEsc('ELAR on Facebook')?></a></li>
+				  <li><a href="http://twitter.com/ELARarchive"><?=$this->transEsc('ELAR on Twitter')?></a></li>*/ ?>
+				</ul>
+			</div>
+			
+		</div>
+		
+		<div class="col-sm-6">
+			<div class="border-facet">
+
+
+			<div class="contentMenu pane">                
+				<div class="post-thumb"><img src="../../../themes/elar/images/hrelp-logo40h.gif" class="img-responsive" alt="Responsive image"></div>
+				<div class="post-content">
+					<p>
+						<?=$this->transEsc('ELAR mess1')?><a href="<?=$this->transEsc('ELAR_registration_url')?>"><?=$this->transEsc('ELAR_registration')?></a><?=$this->transEsc('ELAR mess2')?>
+						<br/><br/><?=$this->transEsc('ELAR mess3')?>
+						<a href="<?=$this->transEsc('arcadia url')?>" target="_blank"><?=$this->transEsc('arcadia')?></a>
+						<?=$this->transEsc('ELAR mess4')?>
+						<a href="<?=$this->transEsc('ELAR_Library_url')?>" target="_blank"><?=$this->transEsc('ELAR_Library')?></a>
+						<?=$this->transEsc('ELAR mess5')?>
+						<a href="<?=$this->transEsc('soas url')?>" target="_blank"><?=$this->transEsc('soas')?></a>
+					</p>
+			   </div>
+			</div>
+
+				<p class="menuHeader">
+					<?=$this->transEsc('update collections')?>
+				</p>
+				
+				 <div id="myCarousel" class="carousel contentMenu" data-interval="false">
+					<!-- Carousel items -->
+					<div class="carousel-inner" role="listbox">
+
+					<?php
+				$url = 'http://'.$_SERVER['SERVER_NAME'].'/Search/Results?lookfor=&type=Deposit&sort=last_indexed+desc&view=rss&limit=12';
+				
+				$content = file_get_contents($url);
+				$x = new SimpleXmlElement($content);
+				 
+				$i = 0;
+				$count = 0;
+				
+				foreach($x->channel->item as $entry) {
+					$dc = $entry->children('http://purl.org/dc/elements/1.1/');
+					$i++;
+					
+					// Delete HTML embebbed code 
+					$d = strip_tags(html_entity_decode( $dc->description ));
+						
+					//$i is now the index.  if $i == 1, then this is the first element.
+					if($i%3 == 0) {
+						//echo "<div id='3'></div>";
+						echo "<div id='coll'>";
+						echo "<p><a href='$entry->link' title='$entry->title'>" . $entry->title . "</a></p>";
+                                                if (!isset($dc->creator) || trim($dc->creator)==='') {
+                                                        echo "<p>--</p>";
+                                                } else {
+                                                        echo "<p>" . $dc->creator . "</p>";
+                                                }
+                                                if (!isset($dc->description) || trim($dc->description)==='') {
+                                                        echo "<p>--</p>";
+                                                } else {
+                                                	echo "<p>" . substr($d,0,150) . "...</p>";
+                                                }
+						echo "</div>";
+						echo "</div>";
+						echo "</div>";
+					} else if ($i == 1) {
+						//echo "<div id='1'></div>";
+						echo "<div class='item active'>";
+						echo "<div id='collections'>";
+						echo "<div id='coll'>";
+						echo "<p><a href='$entry->link' title='$entry->title'>" . $entry->title . "</a></p>";
+						if (!isset($dc->creator) || trim($dc->creator)==='') {
+							echo "<p>--</p>";
+						} else {
+							echo "<p>" . $dc->creator . "</p>";
+						}
+						if (!isset($dc->description) || trim($dc->description)==='') {
+                                                        echo "<p>--</p>";
+                                                } else {
+                                                	echo "<p>" . substr($d,0,150) . "...</p>";
+                                                }
+						echo "</div>";
+					} else {
+						if ($count == 0) {
+							//echo "<div id='2'></div>";
+							$count = 1;
+						}
+						else {
+							echo "<div class='item'>";
+							echo "<div id='collections'>";
+							//echo "<div id='1'></div>";
+							$count = 0;
+						}
+						echo "<div id='coll'>";
+						echo "<p><a href='$entry->link' title='$entry->title'>" . $entry->title . "</a></p>";
+						if (!isset($dc->creator) || trim($dc->creator)==='') {
+                                                        echo "<p>--</p>";
+                                                } else {
+                                                        echo "<p>" . $dc->creator . "</p>";
+                                                }
+						if (!isset($dc->description) || trim($dc->description)==='') {
+                                                        echo "<p>--</p>";
+                                                } else {
+                                                	echo "<p>" . substr($d,0,150) . "...</p>";
+						}
+						echo "</div>";
+					}
+				}
+				
+				?>
+					
+					</div>
+				</div>
+				<div id="carouselImages">
+					<div class="inner">
+						<a href="#myCarousel" data-slide="prev">
+							<img src="../../../themes/elar/images/arrow_up.png" class="img-responsive" alt="Responsive image">
+						</a>
+					</div>
+					<div class="inner">
+						<a href="#myCarousel" data-slide="next">
+							<img src="../../../themes/elar/images/arrow_down.png" class="img-responsive" alt="Responsive image">
+						</a>
+					</div>
+				</div>
+
+				<p class="menuHeader">
+					<?=$this->transEsc('access protocol')?>
+				</p>
+				
+				<div class="contentMenu">                
+					<div class="post-content-right">
+						<p>
+							<?=$this->transEsc('access protocol mess1')?>
+							<span class="m-urcs">
+								<span class="d">O</span>
+								<span class="d">U</span>
+								<span class="d">S</span>
+							</span>
+							<?=$this->transEsc('access protocol mess2')?>
+							<span class="m-urcs">
+								<span class="vd">O</span>
+								<span >U</span>
+								<span>S</span>
+							</span>
+							<?=$this->transEsc('access protocol mess3')?>
+							<span class="m-urcs">
+								<span >O</span>
+								<span class="vd">U</span>
+								<span>S</span>
+							</span>
+							<?=$this->transEsc('access protocol mess4')?>
+							<span class="m-urcs">
+								<span>O</span>
+								<span>U</span>
+								<span class="vd">S</span>
+							</span>
+							<?=$this->transEsc('access protocol mess5')?>
+						</p>
+				   </div>
+				</div>
+			</div>
+			
+
+			<div class="contentMenu">
+				<div id="carouselImages">
+					<div class="col-sm-7 soasImg">
+						<div class="inner">
+							<img width="100%" src="../../../themes/elar/images/soas_60h189w.png" class="img-responsive" alt="Responsive image">
+						</div>
+					</div>
+					<div class="col-sm-5 socialIcons">
+						<div style="padding: 0;display: inline-flex;">
+							<div class="inner">
+								<img width="90%" src="../../../themes/elar/images/social/elar_archive.png" class="img-responsive" alt="Responsive image">
+							</div>
+
+							<div>
+								<span>Follow us on:</span>
+								<div style="display: flex;padding-top: 5%;">
+								<a style="padding:1%;" href="http://www.facebook.com/pages/ELAR-Archive/349631641775743" target="_blank"><img src="../../../themes/elar/images/social/facebook.png" class="img-responsive" alt="Responsive image"></a>
+								<a style="padding:1%;" href="http://twitter.com/ELARarchive" target="_blank"><img src="../../../themes/elar/images/social/twitter.png" class="img-responsive" alt="Responsive image"></a>
+								<a style="padding:1%;" href="https://blogs.soas.ac.uk/elar/" target="_blank"><img src="../../../themes/elar/images/social/wordpress.png" class="img-responsive" alt="Responsive image"></a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-3">
+			<div class="border-facet">
+				<p class="menuHeader">
+					<?=$this->transEsc('elar accounts')?>
+				</p>
+				<p class="contentMenu">
+					<?=$this->transEsc('accounts mess1')?> <br/>
+					<?=$this->transEsc('accounts mess2')?> <br/>
+					<?=$this->transEsc('accounts mess3')?><a href="<?=$this->transEsc('ELAR_registration_url')?>"><?=$this->transEsc('accounts mess3 link')?></a><?=$this->transEsc('accounts mess4')?> <br/>
+					<?=$this->transEsc('accounts mess5')?>
+
+
+    <? $user = $this->auth()->isLoggedIn(); if ($user): ?>
+                                <p class="menuHeader">
+                                        <?=$this->transEsc('Logged in as')?>: <?= $user->cat_username;?>
+                                </p>
+
+    <? else: ?>
+
+				<p class="menuHeader">
+					<?=$this->transEsc('user login')?>
+				</p>
+				<p class="contentMenu">
+					<span>
+						<?=$this->transEsc('authentication_previous_message')?> <a href="mailto:elararchive@soas.ac.uk">elararchive@soas.ac.uk</a>
+					</span>
+					<form method="post" class="form-horizontal" action="<?=$this->url('myresearch-home')?>" name="loginForm" id="loginForm">
+						<label class="control-label" for="login_username">Username:</label>
+						<input id="login_username" class="form-control" type="text" value="" name="username">
+						<label class="control-label" for="login_password">Password:</label>
+						<input id="login_password" class="form-control" type="password" name="password">
+						<div class="contentMenu">
+							<a class="btn btn-link createAccountLink hidden" href="/MyResearch/Account?auth_method=Database">Create New Account</a>
+							<input class="btn btn-primary" type="submit" value="Login" name="processLogin">
+						</div>
+					</form>
+				</p>
+    <? endif; ?>
+			</div>
+		</div>
+	</div>
+
+<? $facetList = is_object($this->results) ? $this->results->getFacetList() : array(); ?>
+<? if (isset($facetList) && is_array($facetList)): ?>
+  <div class="row">
+    <? foreach ($facetList as $field => $details): ?>
+      <? if (isset($this->hierarchicalFacets) && in_array($field, $this->hierarchicalFacets)): ?>
+        <? $this->headScript()->appendFile('vendor/jsTree/jstree.min.js'); ?>
+        <? $this->headScript()->appendFile('facets.js'); ?>
+        <? $sort = isset($this->hierarchicalFacetSortOptions[$field]) ? $this->hierarchicalFacetSortOptions[$field] : ''; ?>
+        <?
+        $script = <<<JS
+$(document).ready(function() {
+  initFacetTree($('#facet_{$this->escapeHtml($field)}'), false);
+});
+JS;
+        ?>
+        <?=$this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, $script, 'SET'); ?>
+        <div class="facet <?=$field=='callnumber-first' ? 'col-sm-6' : 'col-sm-4' ?>">
+          <p class="lead"><?=$this->transEsc('home_browse') . ' ' . $this->transEsc($details['label'])?></p>
+          <div id="facet_<?=$this->escapeHtml($field)?>" class="jstree-facet"
+              data-facet="<?=$this->escapeHtml($field)?>"
+              data-path="<?=$this->url($basicSearch)?>"
+              data-exclude="0"
+              data-operator="AND"
+              data-exclude-title="<?=$this->transEsc('exclude_facet')?>"
+              data-sort="all">
+          </div>
+        </div>
+        <noscript>
+      <? endif; ?>
+      <? $sortedList = $this->sortFacetList($this->results, $field, $details['list'], $basicSearch); ?>
+      <div class="<?=$field=='callnumber-first' ? 'col-sm-6' : 'col-sm-4' ?>">
+        <p class="lead"><?=$this->transEsc('home_browse') . ' ' . $this->transEsc($details['label'])?></p>
+        <div class="row">
+          <ul class="list-unstyled <?=$field == "callnumber-first" ? 'col-sm-6' : 'col-sm-12' ?>">
+          <? /* Special case: two columns for LC call numbers... */ ?>
+          <? if ($field == "callnumber-first"): ?>
+            <? $i = 0; foreach ($sortedList as $url => $value): ?>
+              <? if (!empty($value)): ?>
+                <li><a href="<?=$url?>"><?=$this->escapeHtml($value)?></a></li>
+              <? else: $i--; ?>
+              <? endif; ?>
+              <? if (++$i == 10): ?>
+                </ul><ul class="list-unstyled col-sm-6">
+              <? endif; ?>
+            <? endforeach; ?>
+          <? /* Special case: collections */ ?>
+          <? elseif ($field == 'hierarchy_top_title'): ?>
+            <? $i = 0; foreach ($sortedList as $url => $value): ?>
+              <? if (++$i > 10): ?>
+                <li><a href="<?=$this->url('collections-home')?>"><strong><?=$this->transEsc("More options")?>...</strong></a></li>
+                <? break; ?>
+              <? else: ?>
+                <li><a href="<?=$this->url('collections-bytitle')?>?title=<?=urlencode($value)?>"><?=$this->escapeHtml($value)?></a></li>
+              <? endif; ?>
+            <? endforeach; ?>
+          <? else: ?>
+            <? $i = 0; foreach ($sortedList as $url => $value): ?>
+              <? if (++$i > 10): ?>
+                <li><a href="<?=$this->url($advSearch)?>"><strong><?=$this->transEsc("More options")?>...</strong></a></li>
+                <? break; ?>
+              <? elseif (!empty($value)): ?>
+                <li><a href="<?=$url?>"><?=$this->escapeHtml($value)?></a></li>
+              <? else: $i--; ?>
+              <? endif; ?>
+            <? endforeach; ?>
+          <? endif; ?>
+          </ul>
+        </div>
+      </div>
+      <? if (isset($this->hierarchicalFacets) && in_array($field, $this->hierarchicalFacets)): ?>
+        </noscript>
+      <? endif; ?>
+    <? endforeach; ?>
+  </div>
+<? endif; ?>

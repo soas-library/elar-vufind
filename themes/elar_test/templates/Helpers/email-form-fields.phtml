@@ -1,0 +1,111 @@
+<script src="/themes/elar/js/bootstrap-datepicker.js"></script>
+<link href="/themes/elar/css/datepicker.css" rel="stylesheet">
+<div class="form-group">
+  <label class="col-sm-3 control-label hidden" for="email_to"><?=$this->transEsc('To')?>:</label>
+  <div class="col-sm-9 hidden">
+    <input type="<?=$this->maxRecipients != 1 ? 'text' : 'email'?>" id="email_to" class="form-control" oninvalid="$('#modal .fa-spinner').remove()" name="to" value="elararchive@soas.ac.uk"/>
+    <? if ($this->maxRecipients != 1): ?>
+      <br />
+      <?=$this->transEsc('email_multiple_recipients_note')?>
+      <? if ($this->maxRecipients > 1): ?>
+        <?=$this->transEsc('email_maximum_recipients_note', array('%%max%%' => $this->maxRecipients))?>
+      <? endif; ?>
+    <? endif; ?>
+  </div>
+</div>
+<? if (!$this->disableFrom): ?>
+  <div class="form-group hidden">
+    <label class="col-sm-3 control-label hidden" for="email_from"><?=$this->transEsc('From')?>:</label>
+    <div class="col-sm-9">
+      <input type="email" id="user_email_from" oninvalid="$('#modal .fa-spinner').remove()" name="userfrom" value="<?=isset($this->userfrom) ? $this->userfrom : ''?>" size="40" class="form-control"/>
+      <input type="email" id="email_from" oninvalid="$('#modal .fa-spinner').remove()" name="from" value="noreply@soas.ac.uk" size="40" class="form-control"/>
+    </div>
+  </div>
+<? endif; ?>
+<? if ($this->editableSubject): ?>
+  <div class="form-group">
+    <label class="col-sm-3 control-label" for="email_subject"><?=$this->transEsc('email_subject')?>:</label>
+    <div class="col-sm-9">
+      <input type="text" id="email_subject" oninvalid="$('#modal .fa-spinner').remove()" name="subject" value="<?=isset($this->subject) ? $this->subject : ''?>" size="40" class="form-control"/>
+    </div>
+  </div>
+<? endif; ?>
+
+<div class="form-group">
+  <label class="col-sm-12 control-label" for="email_message" style="text-align: left;"><?=$this->transEsc('resource_period')?>:</label>
+</div>
+
+<?
+	$today = date('d/m/Y');
+?>
+
+<div class="form-group">
+  <label class="col-sm-2 control-label" for="email_message"><?=$this->transEsc('From')?>:</label>
+  <div class="col-sm-2">
+    <input type="text" value="<?=$today;?>" data-date-format="dd/mm/yyyy" id="datepickerFrom" name="datefrom">
+  </div>
+  <label class="col-sm-3 control-label" for="email_message"><?=$this->transEsc('To')?>:</label>
+  <div class="col-sm-2">
+    <input type="text" value="<?=$today;?>" data-date-format="dd/mm/yyyy" id="datepickerTo" name="dateto">
+  </div>
+</div>
+
+<script>
+	$('#datepickerFrom').datepicker({
+	   weekStart: 1 // day of the week start. 0 for Sunday - 6 for Saturday
+	 });
+	$('#datepickerTo').datepicker({
+	   weekStart: 1 // day of the week start. 0 for Sunday - 6 for Saturday
+	 });
+</script>
+
+<style>
+	.datepicker{z-index:1151 !important;}
+</style>
+
+<div class="form-group">
+  <label class="col-sm-12" for="email_message"><?=$this->transEsc('Access to')?>:</label>
+</div>
+<div class="form-group">
+  <div class="col-sm-11 col-sm-offset-1">
+    <div class="radio">
+      <label><input type="radio" name="optradio" value="0" checked><?=$this->transEsc('First request option')?></label>
+    </div>
+    <div class="radio">
+      <label><input type="radio" name="optradio" value="1"><?=$this->transEsc('Second request option')?></label>
+    </div>
+    <div class="radio">
+      <label><input type="radio" name="optradio" value="2"><?=$this->transEsc('Third request option')?></label>
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="col-sm-12" for="email_message"><?=$this->transEsc('Request message')?>:</label>
+</div>
+<div class="form-group">
+  <div class="col-sm-12" align="center">
+    <textarea id="email_message" class="form-control" name="message" rows="4"><?=isset($this->message) ? $this->message : ''?></textarea>
+  </div>
+</div>
+<? if ($this->disableFrom && $this->userEmailInFrom): ?>
+  <div class="form-group">
+    <div class="col-sm-9 col-sm-offset-3">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" name="ccself"/> <?=$this->translate('send_email_copy_to_me'); ?>
+        </label>
+      </div>
+    </div>
+  </div>
+<? endif ?>
+<div class="form-group">
+  <div class="col-sm-9 col-sm-offset-3">
+    <?=$this->recaptcha()->html($this->useRecaptcha) ?>
+  </div>
+</div>
+<div class="form-group">
+  <div class="col-sm-7 col-sm-offset-5">
+    <input type="submit" class="btn btn-primary" name="submit" value="<?=$this->transEsc('Send')?>"/>
+  </div>
+</div>

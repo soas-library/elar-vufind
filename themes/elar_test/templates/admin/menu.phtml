@@ -1,0 +1,18 @@
+<div class="list-group">
+  <div class="">
+  <a href="<?=$this->url('admin')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "home" ? ' active' : ''?>"><?=$this->transEsc('Home')?></a>
+  <!-- <a href="<?=$this->url('admin/social')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "socialstats" ? ' active' : ''?>"><?=$this->transEsc('Social Statistics')?></a> -->
+  <a href="<?=$this->url('admin/statistics')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "statistics" ? ' active' : ''?>"><?=$this->transEsc('Search Statistics')?></a>
+  <a href="" class="list-group-item"><?=$this->transEsc('Private Statistics')?></a>
+  <a href="<?=$this->url('admin/privatestatsgeneral')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "privatestatsgeneral" ? ' active' : ''?>">>>><?=$this->transEsc('General')?></a>
+  <a href="<?=$this->url('admin/privatestatsdepositlist')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "privatestatsdepositlist" ? ' active' : ''?>">>>><?=$this->transEsc('Deposit List')?></a>
+  <a href="<?=$this->url('admin/privatestatsuserdownloads')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "privatestatsuserdownloads" ? ' active' : ''?>">>>><?=$this->transEsc('User Downloads')?></a>
+  <a href="<?=$this->url('admin/privatestatsuploadedfiles')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "privatestatsuploadedfiles" ? ' active' : ''?>">>>><?=$this->transEsc('Uploaded Files')?></a>
+  <a href="<?=$this->url('admin/privatestatsuploadbyfiletype')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "privatestatsuploadbyfiletype" ? ' active' : ''?>">>>><?=$this->transEsc('Uploaded Files (by file type)')?></a>
+  <a href="<?=$this->url('admin/privatestatsdownloadbyfiletype')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "privatestatsdownloadbyfiletype" ? ' active' : ''?>">>>><?=$this->transEsc('Downloaded Files (by file type)')?></a>
+  <a href="<?=$this->url('admin/privatestatsdownloadbyuser')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "privatestatsdownloadbyuser" ? ' active' : ''?>">>>><?=$this->transEsc('Downloads by user')?></a>
+
+  <a href="<?=$this->url('admin/settings')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "settings" ? ' active' : ''?>"><?=$this->transEsc('Settings')?></a>
+
+</div>
+</div>

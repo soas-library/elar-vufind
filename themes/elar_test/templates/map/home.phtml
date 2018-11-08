@@ -1,0 +1,286 @@
+<?
+  // Set page title.
+  $this->headTitle($this->translate('map'));
+
+  // Set up breadcrumbs:
+  $this->layout()->breadcrumbs = '<li class="active">' . $this->transEsc('map') . '</li>';
+?>
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+	
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js"></script>
+    <script>
+
+var currentInfoWindow = null; 
+var map;
+var markers = [];      
+var infowindows = [];
+
+function initialize() {
+     
+	var mapOptions = {
+        	minZoom: 3,
+      		zoom: 3,
+        	center: new google.maps.LatLng(0, 0),
+        	mapTypeId: google.maps.MapTypeId.TERRAIN
+     	};
+ 
+     	map = new google.maps.Map(document.getElementById('location-canvas'),
+mapOptions);
+
+}
+
+function addMarkers(points)
+  {
+
+     	initialize();
+	
+	// SCB - Create ours "tiny" marker icons
+	var redIcon  = "../../../themes/elar/images/red-dot.png";
+        var blueIcon  = "../../../themes/elar/images/blue-dot.png";
+	var greenIcon = "../../../themes/elar/images/green-dot.png";
+	var purpleIcon = "../../../themes/elar/images/purple-dot.png";
+	
+	var isUnknown = false;
+	var isCurated = false;
+	var isInProcess = false;
+	var isForthcoming = false;
+	
+	for ( var i = 0; i < points.length; i++ ) {
+	
+		var latitude = points[i].latitude[0];
+		var longitude = points[i].longitude[0];
+		var position = new google.maps.LatLng(latitude, longitude);
+		var link = points[i].link;
+		var title = points[i].title;
+		var language = points[i].language;
+		var depositor = points[i].depositor;
+		var location = points[i].location[0];		
+		var category = points[i].category[0];	
+		
+		// SCB - Select the colour to show in the map	
+		var icon;
+		if (category == 0) {
+			isUnknown = true;
+			icon = redIcon;
+		// Curated
+		} else if (category == 1) {
+			isCurated = true;
+			icon = blueIcon;
+		// In-process
+		} else if (category == 2) {
+			isInProcess = true;
+			icon = greenIcon;
+		// Forthcoming
+		} else if (category == 3) {
+			isForthcoming = true;
+			icon = purpleIcon;
+		}
+
+		var marker = new google.maps.Marker({
+            		position: position,
+            		map: map,
+            		dragable: false,
+            		title: title,
+			category: category,
+			icon: icon
+     		});
+
+		markers[i] = marker; 	
+		
+		var contentString = '<div id="content">'+
+      			'<div id="siteNotice">'+
+      			'</div>'+
+      			'<h1 id="firstHeading" class="firstHeading"> <a href="' + link + '" target="_blank">' + title + '</a> </h1>'+
+      			'<div id="bodyContent">'+
+      			'<p>Language: '+
+      			language + '</p>'+
+			'<p>Depositor: '+
+                        depositor + '</p>'+
+			'<p>Location: '+
+                        location + '</p>'+
+      			'</div>'+
+      			'</div>';
+		
+     		var infowindow = new google.maps.InfoWindow({
+       			content: contentString
+     		});
+	
+		infowindows[i] = infowindow;
+	
+		lis(i);
+
+	}
+	
+	if (!isUnknown) {
+		// Uncheck
+		$("#unknownbox").prop("checked", false);
+	}
+	
+	if (!isCurated) {
+		// Uncheck
+		$("#curatedbox").prop("checked", false);
+	}
+	
+	if (!isInProcess) {
+		// Uncheck
+		$("#inprocessbox").prop("checked", false);
+	}
+	
+	if (!isForthcoming) {
+		// Uncheck
+		$("#forthcomingbox").prop("checked", false);
+	}
+
+}
+
+
+function lis(i) {
+	var m = markers[i];
+	var iw = infowindows[i];
+    	google.maps.event.addListener(m, 'click', function() {
+		if (currentInfoWindow != null) { currentInfoWindow.close(); }  
+		iw.open(map, this);
+		currentInfoWindow = iw; 
+	});
+}
+
+function filterCategories(check, category) {
+
+	 if (check.checked) {
+                for (i = 0; i < markers.length; i++) {
+                        mark = markers[i];
+                        if (mark.category == category) {
+                                mark.setVisible(true);
+                        }
+                }
+        } else {
+                for (i = 0; i < markers.length; i++) {
+                        mark = markers[i];
+                        if (mark.category == category) {
+                                mark.setVisible(false);
+                        }
+                }
+        }
+
+}
+
+
+    </script>
+  </head>
+  <body>
+
+    <div id='location-canvas' style='width:100%;height:600px;'></div>
+    </br>
+    <div id='filters' class='text-center'>
+   	<span class="titleinfo"><?=$this->transEsc('Show map')?></span>&nbsp;&nbsp;<input type="checkbox" id="unknownbox" checked="checked" onclick="filterCategories(this,'0')" /> <span class="unknownbox"><?=$this->transEsc('Status0')?> <img src="../../../themes/elar/images/red-dot.png" alt="Red icon" height="16" width="16"> </span>
+   	&nbsp;&nbsp;<input type="checkbox" id="curatedbox" checked="checked" onclick="filterCategories(this,'1')" /> <span class="curatedbox"><?=$this->transEsc('Status1')?> <img src="../../../themes/elar/images/blue-dot.png" alt="Blue icon" height="16" width="16"> </span>
+   	&nbsp;&nbsp;<input type="checkbox" id="inprocessbox" checked="checked" onclick="filterCategories(this,'2')" /> <span class="inprocessbox"><?=$this->transEsc('Status2')?> <img src="../../../themes/elar/images/green-dot.png" alt="Green icon" height="16" width="16"> </span>
+   	&nbsp;&nbsp;<input type="checkbox" id="forthcomingbox" checked="checked" onclick="filterCategories(this,'3')" /> <span class="forthcomingbox"><?=$this->transEsc('Status3')?> <img src="../../../themes/elar/images/purple-dot.png" alt="Purple icon" height="16" width="16"> </span> <br />
+    </div>
+
+ <?php
+
+     $url = 'http://localhost:8080/solr/biblio/select?q=*%3A*&fq=format%3A"Deposit"&rows=10000&fl=id%2C+deposit_status%2C+deposit_title%2C+deposit_longitude%2C+deposit_latitude%2C+depositor%2C+deposit_country_name%2C+deposit_language_name&wt=xml&indent=true';
+
+     $ch = curl_init();
+     curl_setopt($ch, CURLOPT_URL,$url);
+     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+     curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+     $contentSerials = curl_exec($ch);  
+     curl_close($ch);
+     try {$xmlSerials= new SimpleXMLElement($contentSerials );} catch (Exception $e) {  }
+     $i = 0;
+
+class Pin
+{
+    public $latitude;
+    public $longitude;
+    public $link;
+    public $title;
+    public $language;
+    public $depositor;
+    public $location;
+    public $category;
+}
+
+$latitude = "";
+$longitude = "";
+$link = "";
+$title = "";
+$language = "";
+$depositor = "";
+$location = "";
+$category = "";
+
+     foreach( $xmlSerials->result->doc  as $result ) {
+	
+	foreach( $result->str as $str ) {
+		if($str['name'] == 'id') {
+			// SCB - Casting object to String
+			$link = "http://".$_SERVER['SERVER_NAME']."/Collection/" . $str . "";
+		} else if($str['name'] == 'deposit_title'){
+			// SCB - Casting object to String
+                	$title = $str."";
+                }
+        }
+	
+	foreach( $result->arr as $arr ){
+		if($arr['name'] == 'deposit_longitude') {
+			$longitude = $arr->str;
+                } else if($arr['name'] == 'deposit_latitude'){
+			$latitude = $arr->str;
+                } else if($arr['name'] == 'deposit_language_name'){
+                        //SCB - More than one language
+			$language = "";
+			$languages = array();
+			$pos = 0;
+			foreach($arr->str as $lang){
+				$languages[$pos] = $lang;
+				$pos++;
+			}
+			$language = implode(", ", $languages);	
+                } else if($arr['name'] == 'depositor'){
+			//SCB - More than one depositor
+			$depositor = "";
+			$depositors = array();
+			$posi = 0;
+			foreach($arr->str as $dep){
+				$depositors[$posi] = $dep;
+				$posi++;
+			}
+			$depositor = implode(", ", $depositors);
+                } else if($arr['name'] == 'deposit_country_name'){
+			$location = $arr->str;
+                } else if($arr['name'] == 'deposit_status'){
+			$category = $arr->str;
+		}
+        }
+	
+	$pin = new Pin();
+	$pin->latitude = $latitude;
+	$pin->longitude = $longitude;
+	$pin->link = $link;
+	$pin->title = $title;
+	$pin->language = $language;
+	$pin->depositor = $depositor;
+	$pin->location = $location;	
+	$pin->category = $category;
+
+	$pins[$i] = $pin;	
+	$i++;
+
+     }
+
+     	$p = json_encode($pins);
+     	echo "<script type=\"text/javascript\">addMarkers($p)</script>";
+
+ ?>
+
+  </body>
+</html>

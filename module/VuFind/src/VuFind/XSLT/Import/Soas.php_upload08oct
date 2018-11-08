@@ -1,0 +1,396 @@
+<?php
+/**
+ * XSLT importer support methods.
+ *
+ * PHP version 5
+ *
+ * Copyright (c) Demian Katz 2010.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * @category VuFind2
+ * @package  Import_Tools
+ * @author   Demian Katz <demian.katz@villanova.edu>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     http://vufind.org/wiki/importing_records Wiki
+ */
+namespace VuFind\XSLT\Import;
+use DOMDocument, VuFind\Config\Locator as ConfigLocator,
+/*SCB PDO Access*/
+PDO, PDOException, VuFind\Exception\ILS as ILSException;
+
+/**
+ * XSLT support class -- all methods of this class must be public and static;
+ * they will be automatically made available to your XSL stylesheet for use
+ * with the php:function() function.
+ *
+ * @category VuFind2
+ * @package  Import_Tools
+ * @author   Demian Katz <demian.katz@villanova.edu>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     http://vufind.org/wiki/importing_records Wiki
+ */
+class Soas 
+{
+
+
+    /**
+     * Get the date/time of the first time this record was indexed.
+     *
+     * @param string $core Solr core holding this record.
+     * @param string $id   Record ID within specified core.
+     * @param string $date Date record was last modified.
+     *
+     * @return string      First index date/time.
+     */
+    public static function getFirstIndexed($core, $id, $date)
+    {
+        $date = strtotime($date);
+        //$row = static::getChangeTracker()->index($core, $id, $date);
+        $iso8601 = 'Y-m-d\TH:i:s\Z';
+        return date($iso8601, $date);
+        //return date($iso8601, strtotime($row->first_indexed));
+
+    }
+
+    /**
+     * Get the date/time of the most recent time this record was indexed.
+     *
+     * @param string $core Solr core holding this record.
+     * @param string $id   Record ID within specified core.
+     * @param string $date Date record was last modified.
+     *
+     * @return string      Latest index date/time.
+     */
+    public static function getLastIndexed($core, $id, $date)
+    {
+        $date = strtotime($date);
+        $iso8601 = 'Y-m-d\TH:i:s\Z';
+        return date($iso8601, $date);
+    }
+
+
+    /**
+     * Get the identificator of one element
+     *
+     * @param string $setSpec. Information of setSpec
+     *
+     * @return string      element id
+     */
+    public static function getParentId($setSpec)
+    {
+    	/*$output="";
+    	$lastPos=strrpos($setSpec,":");
+    	if ($lastPos > 0) $output=substr($setSpec, $lastPos+1);
+        return $output;*/
+    	$parent="";
+    	$firstPos=strpos($setSpec,":");
+    	$aux=substr($setSpec,$firstPos+1,strlen($setSpec));
+	$secondPos = strpos($aux, ":");
+    	$aux2=substr($aux,$secondPos+1,strlen($aux));
+    	$hasDot=strpos($aux2,":");
+    	if ($hasDot>0) $parent=substr($aux2,0,$hasDot);
+    	else $parent=$aux2;
+        return $parent;
+    }
+
+    /**
+     * Change the identificator for one element
+     *
+     * @param string $identifier. Identifier of one element
+     *
+     * @return string      identificator
+     */
+    public static function changeId($id)
+    {
+    	$output=str_replace("oai:soas.ac.uk:", "", $id);
+        return $output;
+    }
+
+    /**
+     * Change the deposit image link
+     *
+     * @param string $link. Link to the image of deposit
+     *
+     * @return string      New link
+     */
+    public static function changeDepositLink($id)
+    {
+    	$output=str_replace("sites/elar.soas.ac.uk/files/", "", $id);
+    	$output=str_replace("sites/all/libraries/audio-player/audio-player/", "swf/", $output);
+    	$output=str_replace("sites/all/libraries/mediaplayer-5/", "swf/", $output);
+        $mainArray = parse_ini_file('/usr/local/vufind/local/config/vufind/config.ini', true);
+        $url= $mainArray['Site']['url'];
+    	$output=str_replace("http://lah.soas.ac.uk/projects/", "https://".$url."/projects/", $output);
+    	$output=str_replace("http://elar.soas.ac.uk/", "https://elar.soas.ac.uk/", $output);
+        return $output;
+    }
+    /**
+     * Capitalise format
+     *
+     * @param string $link. Format name
+     *
+     * @return string      New format name
+     */
+
+
+    public static function changeFormat($format)
+    {
+        $output=$format;
+        if ($output=='audio') $output = "Audio";
+        if ($output=='image') $output = "Image";
+        if ($output=='video') $output = "Video";
+        if ($output=='application') $output = "Application";
+        if ($output=='text') $output = "Text";
+        return $output;
+    }
+
+    /**
+     * Get the finding body
+     *
+     * @param string $id. Number of project
+     *
+     * @return string      ELDP/Other finding body
+     */
+    public static function getFindingBody($id)
+    {
+    	if (!empty($id)) return "ELDP";
+    	else return "Other funding body";
+    }
+
+
+    /**
+     * Change the resource image link
+     *
+     * @param string $link. Link to the resource
+     *
+     * @return string      New link
+     */
+    public static function changeResourceLink($link)
+    {
+    	$output=str_replace("../", "", $link);
+        return $output;
+    }
+
+    /**
+     * Change the setSpec field
+     *
+     * @param string $set. SetSpec of the record
+     *
+     * @return string      New setSpec
+     */
+    public static function changeSpec($set)
+    {
+    	$output="/".str_replace(":", "#/", $set)."#/";
+        return $output;
+    }
+
+    /**
+     * Encode the deposit status
+     *
+     * @param string $status. Status of the deposit
+     *
+     * @return string      Status code
+     */
+    public static function statusCode($status)
+    { 
+        $output="0";
+        switch ($status) {
+          case 'Curated':
+            $output="1";
+            break;
+          case 'In-process':
+            $output="2";
+            break;
+          case 'Forthcoming':
+            $output="3";
+            break;
+        }
+        return $output;
+    }
+
+    /**
+     * Remove links to Elar
+     *
+     * @param string $link. Link to the resource
+     *
+     * @return string      New link
+     */
+    public static function removeLink($link)
+    {	
+	$pattern = '#\<a.*elar.soas.ac.uk.*?\>(.*?)\<\/a\>#si'; 
+	$replace = '$1'; 
+	$output= preg_replace($pattern, $replace, $link);
+        return $output;
+    }
+
+    /**
+     * SCB Access levels
+     *
+     * @param id $id. Id
+     *
+     * @return string      Access level
+     */
+
+    public static function getAccessLevel($id)
+    {
+    	$id=str_replace("oai:soas.ac.uk:","",$id);
+        $mainArray = parse_ini_file('/usr/local/vufind/local/config/vufind/Ams.ini', true);
+        $host= $mainArray['CatalogStructure']['host'];
+        $port= $mainArray['CatalogStructure']['port'];
+        $username= $mainArray['CatalogStructure']['username'];
+        $password= $mainArray['CatalogStructure']['password'];
+        $database= $mainArray['CatalogStructure']['database'];
+        $final = array();
+
+        $db = new PDO(
+            'pgsql:host=' . $host .
+            ';port=' . $port .
+            ';dbname=' . $database,
+            $username,
+            $password
+        );
+        $accessLevel="S";
+        $sql = "SELECT  corpusstructure.nodeid, canonical, valid, vpath0, vpath1, vpath2, vpath, replace(url,'https://lat1.lis.soas.ac.uk/','file:/lat/') as url " .
+            "FROM corpusstructure, archiveobjects ".
+            "where corpusstructure.nodeid = archiveobjects.nodeid ".
+            "and vpath like '%/".$id."#'";
+        try {
+            $itemSqlStmt = $db->prepare($sql);
+            $itemSqlStmt->execute();
+            foreach ($itemSqlStmt->fetchAll() as $rowItem) {
+                $sql = "select aclstring from accessgroups where md5 like (select readrights from archiveobjects where nodeid=" . $rowItem['nodeid'] .")";
+                try {
+                    $itemSqlStmt = $db->prepare($sql);
+                    $itemSqlStmt->execute();
+                    foreach ($itemSqlStmt->fetchAll() as $rowItem2) {
+                        $accessLevel="S";
+                        $anyuser="0";
+                        $everybody="0";
+                        //Check if the resource is free for everybody
+                        $posEverybody = strpos($rowItem2['aclstring'], "everybody");
+                        $posAnyAuthenticatedUser = strpos($rowItem2['aclstring'], "anyAuthenticatedUser");
+                        if ($posEverybody !== false ) {
+                            $accessLevel="O";
+                        }
+                        if ($posAnyAuthenticatedUser !== false ) {
+                            $accessLevel="U";
+                        }
+                        $final[] = $accessLevel;
+
+                    }
+                }
+                catch (PDOException $e) {
+                    throw new ILSException($e->getMessage());
+                }
+
+            }
+            //print_r($final);
+            $final = implode("/", $final);
+
+            return $final;
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+    }
+
+    /**
+     * SCB Resource Filename
+     *
+     * @param id $id. Id
+     *
+     * @return string      Filename
+     */
+
+    public static function getResourceName($id)
+    {
+    	$id=str_replace("oai:soas.ac.uk:","",$id);
+        $mainArray = parse_ini_file('/usr/local/vufind/local/config/vufind/Ams.ini', true);
+        $host= $mainArray['CatalogStructure']['host'];
+        $port= $mainArray['CatalogStructure']['port'];
+        $username= $mainArray['CatalogStructure']['username'];
+        $password= $mainArray['CatalogStructure']['password'];
+        $database= $mainArray['CatalogStructure']['database'];
+        $resources = array();
+
+        $db = new PDO(
+            'pgsql:host=' . $host .
+            ';port=' . $port .
+            ';dbname=' . $database,
+            $username,
+            $password
+        );
+        
+        $sql = "SELECT url FROM corpusstructure, archiveobjects where corpusstructure.nodeid = archiveobjects.nodeid and vpath like '%/".$id."#'";
+        try {
+            $itemSqlStmt = $db->prepare($sql);
+            $itemSqlStmt->execute();
+            foreach ($itemSqlStmt->fetchAll() as $rowItem) {
+            	
+            	$url = explode("/", $rowItem['url']);
+            	$resources[] = $url[count($url)-1];
+            	
+            }
+            
+            $resources = implode("/", $resources);
+            
+            return $resources;
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+    }
+
+    /**
+     * SCB resource link
+     *
+     * @param string $id. NodeId
+     *
+     * @return string      A resource link
+     */
+
+    public static function resourceLink($id)
+    {
+        $mainArray = parse_ini_file('/usr/local/vufind/local/config/vufind/Ams.ini', true);
+        $host= $mainArray['CatalogStructure']['host'];
+        $port= $mainArray['CatalogStructure']['port'];
+        $username= $mainArray['CatalogStructure']['username'];
+        $password= $mainArray['CatalogStructure']['password'];
+        $database= $mainArray['CatalogStructure']['database'];
+        $link = "";
+        
+        $db = new PDO(
+            'pgsql:host=' . $host .
+            ';port=' . $port .
+            ';dbname=' . $database,
+            $username,
+            $password
+        );
+        
+        $sql = "SELECT replace(url,'https://lat1.lis.soas.ac.uk/','file:/lat/') as url FROM archiveobjects a where a.nodeid = CAST(SUBSTR('".$id."',4) as INTEGER)";
+        try {
+            $itemSqlStmt = $db->prepare($sql);
+            $itemSqlStmt->execute();
+            foreach ($itemSqlStmt->fetchAll() as $rowItem) {
+                $link = $rowItem['url'];
+            }
+            return $link;
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+    }
+
+}

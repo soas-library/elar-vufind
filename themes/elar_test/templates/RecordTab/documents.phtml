@@ -1,0 +1,25 @@
+<?
+    // Set page title.
+    //$this->headTitle($this->translate('Documents') . ': ' . $this->driver->getBreadcrumb());
+    $this->headTitle($this->driver->getBreadcrumb());
+
+    // Grab document data:
+    $autor = $this->driver->getTitle();
+    $documents = empty($autor) ? array() : $this->documents($autor);
+
+?>
+<? if (count($documents) > 0): ?>
+  <? foreach ($documents as $provider => $list): ?>
+    <? $i =1; ?>
+    <? foreach ($list as $document): ?>
+      <? if (isset($document['title'])): ?><strong><?=$i?><a href="../Record/<?=$this->escapeHtml($document['id'])?>"> <?=$document['title']?></a></strong><? endif; ?>
+      <? if (isset($document['author'])): ?><?=$this->transEsc('by')?> <?=$document['author']?>.<? endif; ?>
+      <? if (isset($document['publishDate'])): ?><?=$this->transEsc('Published')?> (<?=$document['publishDate']?>)<? endif; ?>
+      <hr/>
+      <? $i = $i + 1; ?>
+    <? endforeach; ?>
+  <? endforeach; ?>
+<? else: ?>
+  <?=$this->transEsc('No documents were found for this record')?>.
+<? endif; ?>
+

@@ -1,0 +1,22 @@
+<?
+    // Set page title.
+    $this->headTitle($this->translate('Description Auth') . ': ' . $this->driver->getBreadcrumb());
+
+    // Grab clean ISBN for convenience:
+    $isbn = $this->driver->getCleanISBN();
+
+    // Activate Syndetics Plus if necessary:
+    if ($this->syndeticsPlus()->isActive()) {
+        $this->headScript()->appendFile($this->syndeticsPlus()->getScript());
+    }
+?>
+<table class="table table-striped" summary="<?=$this->transEsc('Description Auth')?>">
+
+
+  <? if (!isset($contentDisplayed) || !$contentDisplayed): // Avoid errors if there were no rows above ?>
+    <tr><td><?=$this->transEsc('no_description_auth')?></td></tr>
+  <? endif; ?>
+
+
+
+</table>

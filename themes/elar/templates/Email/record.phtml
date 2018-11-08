@@ -1,0 +1,61 @@
+<? // This is a text-only email template; do not include HTML! ?>
+<?=$this->translate('ELAR_Mail_Header')?>
+
+
+<?=$this->translate('bundle_link')?>: <?=$this->serverUrl($this->recordLink()->getUrl($this->driver))?>
+
+
+<?=$this->translate('elar_nodeid')?>: <?=$this->nodeid?>
+
+
+<?=$this->translate('elar_ filename')?>: <?=$this->filename?>
+
+
+<?=$this->translate('date_info')?>: <?=$this->datefrom?> <?=$this->translate('and')?> <?=$this->dateto?>
+
+
+<?=$this->translate('elar_userid')?>: <?=$this->userid?>
+
+
+<?=$this->translate('elar_userfirstname')?>: <?=$this->userfirst?>
+
+
+<?=$this->translate('elar_userlastname')?>: <?=$this->userlast?>
+
+
+<?=$this->translate('elar_email')?>: <?=$this->userfrom?>
+
+
+<? if(strcmp($this->accessType, '0') === 0) { ?>
+<?=$this->translate('One access')?>:
+
+<?=$this->translate('Bundle ID')?>: <?=$this->access[0]?>
+
+
+<?=$this->translate('One Resource')?>: <?=implode(', ',$this->access[1])?>
+
+<? } else if(strcmp($this->accessType, '1') === 0) { ?>
+<?=$this->translate('Bundle access')?>:
+
+<?=$this->translate('Bundle ID')?>: <?=$this->access[0]?>
+
+
+<?/*=$this->translate('Resources')?>: <?=implode(', ',$this->access[1])*/?>
+<?=$this->translate('Resources')?>: <?=implode(', ',$this->access[2])?>
+
+<? } else if(strcmp($this->accessType, '2') === 0) { ?>
+<?=$this->translate('Collection access')?>:
+
+<?=$this->translate('Collection ID')?>: <?=$this->access[0]?>
+
+
+<?=$this->translate('Bundle IDs')?>: <?=implode(', ',$this->access[1])?>
+
+<? } ?>
+
+<? if (!empty($this->message)): ?><?=$this->translate("elar_message")?>:
+<?=$this->message?>
+<? endif; ?>
+
+
+

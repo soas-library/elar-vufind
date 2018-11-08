@@ -1,0 +1,450 @@
+<div class="<?=$this->layoutClass('mainbody')?> title">
+  	<h3><?=$this->escapeHtml($this->driver->getBundleTitle() . ' ' . $this->driver->getSubtitle() . ' ' . $this->driver->getTitleSection())?></h3>
+  </div>
+  <div class="<?=$this->layoutClass('mainbody')?> recordDesc">
+    <div class="record recordId source<?=$this->escapeHtmlAttr($this->driver->getResourceSource())?>" id="record">
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId" id="record_id" />
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getResourceSource()) ?>" class="hiddenSource" />
+      
+<div class="row" vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
+  <!--<div class="col-sm-3">
+    <div class="text-center">
+      <? /* Display thumbnail if appropriate: */ ?>
+      <? $mediumThumb = $this->record($this->driver)->getThumbnail('medium'); $largeThumb = $this->record($this->driver)->getThumbnail('large'); ?>
+      <? if ($mediumThumb): ?>
+        <? if ($largeThumb): ?><a href="<?=$this->escapeHtmlAttr($largeThumb)?>"><? endif; ?>
+          <img alt="<?=$this->transEsc('Cover Image')?>" class="recordcover" src="<?=$this->escapeHtmlAttr($mediumThumb);?>"/>
+        <? if ($largeThumb): ?></a><? endif; ?>
+      <? else: ?>
+        <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
+      <? endif; ?>
+
+      <? /* Display qrcode if appropriate: */ ?>
+      <? $QRCode = $this->record($this->driver)->getQRCode("core"); ?>
+      <? if($QRCode): ?>
+        <span class="hidden-xs">
+          <br/><img alt="<?=$this->transEsc('QR Code')?>" class="qrcode" src="<?=$this->escapeHtmlAttr($QRCode);?>"/>
+        </span>
+      <? endif; ?>
+    </div>
+
+    <? // if you have a preview tab but want to move or remove the preview link
+       // from this area of the record view, this can be split into
+       // getPreviewData() (should stay here) and
+       // getPreviewLink() (can go in your desired tab) ?>
+    <?=$this->record($this->driver)->getPreviews()?>
+  </div>-->
+
+  <div class="col-sm-12">
+
+  <!--<? $summary = $this->driver->getSummary(); $summary = isset($summary[0]) ? $this->escapeHtml($summary[0]) : false; ?>
+    <? if ($summary): ?>
+      <p><?=$this->truncate($summary, 300)?></p>
+
+      <? if(strlen($summary) > 300): ?>
+        <p><a href='<?=$this->recordLink()->getTabUrl($this->driver, 'Description')?>#tabnav'><?=$this->transEsc('Full description')?></a></p>
+      <? endif; ?>
+    <? endif; ?>-->
+
+    <? if ($this->userlist()->getMode() !== 'disabled'): ?>
+      <? /* Display the lists that this record is saved to */ ?>
+      <div class="savedLists hidden alert alert-info" id="savedLists">
+        <strong><?=$this->transEsc("Saved in")?>:</strong>
+      </div>
+    <? endif; ?>
+
+    <?/* Display Main Details */?>
+    <!--SCB-->
+    <!--<table id="recordtable" class="table table-striped" summary="<?=$this->transEsc('Bibliographic Details')?>">-->
+    <div id="core">
+
+      <? $nextTitles = $this->driver->getNewerTitles(); $prevTitles = $this->driver->getPreviousTitles(); ?>
+      <? if (!empty($nextTitles)): ?>
+        <span class="titleinfo"><?=$this->transEsc('New Title')?>: </span></br>
+        <span>
+          <? foreach($nextTitles as $field): ?>
+            <a href="<?=$this->record($this->driver)->getLink('title', $field)?>"><?=$this->escapeHtml($field)?></a><br/>
+          <? endforeach; ?>
+        </span>
+        </br>
+      <? endif; ?>
+
+      <? if (!empty($prevTitles)): ?>
+        <span class="titleinfo"><?=$this->transEsc('Previous Title')?>: </span></br>
+        <span>
+          <? foreach($prevTitles as $field): ?>
+            <a href="<?=$this->record($this->driver)->getLink('title', $field)?>"><?=$this->escapeHtml($field)?></a><br/>
+          <? endforeach; ?>
+        </span>
+        </br>
+      <? endif; ?>
+ 
+      <!-- CUSTOM CODE FOR SOAS LIBRARY ELAR
+           @author Simon Barron sb174@soas.ac.uk-->
+           
+      <div class="col-sm-3">
+      	<? $id = $this->driver->getBundleName(); if (!empty($id)): ?>
+        <span class="titleinfo"><?=$this->transEsc('ID')?>: </span>
+      <? endif; ?>
+      </div>
+    
+      <div class="col-sm-9">
+      	<? $id = $this->driver->getBundleName(); if (!empty($id)): ?>
+        <span><?=$this->escapeHtml($id)?></span>
+      <? endif; ?>
+      </div>
+      
+      <div class="col-sm-3">
+      	<? $title = $this->driver->getBundleTitle(); if (!empty($title)): ?>
+        <span class="titleinfo"><?=$this->transEsc('Title')?>: </span>
+      <? endif; ?>
+      </div>
+    
+      <div class="col-sm-9">
+        <? $title = $this->driver->getBundleTitle(); if (!empty($title)): ?>
+        <span><?=$this->escapeHtml($title)?></span>
+      <? endif; ?>
+      </div>
+      
+      <div class="col-sm-3">
+      	<? $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
+          <span class="titleinfo"><?=$this->transEsc('Level')?>: </span>
+      <? endif; ?> 
+      </div>
+    
+      <div class="col-sm-9">
+        <? $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
+          <span><?=str_replace('class="', 'class="label label-info ', $this->record($this->driver)->getFormatList())?></span></br>
+      <? endif; ?> 
+      </div>
+      
+      <div class="col-sm-3">
+      	 <!-- SCB. GENRE-->
+      <? $keywordGenre = $this->driver->getBundleGenre();
+         $sKeyGen = sizeof($keywordGenre);
+         $total = $sKeyGen;
+         $index = 1;
+         if (!empty($keywordGenre)): ?>
+        <span class="titleinfo"><?=$this->transEsc('Genre')?>: </span>
+      <? endif; ?>
+      <!-- SCB. GENRE-->
+      </div>
+    
+      <div class="col-sm-9">
+         <!-- SCB. GENRE-->
+      <? $keywordGenre = $this->driver->getBundleGenre();
+         $sKeyGen = sizeof($keywordGenre);
+         $total = $sKeyGen;
+         $index = 1;
+         if (!empty($keywordGenre)): ?>
+        <span><? foreach($keywordGenre as $field): ?>
+           <?if ($index == $total): ?>     
+                <?=trim($this->escapeHtml($field))?>
+           <? else: ?>
+           	<?=trim($this->escapeHtml($field))?><span> - </span>
+           	<? $index++ ?>
+           <? endif; ?>
+        <? endforeach; ?></span>
+      <? endif; ?>
+      <!-- SCB. GENRE-->
+      </div>
+      
+      <div class="col-sm-3">
+      	 <!-- SCB. TAGS-->
+      <? $keywordTag = $this->driver->getBundleTag();
+         $sKeyTag = sizeof($keywordTag);
+         $total = $sKeyTag;
+         $index = 1;
+         if (!empty($keywordTag)): ?>
+        <span class="titleinfo"><?=$this->transEsc('Tags')?>: </span>
+      <? endif; ?>
+      <!-- SCB. TAGS-->
+      </div>
+    
+      <div class="col-sm-9">
+         <!-- SCB. TAGS-->
+      <? $keywordTag = $this->driver->getBundleTag();
+         $sKeyTag = sizeof($keywordTag);
+         $total = $sKeyTag;
+         $index = 1;
+         if (!empty($keywordTag)): ?>
+        <span><? foreach($keywordTag as $field): ?>
+           <?if ($index == $total): ?>     
+               <?=trim($this->escapeHtml($field))?>
+           <? else: ?>
+           	<?=trim($this->escapeHtml($field))?><span> - </span>
+           	<? $index++ ?>
+           <? endif; ?>
+        <? endforeach; ?></span>
+      <? endif; ?>
+      <!-- SCB. TAGS-->
+      </div>
+      
+      <div class="col-sm-3">
+      	<? $date = $this->driver->getBundleDate(); if (!empty($date)): ?>
+        <span class="titleinfo"><?=$this->transEsc('Date created')?>: </span>
+      <? endif; ?>
+      </div>
+    
+      <div class="col-sm-9">
+        <? $date = $this->driver->getBundleDate(); if (!empty($date)): ?>
+        <span><?=$this->escapeHtml($date)?></span>
+      <? endif; ?>
+      </div>
+      
+      <div class="col-sm-3">
+      	<? $location = $this->driver->getBundleLocation(); if (!empty($location[0])): ?>
+        <span class="titleinfo"><?=$this->transEsc('Location')?>: </span>
+      <? endif; ?>
+      </div>
+    
+      <div class="col-sm-9">
+        <? $location = $this->driver->getBundleLocation(); if (!empty($location[0])): ?>
+        <? foreach($location as $field): ?>
+           <span><?=$this->escapeHtml($field)?></span>
+        <? endforeach; ?>
+      <? endif; ?>
+      </div>
+      
+      <div class="col-sm-3">
+      	<? $description = $this->driver->getBundleDescription(); if (!empty($description[0])): ?>
+        <span class="titleinfo"><?=$this->transEsc('Description')?>: </span>
+      <? endif; ?>
+      </div>
+    
+      <div class="col-sm-9">
+        <? $description = $this->driver->getBundleDescription(); if (!empty($description[0])): ?>        
+        <? foreach($description as $field): ?>
+           <span><?=$this->escapeHtml($field)?></span></br>
+        <? endforeach; ?>
+      <? endif; ?>
+      </div>
+      
+      <!-- END -->
+
+      <!-- SCB Quito autores -->
+
+
+
+      <? $langs = $this->driver->getLanguages(); if (!empty($langs)): ?>
+          <span class="titleinfo"><?=$this->transEsc('Language')?>: </span></br>
+          <span><? foreach ($langs as $lang): ?><?= $this->escapeHtml($lang)?><br/><? endforeach; ?></span>
+          </br>
+      <? endif; ?>
+
+      <? $publications = $this->driver->getPublicationDetails(); if (!empty($publications)): ?>
+        <span class="titleinfo"><?=$this->transEsc('Published')?>: </span></br>
+        <span>
+          <? foreach ($publications as $field): ?>
+            <span property="publisher" typeof="Organization">
+            <? $pubPlace = $field->getPlace(); if (!empty($pubPlace)): ?>
+              <span property="location"><?=$this->escapeHtml($pubPlace)?></span>
+            <? endif; ?>
+            <? $pubName = $field->getName(); if (!empty($pubName)): ?>
+              <span property="name"><?=$this->escapeHtml($pubName)?></span>
+            <? endif; ?>
+            </span>
+            <? $pubDate = $field->getDate(); if (!empty($pubDate)): ?>
+              <span property="publicationDate"><?=$this->escapeHtml($pubDate)?></span>
+            <? endif; ?>
+            <br/>
+          <? endforeach; ?>
+        </span>
+        </br>
+      <? endif; ?>
+
+      <? $edition = $this->driver->getEdition(); if (!empty($edition)): ?>
+        <span class="titleinfo"><?=$this->transEsc('Edition')?>: </span></br>
+        <span property="bookEdition"><?=$this->escapeHtml($edition)?></span>
+        </br>
+      <? endif; ?>
+
+      <?/* Display series section if at least one series exists. */?>
+      <? $series = $this->driver->getSeries(); if (!empty($series)): ?>
+        span class="titleinfo"><?=$this->transEsc('Series')?>: </span></br>
+        <span>
+          <? foreach ($series as $field): ?>
+            <?/* Depending on the record driver, $field may either be an array with
+               "name" and "number" keys or a flat string containing only the series
+               name.  We should account for both cases to maximize compatibility. */?>
+            <? if (is_array($field)): ?>
+              <? if (!empty($field['name'])): ?>
+                <a href="<?=$this->record($this->driver)->getLink('series', $field['name'])?>"><?=$this->escapeHtml($field['name'])?></a>
+                <? if (!empty($field['number'])): ?>
+                  <?=$this->escapeHtml($field['number'])?>
+                <? endif; ?>
+                <br/>
+              <? endif; ?>
+            <? else: ?>
+              <a href="<?=$this->record($this->driver)->getLink('series', $field)?>"><?=$this->escapeHtml($field)?></a><br/>
+            <? endif; ?>
+          <? endforeach; ?>
+        </span>
+        </br>
+      <? endif; ?>
+
+      <? $subjects = $this->driver->getAllSubjectHeadings(); if (!empty($subjects)): ?>
+        <span class="titleinfo"><?=$this->transEsc('Subjects')?>: </span></br>
+        <span>
+          <? foreach ($subjects as $field): ?>
+          <div class="subjectLine" property="keywords">
+            <? $subject = ''; ?>
+            <? if(count($field) == 1) $field = explode('--', $field[0]); ?>
+            <? $i = 0; foreach ($field as $subfield): ?>
+              <?=($i++ == 0) ? '' : ' &gt; '?>
+              <? $subject = trim($subject . ' ' . $subfield); ?>
+              <a class="backlink" title="<?=$this->escapeHtmlAttr($subject)?>" href="<?=$this->record($this->driver)->getLink('subject', $subject)?>"><?=trim($this->escapeHtml($subfield))?></a>
+            <? endforeach; ?>
+          </div>
+          <? endforeach; ?>
+        </span>
+      <? endif; ?>
+
+      <? $childRecordCount = $this->driver->tryMethod('getChildRecordCount'); if ($childRecordCount): ?>
+        <span class="titleinfo"><?=$this->transEsc('child_records')?>: </span></br>
+        <span>
+          <a href="<?=$this->recordLink()->getChildRecordSearchUrl($this->driver)?>"><?=$this->transEsc('child_record_count', array('%%count%%' => $childRecordCount))?></a>
+        </span>
+        </br>
+      <? endif; ?>
+
+      <?
+        $openUrl = $this->driver->openURLActive('record') ? $this->driver->getOpenURL() : false;
+        // Account for replace_other_urls setting
+        $urls = ($openUrl && $this->driver->replaceURLsWithOpenURL()) ? array() : $this->record($this->driver)->getLinkDetails();
+      ?>
+      <? if (!empty($urls) || $openUrl): ?>
+        <span class="titleinfo"><?=$this->transEsc('Online Access')?>: </span></br>
+        <span>
+          <? foreach ($urls as $current): ?>
+            <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>"><?=$this->escapeHtml($current['desc'])?></a><br/>
+          <? endforeach; ?>
+          <? if ($openUrl): ?>
+            <?=$this->openUrl($openUrl)?><br/>
+          <? endif; ?>
+        </span>
+        </br>
+      <? endif; ?>
+
+      <? $recordLinks = $this->driver->getAllRecordLinks(); ?>
+      <? if(!empty($recordLinks)): ?>
+          <span class="titleinfo"><?=$this->transEsc('Related Items')?>:</span>
+          <span>
+            <? foreach ($recordLinks as $recordLink): ?>
+              <?=$this->transEsc($recordLink['title'])?>:
+              <a href="<?=$this->recordLink()->related($recordLink['link'])?>"><?=$this->escapeHtml($recordLink['value'])?></a><br />
+            <? endforeach; ?>
+            <? /* if we have record links, display relevant explanatory notes */
+              $related = $this->driver->getRelationshipNotes();
+              if (!empty($related)): ?>
+                <? foreach ($related as $field): ?>
+                  <?=$this->escapeHtml($field)?><br/>
+                <? endforeach; ?>
+            <? endif; ?>
+          </span>
+      <? endif; ?>
+      
+      <div class="col-sm-12">
+      	</br>
+      <? $journalTitle = $this->driver->getContainerTitle(); if (!empty($journalTitle)): ?>      
+        <span>
+          <? $containerID = $this->driver->getContainerRecordID(); ?>
+          <a href="/Collection/<?=$this->escapeHtml($journalTitle)?>"><?=$this->transEsc('Back to the deposit')?></a></br>
+          <!--<a href="<?=($containerID ? $this->recordLink()->getUrl("VuFind|$containerID") : $this->record($this->driver)->getLink('journaltitle', $journalTitle))?>"><?=$this->escapeHtml($journalTitle)?></a>-->
+          <? $ref = $this->driver->getContainerReference(); if (!empty($ref)) { echo $this->escapeHtml($ref); } ?>
+        </span>
+        </br>
+      <? endif; ?>
+      
+      <?=$this->record($this->driver)->getToolbar()?>
+      </br>
+      
+      <!-- SCB. KEYWORDS-->
+      <? $keywordLanguage = $this->driver->getBundleLanguageName(); 
+         $keywordGenre = $this->driver->getBundleGenre();
+         $keywordTag = $this->driver->getBundleTag();
+         $keywordKeyword = $this->driver->getResourceKeyword(); 
+         $keywordParticipant = $this->driver->getBundleParticipant();
+         $sKeyLang = sizeof($keywordLanguage);
+         $sKeyGen = sizeof($keywordGenre);
+         $sKeyTag = sizeof($keywordTag);
+         $sKeyKey = sizeof($keywordKeyword);
+         $sKeyPart = sizeof($keywordParticipant);
+         $total = $sKeyLang + $sKeyGen + $sKeyTag + $sKeyKey + $sKeyPart;
+         $index = 1;
+         if (!empty($keywordLanguage)||!empty($keywordGenre)||!empty($keywordTag)||!empty($keywordKeyword)||!empty($keywordParticipant)): ?>
+         <div>
+        <span class="titleinfo"><?=$this->transEsc('Keywords')?>: </span>
+        <span><? foreach($keywordLanguage as $field): ?>
+           <?if ($index == $total): ?>
+           	<a class="keywordsLink" title="<?=$this->escapeHtmlAttr($field)?>" href="<?=$this->record($this->driver)->getLink('bundle-language', $field)?>"><?=trim($this->escapeHtml($field))?></a>
+           <? else: ?>
+           	<a class="keywordsLink" title="<?=$this->escapeHtmlAttr($field)?>" href="<?=$this->record($this->driver)->getLink('bundle-language', $field)?>"><?=trim($this->escapeHtml($field))?></a><span> - </span>
+           	<? $index++ ?>
+           <? endif; ?>
+        <? endforeach; ?></span>
+        <span><? foreach($keywordGenre as $field): ?>
+           <?if ($index == $total): ?>     
+                <a class="keywordsLink" title="<?=$this->escapeHtmlAttr($field)?>" href="<?=$this->record($this->driver)->getLink('bundle-genre', $field)?>"><?=trim($this->escapeHtml($field))?></a>
+           <? else: ?>
+           	<a class="keywordsLink" title="<?=$this->escapeHtmlAttr($field)?>" href="<?=$this->record($this->driver)->getLink('bundle-genre', $field)?>"><?=trim($this->escapeHtml($field))?></a><span> - </span>
+           	<? $index++ ?>
+           <? endif; ?>
+        <? endforeach; ?></span>
+        <span><? foreach($keywordTag as $field): ?>
+           <?if ($index == $total): ?>     
+                <a class="keywordsLink" title="<?=$this->escapeHtmlAttr($field)?>" href="<?=$this->record($this->driver)->getLink('bundle-tag', $field)?>"><?=trim($this->escapeHtml($field))?></a>
+           <? else: ?>
+           	<a class="keywordsLink" title="<?=$this->escapeHtmlAttr($field)?>" href="<?=$this->record($this->driver)->getLink('bundle-tag', $field)?>"><?=trim($this->escapeHtml($field))?></a><span> - </span>
+           	<? $index++ ?>
+           <? endif; ?>
+        <? endforeach; ?></span>
+        <span><? foreach($keywordKeyword as $field): ?>
+           <?if ($index == $total):?>
+                <a class="keywordsLink" title="<?=$this->escapeHtmlAttr($field)?>" href="<?=$this->record($this->driver)->getLink('resource-keyword', $field)?>"><?=trim($this->escapeHtml($field))?></a>
+           <? else: ?>
+           	<a class="keywordsLink" title="<?=$this->escapeHtmlAttr($field)?>" href="<?=$this->record($this->driver)->getLink('resource-keyword', $field)?>"><?=trim($this->escapeHtml($field))?></a><span> - </span>
+           	<? $index++ ?>
+           <? endif; ?>
+        <? endforeach; ?></span>
+        <span><? foreach($keywordParticipant as $field): ?>
+           <?if ($index == $total): ?>
+           	<a class="keywordsLink" title="<?=$this->escapeHtmlAttr($field)?>" href="<?=$this->record($this->driver)->getLink('bundle-participant', $field)?>"><?=trim($this->escapeHtml($field))?></a>
+           <? else: ?>
+           	<a class="keywordsLink" title="<?=$this->escapeHtmlAttr($field)?>" href="<?=$this->record($this->driver)->getLink('bundle-participant', $field)?>"><?=trim($this->escapeHtml($field))?></a><span> - </span>
+        	<? $index++ ?>
+           <? endif; ?>
+        <? endforeach; ?></span>
+        
+        </div>
+        <? /* Separacion Final*/?>
+      </br>
+      <? endif; ?>
+      <!-- SCB. KEYWORDS-->
+      
+      <!-- END -->
+      
+      </div>
+
+      <!--<? if ($this->usertags()->getMode() !== 'disabled'): ?>
+        <? $tagList = $this->driver->getTags(); ?>
+          <span class="titleinfo"><?=$this->transEsc('Tags')?>: </span></br>
+          <span>
+            <span class="pull-right">
+              <i class="fa fa-plus"></i> <a id="tagRecord" class="modal-link" href="<?=$this->recordLink()->getActionUrl($this->driver, 'AddTag')?>" title="<?=$this->transEsc('Add Tag')?>"><?=$this->transEsc('Add Tag')?></a>
+            </span>
+            <div id="tagList">
+              <? if (count($tagList) > 0): ?>
+                <? $i = 0; foreach ($tagList as $tag): ?><?=($i++ == 0)?'':', '?><a href="<?=$this->url('tag-home')?>?lookfor=<?=urlencode($tag->tag)?>"><?=$this->escapeHtml($tag->tag)?></a> (<?=$this->escapeHtml($tag->cnt)?>)<? endforeach; ?>
+              <? else: ?>
+                <?=$this->transEsc('No Tags')?>, <?=$this->transEsc('Be the first to tag this record')?>!
+              <? endif; ?>
+            </div>
+          </span>
+          </br>
+      <? endif; ?>-->
+    <!--</table>-->
+    </div>
+    <?/* End Main Details */?>
+  </div>
+</div>

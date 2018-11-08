@@ -1,0 +1,35 @@
+<? // This is a text-only email template; do not include HTML! ?>
+
+<?=$this->translate('ELAR_Mail_Header')?>
+
+
+<?=$this->translate('bundle_link')?>: <?=$this->serverUrl($this->recordLink()->getUrl($this->driver))?>
+
+
+<?=$this->translate('elar_nodeid')?>: <?=$this->nodeid?>
+
+
+<?=$this->translate('elar_ filename')?>: <?=$this->filename?>
+
+
+<?=$this->translate('date_info')?>: <?=$this->datefrom?> <?=$this->translate('and')?> <?=$this->dateto?>
+
+
+<?=$this->translate('elar_userid')?>: <?=$this->userid?>
+
+
+<?=$this->translate('elar_userfirstname')?>: <?=$this->userfirst?>
+
+
+<?=$this->translate('elar_userlastname')?>: <?=$this->userlast?>
+
+
+<?=$this->translate('elar_email')?>: <?=$this->userfrom?>
+
+
+<? if (!empty($this->message)): ?><?=$this->translate("elar_message")?>:
+<?=$this->message?>
+<? endif; ?>
+
+
+

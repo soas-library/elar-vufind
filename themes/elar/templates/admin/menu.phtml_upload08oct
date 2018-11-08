@@ -1,0 +1,9 @@
+<div class="list-group">
+  <div class="">
+  <a href="<?=$this->url('admin')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "home" ? ' active' : ''?>"><?=$this->transEsc('Home')?></a>
+  <!-- <a href="<?=$this->url('admin/social')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "socialstats" ? ' active' : ''?>"><?=$this->transEsc('Social Statistics')?></a> -->
+  <a href="<?=$this->url('admin/statistics')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "statistics" ? ' active' : ''?>"><?=$this->transEsc('Search Statistics')?></a>
+  <a href="<?=$this->url('admin/privatestats')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "privatestats" ? ' active' : ''?>"><?=$this->transEsc('Private Statistics')?></a>
+  <a href="<?=$this->url('admin/settings')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "settings" ? ' active' : ''?>"><?=$this->transEsc('Settings')?></a>
+</div>
+</div>

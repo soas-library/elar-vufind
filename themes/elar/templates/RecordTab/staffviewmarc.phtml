@@ -1,0 +1,104 @@
+<? 
+//Obtener el número de depositors indexados a traves de XML
+$numSerials = 0;
+$id=$this->driver->getUniqueId();
+$urlArticulos = 'http'.(isset($_SERVER['HTTPS']) ? 's' : '').'://'.$_SERVER['SERVER_NAME'].':8080/solr/biblio/select?q=depositor_id%3A'.$id.'%0A&fl=id%2C+deposit_title&wt=xml&indent=true';
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL,$urlArticulos);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+$contentSerials = curl_exec($ch);
+curl_close($ch);
+try {$xmlSerials= new SimpleXMLElement($contentSerials );} catch (Exception $e) {  }
+$deposit_link = array();
+foreach( $xmlSerials->result->doc  as $result  ) {
+	$id=$result->str[0];
+	$deposit=$result->str[1];
+	$item=array('id'=>$id, 'deposit'=>$deposit);
+	$deposit_link[]=$item;
+}
+?>
+
+<?
+    // Set page title.
+    $this->headTitle($this->translate('Staff View') . ': ' . $this->driver->getBreadcrumb());
+?>
+	
+	<div class="authorsTabs">
+	      
+	      </br>
+	      
+	      <div class="text-center">
+	      	<h3 class="titleinfo"><?=$this->transEsc('Depositor')?>: <?= $this->driver->getTitle();?></h3>
+	      </div>
+	      
+	      </br>
+	
+	<? $fullname = $this->driver->getFullName(); if (!empty($fullname)): ?>
+		      <div id="authorsFields">
+		        <span class="titleinfo"><?=$this->transEsc('Full Name')?>: </span></br>
+		      <? foreach ($fullname as $field):?>
+		        <span style="margin-left: 1%;"><?=$this->escapeHtml($field)?></span></br>
+		          <? endforeach; ?>
+		      </div>
+		      </br>
+	<? endif; ?>
+	
+	<? $image = $this->driver->getImage(); if (!empty($image[0])): ?>
+		      	<? foreach ($image as $field):?>
+				<? $depo_image = "http".(isset($_SERVER["HTTPS"]) ? "s" : "")."://" . $_SERVER['SERVER_NAME'] . "/resources/" . $this->escapeHtml(str_replace('file:/lat/corpora/ELAR/', '', $field)); ?>
+		      		<? /*$depo_image = "http".(isset($_SERVER["HTTPS"]) ? "s" : "")."://" . $_SERVER['SERVER_NAME'] . "/depositStore/" . $this->escapeHtml($field); 
+	                           $url_image = "/mnt/ELAR_Home_Page_Resources/" . $this->escapeHtml($field);*/ ?>
+	                        <? /* if (is_file($url_image)): */ ?>
+				<div id="authorsFields">
+					<span class="titleinfo"><?=$this->transEsc('Image')?>: </span></br>
+					<div id="cover_image"><img src="<?=$depo_image;?>" width="100px" height="100px" class="img-responsive" alt="Responsive image"></div>
+				</div>
+				</br>
+				<? /* endif; */ ?>
+		        <? endforeach; ?>
+	<? endif; ?>
+	
+	<? $affiliation = $this->driver->getAffiliation(); if (!empty($affiliation)): ?>
+		       <div id="authorsFields">
+		        <span class="titleinfo"><?=$this->transEsc('Affiliation')?>: </span></br>
+		       <? foreach ($affiliation as $field):?>
+		        <span style="margin-left: 1%;"><?=$this->escapeHtml($field)?></span></br>
+		          <? endforeach; ?>
+		       </div>
+		       </br>
+	      <? endif; ?>
+	
+	<? $nationality = $this->driver->getNationality(); if (!empty($nationality)): ?>
+		      <div id="authorsFields">
+		        <span class="titleinfo"><?=$this->transEsc('Nationality')?>: </span></br>
+		      <? foreach ($nationality as $field):?>
+		        <span style="margin-left: 1%;"><?=$this->escapeHtml($field)?></span></br>
+		          <? endforeach; ?>
+		      </div>
+		      </br>
+	<? endif; ?>
+	
+	<? if (!empty($deposit_link)): ?>
+
+		      <div id="authorsFields">
+		        <span class="titleinfo"><?=$this->transEsc('Deposits')?>: </span></br>
+		      <? foreach ($deposit_link as $field):?>
+		        <span style="margin-left: 1%;"><a href="http<?=(isset($_SERVER['HTTPS']) ? 's' : '');?>://<?= $_SERVER['SERVER_NAME'];?>/Collection/<?=$field['id'];?>"><?=$field['deposit'];?></a></span></br>
+		          <? endforeach; ?>
+		      </div>
+		      </br>
+	<? endif; ?>
+	
+	<? $urls = $this->driver->getUrls(); if (!empty($urls)): ?>
+		      <div id="authorsFields">
+		        <span class="titleinfo"><?=$this->transEsc('Urls')?>: </span></br>
+		      <? foreach ($urls as $field):?>
+		        <span style="margin-left: 1%;"><a href="http://<?=$this->escapeHtml($field)?>" target="_blank"><?=$this->escapeHtml($field)?></a></span></br>
+		          <? endforeach; ?>
+		      </div>
+		      </br>
+	<? endif; ?> 
+	
+	</div>

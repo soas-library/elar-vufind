@@ -1,0 +1,545 @@
+<?php
+/**
+ * Table Definition for resource
+ *
+ * PHP version 5
+ *
+ * Copyright (C) Villanova University 2010.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * @category VuFind2
+ * @package  Db_Table
+ * @author   Demian Katz <demian.katz@villanova.edu>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     http://vufind.org   Main Site
+ */
+namespace VuFind\Db\Table;
+use Zend\Db\Sql\Expression;
+
+/**
+ * Table Definition for resource
+ *
+ * @category VuFind2
+ * @package  Db_Table
+ * @author   Demian Katz <demian.katz@villanova.edu>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     http://vufind.org   Main Site
+ */
+class LatResources extends Gateway
+{
+    /**
+     * Date converter
+     *
+     * @var \VuFind\Date\Converter
+     */
+    protected $dateConverter;
+
+    /**
+     * Constructor
+     *
+     * @param \VuFind\Date\Converter $converter Date converter
+     */
+    public function __construct()
+    {
+        parent::__construct('lat_resources', 'VuFind\Db\Row\LatResources');
+    }
+
+    /**
+     * Look up a row for the specified resource.
+     *
+     * @param string                            $id     Record ID to look up
+     * @param string                            $source Source of record to look up
+     * @param bool                              $create If true, create the row if it
+     * does not
+     * yet exist.
+     * @param \VuFind\RecordDriver\AbstractBase $driver A record driver for the
+     * resource being created (optional -- improves efficiency if provided, but will
+     * be auto-loaded as needed if left null).
+     *
+     * @return \VuFind\Db\Row\Resource|null Matching row if found or created, null
+     * otherwise.
+     */
+    public function saveResource($id,$accessavailability, $datestamp, $name, $depositId, $size, $duration, $type, $bundle_title, $deposit_title) {
+
+
+            $matches = $this->select(array('id' => $id));
+            if (count($matches) > 0 && ($row = $matches->current())) {
+	            $row->delete(); 
+            }
+            $result = $this->createRow();
+            $result->id = $id;
+            $result->accessavailability = $accessavailability;
+            $result->name = $name;
+            $result->deposit_id = $depositId;
+            $result->datestamp = $datestamp;
+            $result->size = $size;
+            $result->duration = $duration;
+	    $result->file_type = $type;
+            $result->processed=1;
+            $result->bundle_title = $bundle_title;
+ 	    $result->deposit_title = $deposit_title;
+		/*print_r($id. "\n");
+		print_r($accessavailability. "\n");
+                print_r($datestamp. "\n");
+                print_r($name. "\n");
+                print_r($depositId. "\n");
+                print_r($size. "\n");
+                print_r($duration. ":\n");
+                print_r($type. "\n");
+                print_r($bundle_title. "\n");
+                print_r($deposit_title. "\n");*/
+            $result->save();
+            echo "poner". $id. "\n";
+            return $result->id;
+    }
+
+    /**
+     * Initialize processed to 0
+     *
+     * @return void
+     */
+    public function setInitial()
+    {
+        $sql = "update lat_resources set processed='0';";
+        $statement = $this->adapter->query($sql);
+
+        $results = $statement->execute();
+        return $results;
+    }
+
+    /**
+     * Delete all the non processed linkes
+     *
+     * @return void
+     */
+    public function clear()
+    {
+        $sql = "delete from lat_resources where processed='0';";
+        $statement = $this->adapter->query($sql);
+
+        $results = $statement->execute();
+        return $results;
+    }
+
+
+
+
+    /**
+     * Delete all the entries
+     *
+     * @return void
+     */
+    public function truncate()
+    {
+        $sql = "delete from lat_resources";
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	return $results;
+    }
+
+    /**
+     * Returns the count of number of page hits
+     *
+     * @param date $current_year Year to use in the query
+     * date $current_month Month to use in the query
+     *
+     * @return number
+     */
+    public function getNumberOfResources($yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+    	//$current_month="1";
+        $num=array();
+        /*if($current_month == 0) {
+        	if($current_year == 0) {
+		        $sql="select accessavailability, count(*) as num ".
+		        "from lat_resources ".
+		        "group by accessavailability ";
+	        }
+	        else {
+		        $sql="select accessavailability, count(*) as num ".
+		        "from lat_resources ".
+		        "where YEAR(datestamp) = ".$current_year . " ".
+		        "group by accessavailability ";
+	        }
+        } else {
+        	if($current_year == 0) {
+		        $sql="select accessavailability, count(*) as num ".
+		        "from lat_resources ".
+		        "where MONTH(datestamp) = ".$current_month. " ".
+		        "group by accessavailability ";
+	        } else {
+		        $sql="select accessavailability, count(*) as num ".
+		        "from lat_resources ".
+		        "where YEAR(datestamp) = ".$current_year. " ".
+		        "and MONTH(datestamp) = ".$current_month. " ".
+		        "group by accessavailability ";
+	        }
+        }*/
+
+	$sql = 'select accessavailability, count(*) as num '
+	.'from lat_resources '
+	.'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom . '" '
+	.'AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo . '" '
+	.'group by accessavailability;';
+
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	
+	foreach ($results as $row) {
+		$num[] = array('accessavailability'=>$row['accessavailability'],'num'=>$row['num'] );
+	}
+        return $num;
+    }
+
+    /**
+     * Returns the count of number of page hits
+     *
+     * @param date $current_year Year to use in the query
+     * date $current_month Month to use in the query
+     *
+     * @return number
+     */
+    public function getNumberOfResourcesByDeposit($yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo,$depositId)
+    {
+    	//$current_month="1";
+        /*if($current_month == 0) {
+        	if($current_year == 0) {
+		        $sql="select accessavailability, count(*) as num ".
+		        "from lat_resources ".
+		        "where deposit_id = ".$depositId. " ".
+		        "group by accessavailability ";
+	        } else {
+		        $sql="select accessavailability, count(*) as num ".
+		        "from lat_resources ".
+		        "where YEAR(datestamp) = ".$current_year . " ".
+		        "and deposit_id = ".$depositId. " ".
+		        "group by accessavailability ";
+	        }
+        } else {
+        	if($current_year == 0) {
+		        $sql="select accessavailability, count(*) as num ".
+		        "from lat_resources ".
+		        "where MONTH(datestamp) = ".$current_month. " ".
+		        "and deposit_id = ".$depositId. " ".
+		        "group by accessavailability ";
+	        } else {
+		        $sql="select accessavailability, count(*) as num ".
+		        "from lat_resources ".
+		        "where YEAR(datestamp) = ".$current_year . " ".
+		        "and MONTH(datestamp) = ".$current_month. " ".
+		        "and deposit_id = ".$depositId. " ".
+		        "group by accessavailability ";
+	        }
+        }*/
+        
+        $sql='select accessavailability, count(*) as num '
+	.'from lat_resources '
+	.'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom . '" '
+	.'AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo . '" '
+	.'and deposit_id = '.$depositId
+	.' group by accessavailability;';
+        
+	//echo $sql;
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	
+	foreach ($results as $row) {
+		$num[] = array('accessavailability'=>$row['accessavailability'],'num'=>$row['num'] );
+	}
+        return $num;
+    }
+
+    /**
+     * Returns the count of number of page hits
+     *
+     * @param date $current_year Year to use in the query
+     * date $current_month Month to use in the query
+     *
+     * @return number
+     */
+    public function getAllResourcesByDeposit($yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+    	
+    	//$current_month="1";
+        /*if($current_month == 0) {
+                if($current_year == 0) {
+		        $sql = "SELECT deposit_id, accessavailability, COUNT(accessavailability) AS count ".
+		        "FROM lat_resources ".
+		        "where accessavailability in (SELECT accessavailability FROM vufind.lat_resources group by accessavailability) ".
+		        "group by accessavailability, deposit_id";
+	        } else {
+		        $sql = "SELECT deposit_id, accessavailability, COUNT(accessavailability) AS count ".
+		        "FROM lat_resources ".
+		        "where YEAR(datestamp) = ".$current_year . " ".
+		        "and accessavailability in (SELECT accessavailability FROM vufind.lat_resources group by accessavailability) ".
+		        "group by accessavailability, deposit_id";
+	        }
+        } else {
+        	if($current_year == 0) {
+		        $sql = "SELECT deposit_id, accessavailability, COUNT(accessavailability) AS count ".
+		        "FROM lat_resources ".
+		        "where 1=1 " .
+		        "and MONTH(datestamp) = ".$current_month . " ".
+		        "and accessavailability in (SELECT accessavailability FROM vufind.lat_resources group by accessavailability) ".
+		        "group by accessavailability, deposit_id";
+	        } else {
+		        $sql = "SELECT deposit_id, accessavailability, COUNT(accessavailability) AS count ".
+		        "FROM lat_resources ".
+		        "where YEAR(datestamp) = ".$current_year . " ".
+		        "and MONTH(datestamp) = ".$current_month. " ".
+		        "and accessavailability in (SELECT accessavailability FROM vufind.lat_resources group by accessavailability) ".
+		        "group by accessavailability, deposit_id";
+	        }
+        }*/
+
+	$sql = 'SELECT deposit_id, accessavailability, COUNT(accessavailability) AS count '
+	.'FROM lat_resources '
+	.'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom . '" '
+	.'AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo . '" '
+	.'and accessavailability in '
+	.'(SELECT accessavailability '
+	.'FROM vufind.lat_resources '
+	.'group by accessavailability) '
+	.'group by accessavailability, deposit_id;';
+
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	
+	foreach ($results as $row) {
+		//$num[] = array('deposit_id'=> $row['deposit_id'], 'accessavailability'=>$row['accessavailability'],'num'=>$row['count'] );
+		$depositId=$row['deposit_id'];
+		$accesavailability= $row['accessavailability'];
+		$num[$depositId][$accesavailability] = array('num'=>$row['count'] );
+	}
+	//print_r($num);
+        return $num;
+    }
+
+    /**
+     * Returns the years to use in the filters
+     *
+     * @return number
+     */
+     
+    public function getYears()
+    {
+        $filters = array();
+        
+        $sql="select distinct(year(datestamp)) as year from lat_resources;";
+	$statement = $this->adapter->query($sql);
+	$results = $statement->execute();
+	
+	foreach ($results as $row) {
+		$filters[] = $row['year'];
+	}
+        return $filters;
+    }
+
+    public function getDepositUploadedFilesStatisticsDisplay($deposit_node_id, $yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+
+        //SCB Fix. Sanitize $depNodeId
+        $hasArguments = strpos($deposit_node_id,'?');
+        if ($hasArguments >0) {$deposit_node_id=substr($deposit_node_id,0,$hasArguments-1);}
+	
+	$sql = 'SELECT file_type, count(*) FROM lat_resources '
+	.'where deposit_id = "MPI' . $deposit_node_id 
+	.'" AND DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom 
+	.'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo 
+	.'" group by file_type order by count(*) DESC;';
+	
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	
+	$exa = array();
+	
+	foreach ($results as $row) {
+ 
+		$num = $row['count(*)'];
+		$file_type = $row['file_type'];
+	        
+	        $ex = $num . ' - ' . $file_type;
+	        
+	        $exa[] = $ex;
+	        
+	}
+        return $exa;
+    }
+
+    public function getDepositUploadedFilesStatistics($deposit_node_id, $yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+
+        //SCB Fix. Sanitize $depNodeId
+        $hasArguments = strpos($deposit_node_id,'?');
+        if ($hasArguments >0) {$deposit_node_id=substr($deposit_node_id,0,$hasArguments-1);}
+
+        $sql = 'SELECT DATE(datestamp), TIME(datestamp), id, bundle_title, name, accessavailability, size, duration, file_type, deposit_id, deposit_title FROM lat_resources '
+        .'where deposit_id = "MPI' . $deposit_node_id
+        .'" AND DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+        .'" order by datestamp DESC;';
+	
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+	
+	$exa = array();
+	
+	foreach ($results as $row) {
+
+		$d = $row['DATE(datestamp)'];
+		$t = $row['TIME(datestamp)']; 
+		$id = $row['id'];
+        $bundle_title = $row['bundle_title'];
+		$name = $row['name'];
+		$accessavailability = $row['accessavailability'];
+		$size = $row['size'];
+		$duration = $row['duration'];
+        $file_type = $row['file_type'];
+	    $deposit_id = $row['deposit_id'];
+		$deposit_title = $row['deposit_title'];
+		# Added by sb174 for Supportworks call no. F0183052 2018-05-29
+		$status = "Current";
+		if ((strpos(file_get_contents('https://lat1.lis.soas.ac.uk/ds/oaiprovider/oai2?verb=GetRecord&metadataPrefix=imdi&identifier=' . explode("-", $id)[1]), "Found no records")) !== false) {
+			$status = "Superseded";
+		}
+		# End
+ 
+	        $ex = $d . ' % ' . $t . ' % ' . $id . ' % ' . $bundle_title . ' % ' . $name . ' % ' . $accessavailability . ' % ' . $size. ' % ' . $duration. ' % ' . $file_type. ' % ' . $deposit_id. ' % ' . $deposit_title. ' % ' . $status;
+	        
+	        $exa[] = $ex;
+	        
+	}
+        return $exa;
+    }
+
+     public function getCountDepositUploadedFilesStatistics($yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+        $sql = 'SELECT COUNT(*) as total FROM lat_resources '
+        .'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+        .'" order by datestamp DESC';
+
+        $statement = $this->adapter->query($sql);
+        $results = $statement->execute();
+        foreach ($results as $row) {
+                $total = $row['total'];
+        }
+        return $total;
+    }
+
+
+
+    public function getDepositUploadedFilesPrivateStatistics($yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo, $page)
+    {
+
+        //SCB Fix. Sanitize $depNodeId
+        $hasArguments = strpos($deposit_node_id,'?');
+        if ($hasArguments >0) {$deposit_node_id=substr($deposit_node_id,0,$hasArguments-1);}
+
+//ini_set('memory_limit', '512M');
+ini_set('memory_limit', '1024M');
+
+        $sql = 'SELECT DATE(datestamp), TIME(datestamp), id, name, accessavailability, size, duration, file_type, deposit_id, deposit_title FROM lat_resources '
+        .'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+        .'" order by datestamp DESC limit 10 OFFSET '. $page*10;
+	
+	$statement = $this->adapter->query($sql);
+	
+	$results = $statement->execute();
+
+	$exa = array();
+	
+	foreach ($results as $row) {
+
+		$d = $row['DATE(datestamp)'];
+		$t = $row['TIME(datestamp)']; 
+		$id = $row['id'];
+        //$bundle_title = $row['bundle_title'];
+		$name = $row['name'];
+		$accessavailability = $row['accessavailability'];
+		$size = $row['size'];
+		$duration = $row['duration'];
+        $file_type = $row['file_type'];
+	    $deposit_id = $row['deposit_id'];
+		$deposit_title = $row['deposit_title'];
+	
+		$exa[]=array('datetime'=>$d . ' - ' . $t, 'id'=>explode("-", $id)[1],'name'=>$name,'accessavailability'=>$accessavailability,'size'=>$size,'duration'=>$duration,'file_type'=>$file_type,'deposit_id'=>$deposit_id,'deposit_title'=>$deposit_title);
+        
+	}
+        return $exa;
+    }
+
+    public function getDepositUploadedFilesPrivateStatisticsCsv($yearFrom, $monthFrom, $dayFrom, $yearTo, $monthTo, $dayTo)
+    {
+
+        //SCB Fix. Sanitize $depNodeId
+        $hasArguments = strpos($deposit_node_id,'?');
+        if ($hasArguments >0) {$deposit_node_id=substr($deposit_node_id,0,$hasArguments-1);}
+
+//ini_set('memory_limit', '512M');
+ini_set('memory_limit', '1024M');
+
+        $sql = 'SELECT DATE(datestamp), TIME(datestamp), id, name, accessavailability, size, duration, file_type, deposit_id, deposit_title FROM lat_resources '
+        .'where DATE(datestamp) between "' . $yearFrom . '-' . $monthFrom . '-' . $dayFrom
+        .'" AND "' . $yearTo . '-' . $monthTo . '-' . $dayTo
+        .'" order by datestamp DESC';
+
+        $statement = $this->adapter->query($sql);
+
+        $results = $statement->execute();
+
+        $exa = array();
+
+        foreach ($results as $row) {
+
+                $d = $row['DATE(datestamp)'];
+                $t = $row['TIME(datestamp)'];
+                $id = $row['id'];
+                //$bundle_title = $row['bundle_title'];
+                $name = $row['name'];
+                $accessavailability = $row['accessavailability'];
+                $size = $row['size'];
+                $duration = $row['duration'];
+                $file_type = $row['file_type'];
+                $deposit_id = $row['deposit_id'];
+                $deposit_title = $row['deposit_title'];
+				# Added by sb174 for Supportworks call no. F0183052 2018-05-29
+				$status = "Current";
+				if ((strpos(file_get_contents('https://lat1.lis.soas.ac.uk/ds/oaiprovider/oai2?verb=GetRecord&metadataPrefix=imdi&identifier=' . explode("-", $id)[1]), "Found no records")) !== false) {
+					$status = "Superseded";
+				}
+				# End
+
+                $exa[]=array('datetime'=>$d . ' - ' . $t, 'id'=>explode("-", $id)[1],'name'=>$name,'accessavailability'=>$accessavailability,'size'=>$size,'duration'=>$duration,'file_type'=>$file_type,'deposit_id'=>$deposit_id,'deposit_title'=>$deposit_title,'status'=>$status);
+
+        }
+        return $exa;
+    }
+
+
+
+
+
+
+
+
+}

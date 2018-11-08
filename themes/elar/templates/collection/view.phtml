@@ -1,0 +1,162 @@
+<? if($this->driver->getDeletionMessage()=='deleted') :?>
+<div class="alert alert-danger">
+  <? $deposit_id=$this->driver->getHierarchyTopID()[0];
+  $id = $this->driver->getUniqueId();
+  if ($id==$deposit_id)
+      echo $this->transEsc('Deleted deposit');
+  else
+      echo $this->transEsc('Deleted bundle'). "<a href=\"http://".$_SERVER['SERVER_NAME']."/Collection/".$deposit_id."\"> ".$this->transEsc('collection')."</a>";  
+  ?>
+  <? $this->layout()->breadcrumbs='';?>
+</div>
+  	 <? else:?>
+<?
+  // Set up standard record scripts:
+  $this->headScript()->appendFile("record.js");
+  $this->headScript()->appendFile("check_save_statuses.js");
+  // Activate Syndetics Plus if necessary:
+  if ($this->syndeticsPlus()->isActive()) {
+    echo $this->headScript()->appendFile($this->syndeticsPlus()->getScript());
+  }
+
+  // Add RDF header link if applicable:
+  if ($this->export()->recordSupportsFormat($this->driver, 'RDF')) {
+      $this->headLink()->appendAlternate($this->recordLink()->getActionUrl($this->driver, 'RDF'), 'application/rdf+xml', 'RDF Representation');
+  }
+
+  // Set flag for special cases relating to full-width hierarchy tree tab:
+  $tree = (strtolower($this->activeTab) == 'hierarchytree');
+
+  // Set up breadcrumbs:
+  $lastSearch = $this->getLastSearchLink($this->transEsc('Back to the result list'));
+  if (!empty($lastSearch)) {
+    $this->layout()->breadcrumbs = '<li>' . $lastSearch . '</li> ';
+  }
+  //SCB
+ // $this->layout()->breadcrumbs .= '<li><a href="' . $this->url('collections-home') . '">' . $this->transEsc('Collections') . '</a></li> '
+ //. '<li class="active">' . $this->recordLink()->getBreadcrumb($this->driver) . '</li>';
+ 
+ // $this->layout()->breadcrumbs .= '<li>' . $this->transEsc('Collections') . '</li> ';
+ //   . '<li class="active">' . $this->recordLink()->getBreadcrumb($this->driver) . '</li>';
+     
+?>
+
+    <? if (isset($this->scrollData) && ($this->scrollData['previousRecord'] || $this->scrollData['nextRecord'])): ?>
+	<ul class="pager">
+    	<? if ($this->scrollData['previousRecord']): ?>
+        	<li>
+	  		<a href="<?=$this->recordLink()->getUrl($this->scrollData['previousRecord'])?>" title="<?=$this->transEsc('Previous Search Result')?>">&laquo; <?=$this->transEsc('Prev')?></a>
+		</li>
+	<? else: ?>
+	      	<li class="disabled"><a href="#">&laquo; <?=$this->transEsc('Prev')?></a></li>
+	<? endif; ?>
+	#<?=$this->localizedNumber($this->scrollData['currentPosition']) . ' ' . $this->transEsc('of') . ' ' . $this->localizedNumber($this->scrollData['resultTotal']) . ' ' . $this->transEsc('results') ?>
+	<? if ($this->scrollData['nextRecord']): ?>
+	 	<li>
+	        	<a href="<?=$this->recordLink()->getUrl($this->scrollData['nextRecord'])?>" title="<?=$this->transEsc('Next Search Result')?>"><?=$this->transEsc('Next')?> &raquo;</a>
+	      	</li>
+	<? else: ?>
+	 	<li class="disabled"><a href="#"><?=$this->transEsc('Next')?> &raquo;</a></li>
+	<? endif; ?>
+	</ul>
+    <? endif; ?>
+    
+    <div class="title"><h3><?=$this->escapeHtml($this->driver->getDepositTitle() . ' ' . $this->driver->getSubtitle() . ' ' . $this->driver->getTitleSection())?></h3></div>
+
+    <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+        <li class="active"><a class="tab" href="#deposit" data-toggle="tab"><?=$this->transEsc('Tab1')?></a></li>
+        <li><a class="tab" href="#items" data-toggle="tab"><?=$this->transEsc('Tab2')?></a></li>
+    </ul>
+    
+    <div id="my-tab-content" class="tab-content">    
+        <div class="tab-pane active" id="deposit">
+        
+	    <div class="row">
+  		<div class="<?=$tree ? 'col-sm-12' : $this->layoutClass('mainbody') ?>">
+    		<div class="record">
+      			<input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId" id="record_id" />
+      			<input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getResourceSource())?>" class="hiddenSource" />
+      			<?=$this->flashmessages()?>
+      			<?=$this->record($this->driver)->getCollectionMetadata()?>
+    	    </div>
+
+	    	<? if (count($this->tabs) > 0): ?>
+		      	<a name="tabnav"></a>
+		      	</br>
+		        <? foreach ($this->tabs as $tab => $obj): ?>
+		        <? // add current tab to breadcrumbs if applicable:
+		          $desc = $obj->getDescription();
+		          $tab_classes = array();
+		          if (0 === strcasecmp($this->activeTab, $tab)) {
+		            $tab_classes[] = 'active';
+		            //$this->layout()->breadcrumbs .= ' <li id="tab1" class="active">' . $this->transEsc('Tab1') . '</li>';
+		            $activeTabObj = $obj;
+		          }
+		          if (!$obj->isVisible()) { $tab_classes[] = 'hidden'; }
+		          if (!$obj->supportsAjax()) { $tab_classes[] = 'noajax'; }
+		        ?>
+		        <? endforeach; ?>
+	    	<? endif; ?>
+    
+	    <span class="Z3988" title="<?=$this->escapeHtmlAttr($this->driver->getOpenURL())?>"></span>
+	  </div>
+
+	  <? if (isset($activeTabObj) && is_callable(array($activeTabObj, 'getSideRecommendations'))): ?>
+	    <div class="<?=$this->layoutClass('sidebar')?>">
+	      <? foreach ($activeTabObj->getSideRecommendations() as $current): ?>
+	        <?=$this->recommend($current)?>
+	      <? endforeach; ?>
+	    </div>
+	  <? endif; ?>
+	</div>
+            
+        </div>
+        <div class="tab-pane" id="items">
+        
+        <div class="row">
+  		<div class="<?=$tree ? 'col-sm-12' : $this->layoutClass('mainbody') ?> biblioDetails">
+    	<div class="record">
+      	<input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId" id="record_id" />
+      	<input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getResourceSource())?>" class="hiddenSource" />
+      	<?=$this->flashmessages()?>
+    	</div>
+
+	    <? if (count($this->tabs) > 0): ?>
+	      <a name="tabnav"></a>
+	      </br>
+	        <? foreach ($this->tabs as $tab => $obj): ?>
+	        <? // add current tab to breadcrumbs if applicable:
+	          $desc = $obj->getDescription();
+	          $tab_classes = array();
+	          if (0 === strcasecmp($this->activeTab, $tab)) {
+	            $tab_classes[] = 'active';
+	            //$this->layout()->breadcrumbs .= ' <li id="tab2" class="active">' . $this->transEsc('Tab2') . '</li>';
+	            $activeTabObj = $obj;
+	          }
+	          if (!$obj->isVisible()) { $tab_classes[] = 'hidden'; }
+	          if (!$obj->supportsAjax()) { $tab_classes[] = 'noajax'; }
+	        ?>
+	        <? endforeach; ?>
+	    <? endif; ?>
+
+	    <div class="collectionDetails<?=$tree ? 'Tree' : ''?> tab-content" id="record-tabs">
+	      <div class="tab-pane active" id="<?=$this->activeTab ?>-tab">
+	        <?=isset($activeTabObj) ? $this->record($this->driver)->getTab($activeTabObj) : '' ?>
+	      </div>
+	    </div>
+
+	    <span class="Z3988" title="<?=$this->escapeHtmlAttr($this->driver->getOpenURL())?>"></span>
+	  </div>
+
+	  <? if (isset($activeTabObj) && is_callable(array($activeTabObj, 'getSideRecommendations'))): ?>
+	    <div class="<?=$this->layoutClass('sidebar')?>">
+	      <? foreach ($activeTabObj->getSideRecommendations() as $current): ?>
+	        <?=$this->recommend($current)?>
+	      <? endforeach; ?>
+	    </div>
+	  <? endif; ?>
+	</div>
+        
+        </div>
+    </div>
+<? endif;?>

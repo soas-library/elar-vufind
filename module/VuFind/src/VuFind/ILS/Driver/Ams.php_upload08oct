@@ -1,0 +1,1153 @@
+<?php
+/**
+ * Ams ILS Driver
+ *
+ * PHP version 5
+ *
+ * Copyright (C) Ayesha Abed Library, BRAC University 2010.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * @category VuFind2
+ * @package  ILS_Drivers
+ * @author   Altaf Mahmud, System Programmer <altaf.mahmud@gmail.com>
+ * @author   David Maus <maus@hab.de>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     http://vufind.org/wiki/vufind2:building_an_ils_driver Wiki
+ */
+namespace VuFind\ILS\Driver;
+use PDO, PDOException, VuFind\Exception\ILS as ILSException;
+
+/**
+ * VuFind Driver for Ams (version: 3.02)
+ *
+ * @category VuFind2
+ * @package  ILS_Drivers
+ * @author   Altaf Mahmud, System Programmer <altaf.mahmud@gmail.com>
+ * @author   David Maus <maus@hab.de>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     http://vufind.org/wiki/vufind2:building_an_ils_driver Wiki
+ */
+class Ams extends AbstractBase
+{
+    /**
+     * Database connection
+     *
+     * @var PDO
+     */
+    protected $db;
+
+    /**
+     * ILS base URL
+     *
+     * @var string
+     */
+    protected $ilsBaseUrl;
+
+    /**
+     * Location codes
+     *
+     * @var array
+     */
+    protected $locCodes;
+
+    /**
+     * Initialize the driver.
+     *
+     * Validate configuration and perform all resource-intensive tasks needed to
+     * make the driver active.
+     *
+     * @throws ILSException
+     * @return void
+     */
+    public function init()
+    {
+        if (empty($this->config)) {
+            throw new ILSException('Configuration needs to be set.');
+        }
+
+        //Connect to MySQL
+        $this->db = new PDO(
+            'pgsql:host=' . $this->config['Catalog']['host'] .
+            ';port=' . $this->config['Catalog']['port'] .
+            ';dbname=' . $this->config['Catalog']['database'],
+            $this->config['Catalog']['username'],
+            $this->config['Catalog']['password']
+        );
+        // Throw PDOExceptions if something goes wrong
+        //$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        // Return result set like mysql_fetch_assoc()
+        //$this->db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
+        //Storing the base URL of ILS
+        $this->ilsBaseUrl = $this->config['Catalog']['url'];
+
+        // Location codes are defined in 'Ams.ini' file according to current
+        // version (3.02)
+        $this->locCodes = $this->config['Location_Codes'];
+    }
+
+    /**
+     * Get Holding
+     *
+     * This is responsible for retrieving the holding information of a certain
+     * record.
+     *
+     * @param string $id     The record id to retrieve the holdings for
+     * @param array  $patron Patron data
+     *
+     * @throws \VuFind\Exception\Date
+     * @throws ILSException
+     * @return array         On success, an associative array with the following
+     * keys: id, availability (boolean), status, location, reserve, callnumber,
+     * duedate, number, barcode.
+     */
+    public function getHolding($id, array $patron = null)
+    {
+    	
+        $this->db = new PDO(
+            'pgsql:host=' . $this->config['CatalogStructure']['host'] .
+            ';port=' . $this->config['CatalogStructure']['port'] .
+            ';dbname=' . $this->config['CatalogStructure']['database'],
+            $this->config['CatalogStructure']['username'],
+            $this->config['CatalogStructure']['password']
+        );
+        $holding = [];
+        $resource = [];
+        $available = true;
+        $duedate = $status = '';
+        $inum = 0;
+        $loc = $shelf = '';
+
+        $sql = "SELECT  nodeid, canonical, valid, vpath0, vpath1, vpath2, vpath " .
+            "FROM corpusstructure ".
+            "where vpath = '/MPI0#/MPI666428#/MPI677073#/MPI677171#'";
+
+        try {
+            $itemSqlStmt = $this->db->prepare($sql);
+            $itemSqlStmt->execute();
+            foreach ($itemSqlStmt->fetchAll() as $rowItem) {
+                $inum = $rowItem['nodeid'];
+
+
+                //Retrieving the location (shelf types)
+
+                //A default value is stored for null
+                $holding[] = [
+                    'id' => $id,
+                    'availability' => $available,
+                    'item_num' => 'hola',
+                    'status' => $status,
+                    'location' => $loc,
+                    'reserve' => (null == $rowItem['RESERVES'])
+                        ? 'Unknown' : $rowItem['RESERVES'],
+                    'callnumber' => $inum,
+                    'duedate' => $duedate,
+                    'barcode' => 'aaaaaa',
+                    'number' => '55555'
+                ];
+            }
+            return $holding;
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+    }
+
+    /**
+     * Get Resource
+     *
+     * This is responsible for retrieving the holding information of a certain
+     * record.
+     *
+     * @param string $id     The record id to retrieve the holdings for
+     * @param array  $patron Patron data
+     *
+     * @throws \VuFind\Exception\Date
+     * @throws ILSException
+     * @return array         On success, an associative array with the following
+     * keys: id, availability (boolean), status, location, reserve, callnumber,
+     * duedate, number, barcode.
+     */
+    public function getResource($id, $email, $setSpec, array $patron = null)
+    {
+        //echo "EMAIL " . $email . " SPEC " . $setSpec;
+        $this->db = new PDO(
+            'pgsql:host=' . $this->config['CatalogStructure']['host'] .
+            ';port=' . $this->config['CatalogStructure']['port'] .
+            ';dbname=' . $this->config['CatalogStructure']['database'],
+            $this->config['CatalogStructure']['username'],
+            $this->config['CatalogStructure']['password']
+        );
+        $resource = [];
+        $finalResource = [];
+        $sql = "SELECT  corpusstructure.nodeid, canonical, valid, vpath0, vpath1, vpath2, vpath, replace(url,'https://lat1.lis.soas.ac.uk/','file:/lat/') as url " .
+            "FROM corpusstructure, archiveobjects ".
+            "where corpusstructure.nodeid = archiveobjects.nodeid ".
+            "and vpath = '". $setSpec. "' ";
+        //echo $sql. "</br></br>";
+        try {
+
+            $itemSqlStmt = $this->db->prepare($sql);
+            $itemSqlStmt->execute();
+            foreach ($itemSqlStmt->fetchAll() as $rowItem) {
+                $sql = "select aclstring from accessgroups where md5 like (select readrights from archiveobjects where nodeid=" . $rowItem['nodeid'] .")";
+                //echo $sql. "</br></br>";
+		$deposit_id = $rowItem['vpath2'];
+                try {
+                    $itemSqlStmt = $this->db->prepare($sql);
+                    $itemSqlStmt->execute();
+                    foreach ($itemSqlStmt->fetchAll() as $rowItem2) {
+                        $roles_bundle_id = $rowItem2['aclstring'];
+                    }
+		    // Deposit roles
+		    $sql = "SELECT aclstring from accessgroups where md5 like (SELECT writerights from archiveobjects where nodeid=" . $deposit_id .")";
+		    //echo $sql. "</br></br>";
+		    $itemSqlStmt = $this->db->prepare($sql);
+                    $itemSqlStmt->execute();
+                    foreach ($itemSqlStmt->fetchAll() as $rowItem2) {
+                        $roles_deposit_id = $rowItem2['aclstring'];
+                    }
+
+                }
+                catch (PDOException $e) {
+                    throw new ILSException($e->getMessage());
+                }
+
+		$autorised="0";
+                $anyuser="0";
+                $everybody="0";
+		//Check if email is authorised in a specific deposit
+	
+		//echo $deposit_id. "</br></br>";
+		//echo 'Roles deposit'. "</br></br>";
+		//echo $roles_deposit_id. "</br></br>";	
+
+	        $posEmailDeposit = strpos($roles_deposit_id, $email);
+                //Check if email is authorised in a specific resource
+                
+		//echo 'Roles bundles'. "</br></br>";
+		//echo $roles_bundle_id. "</br></br>";
+
+		$posEmailBundle = strpos($roles_bundle_id, $email);
+                //Check if the resource is free for everybody
+                $posEverybody = strpos($roles_bundle_id, "everybody");
+                $posAnyAuthenticatedUser = strpos($roles_bundle_id, "anyAuthenticatedUser");
+                if ($posEverybody !== false ) {
+                	$everybody="1";
+                }
+                if ($posAnyAuthenticatedUser !== false ) {
+                        $anyuser="1";
+                }
+                if ($posEmailDeposit !== false || $posEmailBundle !== false || $posEverybody !== false ) {
+	    
+                        $autorised="1";
+                }
+
+                $resource[] = [
+                    'nodeid' => $rowItem['nodeid'],
+                     'url'  => $rowItem['url'],
+                     'authorised' => $autorised,
+                     'anyuser' => $anyuser,
+                     'everybody' => $everybody
+                 ];
+            }
+            foreach($resource as $item){
+            	$sql="select type, format, accessavailability from imdimd_mediafile where resourcelink = '". $item['url']."' UNION ". 
+            	"select type, format, accessavailability from imdimd_writtenresource where resourcelink = '". $item['url']."'";
+                $sql="select type, format, accessavailability,imdimd_sessionkeys.value as previo, imdimd_mediafilekeys.value as path ".
+                    "from imdimd_mediafile, imdimd_sessionkeys, imdimd_mediafilekeys ".
+                    "where imdimd_mediafile.nodeid = imdimd_sessionkeys.nodeid ".
+                    "and imdimd_mediafile.nodeid = imdimd_mediafilekeys.nodeid ".
+                    "and imdimd_mediafile.id2 = imdimd_mediafilekeys.id2 ".
+                    "and resourcelink =  '". $item['url']."' and imdimd_sessionkeys.name='CorpusId' ".
+                    "and imdimd_mediafilekeys.name='MasterPath' UNION ". 
+                    "select type, format, accessavailability,imdimd_sessionkeys.value as previo, imdimd_writtenresourcekeys.value as path ".
+                    "from imdimd_writtenresource, imdimd_sessionkeys, imdimd_writtenresourcekeys ".
+                    "where imdimd_writtenresource.nodeid = imdimd_sessionkeys.nodeid ".
+                    "and imdimd_writtenresource.nodeid = imdimd_writtenresourcekeys.nodeid ".
+                    "and imdimd_writtenresource.id2= imdimd_writtenresourcekeys.id2 ".
+                    "and resourcelink = '". $item['url']."' and imdimd_sessionkeys.name='CorpusId' ".
+                    "and imdimd_writtenresourcekeys.name = 'MasterPath'";
+                    
+                $sql="select type, format, accessavailability, replace(replace(resourcelink,'file:/lat/corpora/zzz-test-zzz/',''),'file:/lat/corpora/ELAR/','') as path ".
+                "from imdimd_mediafile ".
+                "where resourcelink = '". $item['url']."' ".
+                "UNION select type, format, accessavailability, replace(replace(resourcelink,'file:/lat/corpora/zzz-test-zzz/',''),'file:/lat/corpora/ELAR/','') as path ".
+                "from imdimd_writtenresource ".
+                "where resourcelink = '". $item['url']."' ";
+
+
+                $sql="select type, format, accessavailability, replace(replace(resourcelink,'file:/lat/corpora/zzz-test-zzz/',''),'file:/lat/corpora/ELAR/','') as path ".
+                "from imdimd_mediafile ".
+                "where resourcelink = '". $item['url']."' ".
+                "or resourcelink = '". str_replace('file:/lat/','https://lat1.lis.soas.ac.uk/',trim($item['url']))."' ".
+                "UNION select type, format, accessavailability, replace(replace(resourcelink,'file:/lat/corpora/zzz-test-zzz/',''),'file:/lat/corpora/ELAR/','') as path ".
+                "from imdimd_writtenresource ".
+                "where resourcelink = '". $item['url']."' ".
+                "or resourcelink = '". str_replace('file:/lat/','https://lat1.lis.soas.ac.uk/',trim($item['url']))."' ";
+
+                $sql = "select type, format, accessavailability, replace(replace(replace(resourcelink,'file:/lat/corpora/zzz-test-zzz/',''),'file:/lat/corpora/ELAR/',''),'https://lat1.lis.soas.ac.uk/corpora/ELAR/','') as path ".
+                "from imdimd_mediafile ".
+                "where resourcelink = '". $item['url']."' ".
+                "or resourcelink = '". str_replace('file:/lat/','https://lat1.lis.soas.ac.uk/',trim($item['url']))."' ".
+                "UNION select type, format, accessavailability, replace(replace(replace(resourcelink,'file:/lat/corpora/zzz-test-zzz/',''),'file:/lat/corpora/ELAR/',''),'https://lat1.lis.soas.ac.uk/corpora/ELAR/','') as path ".
+                "from imdimd_writtenresource ".
+                "where resourcelink = '". str_replace('file:/lat/','https://lat1.lis.soas.ac.uk/',trim($item['url']))."' ".
+                "or resourcelink = '". str_replace('file:/lat/','https://lat1.lis.soas.ac.uk/',trim($item['url']))."' ";
+
+                $sql = "select type, format, accessavailability, replace(replace(replace(resourcelink,'file:/lat/corpora/zzz-test-zzz/',''),'file:/lat/corpora/ELAR/',''),'https://lat1.lis.soas.ac.uk/corpora/ELAR/','') as path ".
+                "from imdimd_mediafile ".
+                "where resourcelink = '". $item['url']."' ".
+                "or resourcelink = '". str_replace('file:/lat/','https://lat1.lis.soas.ac.uk/',trim($item['url']))."' ".
+                "UNION select type, format, accessavailability, replace(replace(replace(resourcelink,'file:/lat/corpora/zzz-test-zzz/',''),'file:/lat/corpora/ELAR/',''),'https://lat1.lis.soas.ac.uk/corpora/ELAR/','') as path ".
+                "from imdimd_writtenresource ".
+                "where resourcelink = '". $item['url']."' ".
+                "or resourcelink = '". str_replace('file:/lat/','https://lat1.lis.soas.ac.uk/',trim($item['url']))."' ";
+
+
+        
+
+
+
+                //echo $sql. "</br></br>";
+
+                try {
+                    $path1="";
+                    $path2="";
+                    $itemSqlStmt = $this->db->prepare($sql);
+                    $itemSqlStmt->execute();
+                    foreach ($itemSqlStmt->fetchAll() as $rowItem3) {
+                    	$pointPos = strrpos($rowItem3['path'],".");
+                    	$path1 = substr($rowItem3['path'],0,$pointPos);
+                    	$path2 = substr($rowItem3['path'],$pointPos+1);
+                    	$pointBar = strrpos($rowItem3['path'],"/");
+                    	$filename = substr($rowItem3['path'],$pointBar+1);
+
+                        $anyuser= $item['anyuser'];
+                        $everybody = $item['everybody'];	
+
+                    	$accessavailability = $rowItem3['accessavailability'];
+                    	if ($everybody!=false) $accessavailability='O';
+                    	else if ($anyuser!= false) $accessavailability='U';
+                    	     else $accessavailability='S';
+                    	$finalResource[] =[
+                            'nodeid' => $item['nodeid'],
+                            //'url' => $item['url'],
+                            'authorised' => $item['authorised'],
+                            //'authorised' => '1',
+                            'type' => $rowItem3['type'],
+                            'previo' => $rowItem3['previo'],
+                            'path' => $rowItem3['path'],
+                            'path1' => $path1,
+                            'path2' => $path2,
+                            'filename' => $filename,
+                            'format' => $rowItem3['format'],
+                            'anyuser' => $item['anyuser'],
+                            'everybody' => $item['everybody'],
+                            //'accessavailability' => 'U'
+                            'accessavailability' => $accessavailability
+                    	];
+                    }
+                }
+                catch (PDOException $e) {
+                    throw new ILSException($e->getMessage());
+                }
+            }
+            //echo '<pre>'; print_r($finalResource); echo '</pre>';
+            return $finalResource;
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+    }
+
+
+ public function getDepositorFrom($nodeId)
+    {
+        $this->db = new PDO(
+            'pgsql:host=' . $this->config['CatalogStructure']['host'] .
+            ';port=' . $this->config['CatalogStructure']['port'] .
+            ';dbname=' . $this->config['CatalogStructure']['database'],
+            $this->config['CatalogStructure']['username'],
+            $this->config['CatalogStructure']['password']
+        );
+        $sql = "SELECT * FROM imdimd_session where nodeid= '". $nodeId. "' ";
+        //echo $sql. "</br></br>";
+        try {
+            $itemSqlStmt = $this->db->prepare($sql);
+            $itemSqlStmt->execute();
+            foreach ($itemSqlStmt->fetchAll() as $rowItem) {
+            	$depositor = $rowItem['projectcontactname'];
+            }
+            return $depositor;
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+    }
+
+
+    /**
+     * Get Hold Link
+     *
+     * The goal for this method is to return a URL to a "place hold" web page on
+     * the ILS OPAC. This is used for ILSs that do not support an API or method
+     * to place Holds.
+     *
+     * @param string $id      The id of the bib record
+     * @param array  $details Item details from getHoldings return array
+     *
+     * @return string         URL to ILS's OPAC's place hold screen.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function getHoldLink($id, $details)
+    {
+        // Web link of the ILS for placing hold on the item
+        return $this->ilsBaseUrl . "/cgi-bin/koha/opac-reserve.pl?biblionumber=$id";
+    }
+
+    /**
+     * Get Patron Fines
+     *
+     * This is responsible for retrieving all fines by a specific patron.
+     *
+     * @param array $patron The patron array from patronLogin
+     *
+     * @throws \VuFind\Exception\Date
+     * @throws ILSException
+     * @return mixed        Array of the patron's fines on success.
+     */
+    public function getMyFines($patron)
+    {
+        $sql = $sqlStmt = $row = '';
+        $id = 0;
+        $fineLst = [];
+        try {
+            $id = $patron['id'];
+            $sql = "select round(accountlines.amount*100) as AMOUNT, " .
+                "issues.issuedate as CHECKOUT, " .
+                "accountlines.description as FINE, " .
+                "round(accountlines.amountoutstanding*100) as BALANCE, " .
+                "issues.date_due as DUEDATE, items.biblionumber as BIBNO " .
+                "from accountlines join issues on " .
+                "accountlines.borrowernumber = issues.borrowernumber and " .
+                "accountlines.itemnumber = issues.itemnumber " .
+                "join items on accountlines.itemnumber = items.itemnumber " .
+                "where accountlines.borrowernumber = :id";
+            $sqlStmt = $this->db->prepare($sql);
+            $sqlStmt->execute([':id' => $id]);
+            foreach ($sqlStmt->fetchAll() as $row) {
+                $fineLst[] = [
+                    'amount' => (null == $row['AMOUNT']) ? 0 : $row['AMOUNT'],
+                    'checkout' => $row['CHECKOUT'],
+                    'fine' => (null == $row['FINE']) ? 'Unknown' : $row['FINE'],
+                    'balance' => (null == $row['BALANCE']) ? 0 : $row['BALANCE'],
+                    'duedate' => $row['DUEDATE'],
+                    'id' => $row['BIBNO']
+                ];
+            }
+            return $fineLst;
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+    }
+
+    /**
+     * Get Patron Holds
+     *
+     * This is responsible for retrieving all holds by a specific patron.
+     *
+     * @param array $patron The patron array from patronLogin
+     *
+     * @throws \VuFind\Exception\Date
+     * @throws ILSException
+     * @return array        Array of the patron's holds on success.
+     */
+    public function getMyHolds($patron)
+    {
+        $sql = $sqlStmt = $row = '';
+        $id = 0;
+        $holdLst = [];
+        try {
+            $id = $patron['id'];
+            $sql = "select reserves.biblionumber as BIBNO, " .
+                "branches.branchname as BRNAME, " .
+                "reserves.expirationdate as EXDATE, " .
+                "reserves.reservedate as RSVDATE from reserves " .
+                "join branches on reserves.branchcode = branches.branchcode " .
+                "where reserves.borrowernumber = :id";
+            $sqlStmt = $this->db->prepare($sql);
+            $sqlStmt->execute([':id' => $id]);
+            foreach ($sqlStmt->fetchAll() as $row) {
+                $holdLst[] = [
+                    'id' => $row['BIBNO'],
+                    'location' => $row['BRNAME'],
+                    'expire' => $row['EXDATE'],
+                    'create' => $row['RSVDATE']
+                ];
+            }
+            return $holdLst;
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+    }
+
+    /**
+     * Get Patron Profile
+     *
+     * This is responsible for retrieving the profile for a specific patron.
+     *
+     * @param array $patron The patron array
+     *
+     * @throws ILSException
+     * @return array        Array of the patron's profile data on success.
+     */
+    public function getMyProfile($patron)
+    {
+        $id = 0;
+        $sql = $sqlStmt = $row = '';
+        $profile = [];
+        try {
+            $id = $patron['firstname'];
+	    $sql = "select email as email from \"user\" " .
+                "where firstname = '" .$id ."'";
+            $sqlStmt = $this->db->prepare($sql);
+            $sqlStmt->execute();
+            $row = $sqlStmt->fetch();
+            if ($row) {
+                $profile = [
+                    'firstname' => $patron['firstname'],
+                    'lastname' => $patron['lastname'],
+                    'email' => $row['email'],
+                    'displayed' => $patron['displayed']
+                ];
+                return $profile;
+            }
+            return null;
+	}
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+    }
+
+    /**
+     * Get Patron Transactions
+     *
+     * This is responsible for retrieving all transactions (i.e. checked out items)
+     * by a specific patron.
+     *
+     * @param array $patron The patron array from patronLogin
+     *
+     * @throws \VuFind\Exception\Date
+     * @throws ILSException
+     * @return array        Array of the patron's transactions on success.
+     */
+    public function getMyTransactions($patron)
+    {
+        $id = 0;
+        $transactionLst = [];
+        $row = $sql = $sqlStmt = '';
+        try {
+            $id = $patron['id'];
+            $sql = "select issues.date_due as DUEDATE, items.biblionumber as " .
+                "BIBNO, items.barcode BARCODE, issues.renewals as RENEWALS " .
+                "from issues join items on issues.itemnumber = items.itemnumber " .
+                "where issues.borrowernumber = :id";
+            $sqlStmt = $this->db->prepare($sql);
+            $sqlStmt->execute([':id' => $id]);
+            foreach ($sqlStmt->fetchAll() as $row) {
+                $transactionLst[] = [
+                    'duedate' => $row['DUEDATE'],
+                    'id' => $row['BIBNO'],
+                    'barcode' => $row['BARCODE'],
+                    'renew' => $row['RENEWALS']
+                ];
+            }
+            return $transactionLst;
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+    }
+
+    /**
+     * Get Purchase History
+     *
+     * This is responsible for retrieving the acquisitions history data for the
+     * specific record (usually recently received issues of a serial).
+     *
+     * @param string $id The record id to retrieve the info for
+     *
+     * @throws ILSException
+     * @return array     An array with the acquisitions data on success.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function getPurchaseHistory($id)
+    {
+        // TODO
+        return [];
+    }
+
+    /**
+     * Get Status
+     *
+     * This is responsible for retrieving the status information of a certain
+     * record.
+     *
+     * @param string $id The record id to retrieve the holdings for
+     *
+     * @throws ILSException
+     * @return mixed     On success, an associative array with the following keys:
+     * id, availability (boolean), status, location, reserve, callnumber.
+     */
+    public function getStatus($id)
+    {
+        return $this->getHolding($id);
+    }
+
+    /**
+     * Get Statuses
+     *
+     * This is responsible for retrieving the status information for a
+     * collection of records.
+     *
+     * @param array $idLst The array of record ids to retrieve the status for
+     *
+     * @throws ILSException
+     * @return array       An array of getStatus() return values on success.
+     */
+    public function getStatuses($idLst)
+    {
+        $statusLst = [];
+        foreach ($idLst as $id) {
+            $statusLst[] = $this->getStatus($id);
+        }
+        return $statusLst;
+    }
+
+    /**
+     * Get suppressed records.
+     *
+     * NOTE: This function needs to be modified only if Ams has
+     *       suppressed records in OPAC view
+     *
+     * @throws ILSException
+     * @return array ID numbers of suppressed records in the system.
+     */
+    public function getSuppressedRecords()
+    {
+        // TODO
+        return [];
+    }
+
+    /**
+     * Patron Login
+     *
+     * This is responsible for authenticating a patron against the catalog.
+     *
+     * @param string $username The patron username
+     * @param string $password The patron's password
+     *
+     * @throws ILSException
+     * @return mixed          Associative array of patron info on successful login,
+     * null on unsuccessful login.
+     */
+    public function patronLogin($firstname, $password)
+    {
+        $patron = [];
+        $row = '';
+
+        $stored_hash = '';
+        try {
+            $sql = "select passwd from \"user\", principal where principal.id = \"user\".id and principal.uid = '".$firstname."@soas.ac.uk'";
+            $sqlStmt = $this->db->prepare($sql);
+            $sqlStmt->execute();
+            $row = $sqlStmt->fetch();
+            if ($row) {
+                $stored_hash = str_replace("{CRYPT}","",$row['passwd']);
+            } else {
+                return null;
+            }
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+        $db_pwd = crypt($password, $stored_hash);
+        $sql = "select principal.id as id, firstname as fname, " .
+            "name as lname, uid as email from \"user\", principal " .
+            "where principal.id = \"user\".id and uid = '".$firstname."@soas.ac.uk' and passwd = '{CRYPT}" . $db_pwd."'";
+        try {
+            $sqlStmt = $this->db->prepare($sql);
+            $sqlStmt->execute();
+            $row = $sqlStmt->fetch();
+            if ($row) {
+                try {
+                    //Check the license
+                    $sql = "select node_id,uid,accepted_on ".
+                    "from nodepcpl_license as a, node_principal as b, principal as c ".
+                    "where accepted_on is not null ".
+                    "and node_pcpl_id = b.id ".
+                    "and pcpl_id = c.id ".
+                    "and uid like '". $row['email'] ."'";
+                    $sqlStmt = $this->db->prepare($sql);
+                    $sqlStmt->execute();
+                    $row2 = $sqlStmt->fetch();
+                    
+                    //Check the correct email
+                    $sql = "select u.email from principal p, \"user\" u where p.id = u.id and p.uid = CONCAT('".$firstname."','@soas.ac.uk');";
+                    $sqlStmt = $this->db->prepare($sql);
+                    $sqlStmt->execute();
+                    $row3 = $sqlStmt->fetch();
+                    
+                    if ($row3) {
+                    
+                    if ($row2) {
+                        $patron = [
+                            'id' => $row['id'],
+                            'firstname' => $row['fname'],
+                            'lastname' => $row['lname'],
+                            'cat_username' => $firstname,
+                            'cat_password' => $password,
+                            'email' => $row['email'],
+                            'major' => null,
+                            'college' => null,
+			    'displayed' => $row3['email']
+                        ];
+                        return $patron;
+                    }
+                        $patron = [
+                            'id' => $row['id'],
+                            'firstname' => $row['fname'],
+                            'lastname' => $row['lname'],
+                            'cat_username' => $firstname,
+                            'cat_password' => $password,
+                            'email' => $row['email'],
+                            'major' => null,
+                            'college' => null,
+                            'displayed' => $row3['email']
+                        ];
+                        return $patron;
+                     }
+                     return null;
+                     
+                }
+                catch (PDOException $e) {
+                    throw new ILSException($e->getMessage());
+                }
+            }
+            return null;
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+    }
+
+    /**
+     * Get Resource
+     *
+     * This is responsible for retrieving the holding information of a certain
+     * record.
+     *
+     * @param string $id     The record id to retrieve the holdings for
+     * @param array  $patron Patron data
+     *
+     * @throws \VuFind\Exception\Date
+     * @throws ILSException
+     * @return array         On success, an associative array with the following
+     * keys: id, availability (boolean), status, location, reserve, callnumber,
+     * duedate, number, barcode.
+     */
+    public function getAccessLevelsDb($id,$setSpec)
+    {
+        $this->db = new PDO(
+            'pgsql:host=' . $this->config['CatalogStructure']['host'] .
+            ';port=' . $this->config['CatalogStructure']['port'] .
+            ';dbname=' . $this->config['CatalogStructure']['database'],
+            $this->config['CatalogStructure']['username'],
+            $this->config['CatalogStructure']['password']
+        );
+        $resource = [];
+        $finalResource = [];
+        $sql = "SELECT  corpusstructure.nodeid, canonical, valid, vpath0, vpath1, vpath2, vpath, replace(url,'https://lat1.lis.soas.ac.uk/','file:/lat/') as url " .
+            "FROM corpusstructure, archiveobjects ".
+            "where corpusstructure.nodeid = archiveobjects.nodeid ".
+            "and vpath = '". $setSpec. "' ";
+        try {
+            $itemSqlStmt = $this->db->prepare($sql);
+            $itemSqlStmt->execute();
+            foreach ($itemSqlStmt->fetchAll() as $rowItem) {
+                $sql = "select aclstring from accessgroups where md5 like (select readrights from archiveobjects where nodeid=" . $rowItem['nodeid'] .")";
+                try {
+                    $itemSqlStmt = $this->db->prepare($sql);
+                    $itemSqlStmt->execute();
+                    foreach ($itemSqlStmt->fetchAll() as $rowItem2) {
+                        $autorised="0";
+                        $anyuser="0";
+                        $everybody="0";
+                        //Check if email is authorised
+                        $posEmail = strpos($rowItem2['aclstring'], $email);
+                        //Check if the resource is free for everybody
+                        $posEverybody = strpos($rowItem2['aclstring'], "everybody");
+                        $posAnyAuthenticatedUser = strpos($rowItem2['aclstring'], "anyAuthenticatedUser");
+                        if ($posEverybody !== false ) {
+                            $everybody="1";
+                        }
+                        if ($posAnyAuthenticatedUser !== false ) {
+                            $anyuser="1";
+                        }
+                        if ($posEmail !== false || $posEverybody !== false ) {
+                            $autorised="1";
+                        }
+                    }
+                }
+                catch (PDOException $e) {
+                    throw new ILSException($e->getMessage());
+                }
+                $resource[] = [
+                    'nodeid' => $rowItem['nodeid'],
+                     'url'  => $rowItem['url'],
+                     'authorised' => $autorised,
+                     'anyuser' => $anyuser,
+                     'everybody' => $everybody
+                 ];
+            }
+            foreach($resource as $item){
+            	$sql="select type, format, accessavailability from imdimd_mediafile where resourcelink = '". $item['url']."' UNION ". 
+            	"select type, format, accessavailability from imdimd_writtenresource where resourcelink = '". $item['url']."'";
+                $sql="select type, format, accessavailability,imdimd_sessionkeys.value as previo, imdimd_mediafilekeys.value as path ".
+                    "from imdimd_mediafile, imdimd_sessionkeys, imdimd_mediafilekeys ".
+                    "where imdimd_mediafile.nodeid = imdimd_sessionkeys.nodeid ".
+                    "and imdimd_mediafile.nodeid = imdimd_mediafilekeys.nodeid ".
+                    "and imdimd_mediafile.id2 = imdimd_mediafilekeys.id2 ".
+                    "and resourcelink =  '". $item['url']."' and imdimd_sessionkeys.name='CorpusId' ".
+                    "and imdimd_mediafilekeys.name='MasterPath' UNION ". 
+                    "select type, format, accessavailability,imdimd_sessionkeys.value as previo, imdimd_writtenresourcekeys.value as path ".
+                    "from imdimd_writtenresource, imdimd_sessionkeys, imdimd_writtenresourcekeys ".
+                    "where imdimd_writtenresource.nodeid = imdimd_sessionkeys.nodeid ".
+                    "and imdimd_writtenresource.nodeid = imdimd_writtenresourcekeys.nodeid ".
+                    "and imdimd_writtenresource.id2= imdimd_writtenresourcekeys.id2 ".
+                    "and resourcelink = '". $item['url']."' and imdimd_sessionkeys.name='CorpusId' ".
+                    "and imdimd_writtenresourcekeys.name = 'MasterPath'";
+                    
+                $sql="select type, format, accessavailability, replace(replace(resourcelink,'file:/lat/corpora/zzz-test-zzz/',''),'file:/lat/corpora/ELAR/','') as path ".
+                "from imdimd_mediafile ".
+                "where resourcelink = '". $item['url']."' ".
+                "UNION select type, format, accessavailability, replace(replace(resourcelink,'file:/lat/corpora/zzz-test-zzz/',''),'file:/lat/corpora/ELAR/','') as path ".
+                "from imdimd_writtenresource ".
+                "where resourcelink = '". $item['url']."' ";
+
+                try {
+                    $path1="";
+                    $path2="";
+                    $itemSqlStmt = $this->db->prepare($sql);
+                    $itemSqlStmt->execute();
+                    foreach ($itemSqlStmt->fetchAll() as $rowItem3) {
+                    	$pointPos = strrpos($rowItem3['path'],".");
+                    	$path1 = substr($rowItem3['path'],0,$pointPos);
+                    	$path2 = substr($rowItem3['path'],$pointPos+1);
+                    	$pointBar = strrpos($rowItem3['path'],"/");
+                    	$filename = substr($rowItem3['path'],$pointBar+1);
+                    	
+                        $anyuser= $item['anyuser'];
+                        $everybody = $item['everybody'];
+
+                    	if ($everybody!=false) $accessavailability='O';
+                    	else if ($anyuser!= false) $accessavailability='U';
+                    	     else $accessavailability='S';
+                    	$finalResource[] =[
+                            'nodeid' => $item['nodeid'],
+                            //'url' => $item['url'],
+                            'authorised' => $item['authorised'],
+                            //'authorised' => '1',
+                            'type' => $rowItem3['type'],
+                            'previo' => $rowItem3['previo'],
+                            'path' => $rowItem3['path'],
+                            'path1' => $path1,
+                            'path2' => $path2,
+                            'filename' => $filename,
+                            'format' => $rowItem3['format'],
+                            'anyuser' => $item['anyuser'],
+                            'everybody' => $item['everybody'],
+                            //'accessavailability' => 'U'
+                            'accessavailability' => $accessavailability
+                    	];
+                    }
+                }
+                catch (PDOException $e) {
+                    throw new ILSException($e->getMessage());
+                }
+            }
+            //echo '<pre>'; print_r($finalResource); echo '</pre>';
+            return $finalResource;
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+    }
+
+
+     /**
+     * Get Resource
+     *
+     * Retrieve the stadistics permission.
+     *
+     * @param String $u     User email
+     * @param int  $node_id Node ID
+     */
+    public function getStadisticsPermission($u, $node_id)
+    {
+        $this->db = new PDO(
+            'pgsql:host=' . $this->config['CatalogStructure']['host'] .
+            ';port=' . $this->config['CatalogStructure']['port'] .
+            ';dbname=' . $this->config['CatalogStructure']['database'],
+            $this->config['CatalogStructure']['username'],
+            $this->config['CatalogStructure']['password']
+        );
+        $resource = [];
+        $finalResource = [];
+        $sql = "SELECT aclstring from accessgroups where md5 like (SELECT writerights from archiveobjects where nodeid=". $node_id .");";
+        try {
+            $itemSqlStmt = $this->db->prepare($sql);
+            $itemSqlStmt->execute();
+            foreach ($itemSqlStmt->fetchAll() as $rowItem) {
+                $users = explode(" ", $rowItem['aclstring']);
+                //print_r($users);
+                foreach ($users as $user) {
+		    if (strcmp($user, $u) == 0) {
+			    return True;
+			}
+		}
+            }
+            return False;
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+    }
+
+/**
+     * Get BundleID and one resource
+     *
+     * Retrieve the bundle id and the selected resource from nodeid.
+     *
+     * @param int  $node_id Node ID
+     */
+    public function getBundlesAndOneResource($node_id)
+    {
+        $this->db = new PDO(
+            'pgsql:host=' . $this->config['CatalogStructure']['host'] .
+            ';port=' . $this->config['CatalogStructure']['port'] .
+            ';dbname=' . $this->config['CatalogStructure']['database'],
+            $this->config['CatalogStructure']['username'],
+            $this->config['CatalogStructure']['password']
+        );
+        
+        $all = [];
+        $resourceName = [];
+        $bundleId = 0;
+        
+        $sql = "select vpath from corpusstructure where nodeid = ". $node_id .";";
+        
+        try {
+            $itemSqlStmt = $this->db->prepare($sql);
+            $itemSqlStmt->execute();
+            foreach ($itemSqlStmt->fetchAll() as $rowItem) {
+                $vpath = $rowItem['vpath'];
+            }
+            $temp = explode("/", $vpath);
+            $bundleId = end($temp);
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+        
+        $sql = "select name from corpusnodes where nodeid = ". $node_id .";";
+        
+        //Bundle ID
+        $bundleId = str_replace("#","",$bundleId);
+        $all[] = $bundleId;
+        
+        try {
+            $itemSqlStmt = $this->db->prepare($sql);
+            $itemSqlStmt->execute();
+            foreach ($itemSqlStmt->fetchAll() as $rowItem) {
+                $resourceName[] = $rowItem['name'];
+            }
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+        
+        $all[] = $resourceName;
+        
+        return $all;
+        
+    }
+
+     /**
+     * Get BundleID and all child resources
+     *
+     * Retrieve the bundle id and all child resources from nodeid.
+     *
+     * @param int  $node_id Node ID
+     */
+    public function getBundlesAndResources($node_id)
+    {
+        $this->db = new PDO(
+            'pgsql:host=' . $this->config['CatalogStructure']['host'] .
+            ';port=' . $this->config['CatalogStructure']['port'] .
+            ';dbname=' . $this->config['CatalogStructure']['database'],
+            $this->config['CatalogStructure']['username'],
+            $this->config['CatalogStructure']['password']
+        );
+        
+        $all = [];
+        $resource = [];
+        $resourceName = [];
+        $bundleId = 0;
+        
+        $sql = "select vpath from corpusstructure where nodeid = ". $node_id .";";
+        
+        try {
+            $itemSqlStmt = $this->db->prepare($sql);
+            $itemSqlStmt->execute();
+            foreach ($itemSqlStmt->fetchAll() as $rowItem) {
+                $vpath = $rowItem['vpath'];
+            }
+            $temp = explode("/", $vpath);
+            $bundleId = end($temp);
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+        
+        $sql = "select nodeid from corpusstructure where vpath like '%". $vpath ."%';";
+        
+        //Bundle ID
+        $bundleId = str_replace("#","",$bundleId);
+        //$bundleId = str_replace("MPI","",$bundleId);
+        $all[] = $bundleId;
+        
+        try {
+            $itemSqlStmt = $this->db->prepare($sql);
+            $itemSqlStmt->execute();
+            foreach ($itemSqlStmt->fetchAll() as $rowItem) {
+                $resource[] = $rowItem['nodeid'];
+                
+                $sql_names = "select name from corpusnodes where nodeid = ". $rowItem['nodeid'] .";";
+                $itemSqlStmt_names = $this->db->prepare($sql_names);
+                $itemSqlStmt_names->execute();
+                foreach ($itemSqlStmt_names->fetchAll() as $rowItemName) {
+                	$resourceName[] = $rowItemName['name'];
+                }
+                
+            }
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+        
+        $all[] = $resource;
+        $all[] = $resourceName;
+        
+        return $all;
+        
+    }
+
+     /**
+     * Get BundleID and all child resources
+     *
+     * Retrieve the bundle id and all child resources from nodeid.
+     *
+     * @param int  $node_id Node ID
+     */
+    public function getCollectionAndBundles($node_id)
+    {
+        $this->db = new PDO(
+            'pgsql:host=' . $this->config['CatalogStructure']['host'] .
+            ';port=' . $this->config['CatalogStructure']['port'] .
+            ';dbname=' . $this->config['CatalogStructure']['database'],
+            $this->config['CatalogStructure']['username'],
+            $this->config['CatalogStructure']['password']
+        );
+        
+        $all = [];
+        $bundle = [];
+        $collectionId = 0;
+        $bundleId = 0;
+        
+        $sql = "select vpath from corpusstructure where nodeid = ". $node_id .";";
+        
+        try {
+            $itemSqlStmt = $this->db->prepare($sql);
+            $itemSqlStmt->execute();
+            foreach ($itemSqlStmt->fetchAll() as $rowItem) {
+                $vpath = $rowItem['vpath'];
+            }
+            $temp = explode("/", $vpath);
+            $bundleId = end($temp);
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+        
+        //Bundle ID
+        $bundleId = str_replace("#","",$bundleId);
+        $bundleId = str_replace("MPI","",$bundleId);
+        
+        $sql = "select * from corpusstructure where nodeid = ". $bundleId .";";
+        
+        try {
+            $itemSqlStmt = $this->db->prepare($sql);
+            $itemSqlStmt->execute();
+            foreach ($itemSqlStmt->fetchAll() as $rowItem) {
+                $vpath = $rowItem['vpath'];
+            }
+            $temp = explode("/", $vpath);
+            $collectionId = end($temp);
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+        
+        //Collection ID
+        $collectionId = str_replace("#","",$collectionId);
+        //$collectionId = str_replace("MPI","",$collectionId);
+        $all[] = $collectionId;
+        
+        $sql = "select nodeid from corpusstructure where vpath like '%". $vpath ."';";
+        
+        try {
+            $itemSqlStmt = $this->db->prepare($sql);
+            $itemSqlStmt->execute();
+            foreach ($itemSqlStmt->fetchAll() as $rowItem) {
+                $bundle[] = 'MPI' . $rowItem['nodeid'];
+            }
+        }
+        catch (PDOException $e) {
+            throw new ILSException($e->getMessage());
+        }
+        
+        $all[] = $bundle;
+        
+        return $all;
+        
+    }
+
+}
