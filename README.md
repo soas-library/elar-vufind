@@ -96,7 +96,7 @@ Important sub-directories are:
 
 * /usr/local/vufind/local/cache (Cache files for cover images, languages, objects, and searchspecs)
 
-* /usr/local/vufind/local/config (Copies of the /usr/local/vufind2/config files which have been customised for SOAS Library)
+* /usr/local/vufind/local/config (Copies of the /usr/local/vufind2/config files which have been customised for ELAR)
 
 * /usr/local/vufind/module (VuFind application code)
 
@@ -112,9 +112,9 @@ Important sub-directories are:
 
 * /usr/local/vufind/themes (HTML and CSS files for website display)
 
-* /usr/local/vufind/themes/templates/scb-soas (Highly customised files for SOAS Library display)
+* /usr/local/vufind/themes/templates/elar (Highly customised files for ELAR display)
 
-* /usr/local/vufind/util	(Utilities scripts: optimization, sitemap building, dedupe, etc.)
+* /usr/local/vufind/util (Utilities scripts: optimization, sitemap building, dedupe, etc.)
 
 ### 1.3.1: Configuration files
 
@@ -122,7 +122,7 @@ Important sub-directories are:
 
 * /usr/local/vufind/local/config/vufind/config.ini (Main configuration file for VuFind. Contains most general configuration: theme, ILS, debug mode, proxy settings, languages, authentication, links to external sites, SFX link, browsing, alphabrowsing, and more.)
 
-* /usr/local/vufind/local/config/vufind/OLE.ini	(Configuration file for connection to OLE.)
+* /usr/local/vufind/local/config/vufind/Ams.ini	(Configuration file for connection to LAT's access management database.)
 
 * /usr/local/vufind/local/config/vufind/facets.ini (Controls the facets / filters.)
 
@@ -134,7 +134,7 @@ Important sub-directories are:
 
 * /usr/local/vufind/local/config/vufind/searchbox.ini (Controls the searchbox: largely used to turn on the 'combined search' module.)
 
-* /usr/local/vufind/harvest/oai.ini (Defines OAI-PMH connections. Used for SOAS Research Online, SOAS Archives, SOAS Digital Collections, Directory of Open Access Books.)
+* /usr/local/vufind/harvest/oai.ini (Defines OAI-PMH connections. Used for connecting to LAT.)
 
 ### 1.3.2: Basic Apache control
 
@@ -165,16 +165,6 @@ To stop the VuFind application (user must be root):
 To restart the VuFind application (user must be root):
 
 `/usr/local/vufind/solr.sh restart`
-
-To run the indexing process:
-
-`/usr/local/vufind/import-marc.sh [FILE CONTAINING MARC RECORDS]`
-
-For example: /usr/local/vufind/import-marc.sh /home/vufind/input/daily/vufind_update_full-21.05.15.mrc
-
-To run the alphabrowse indexing process:
-
-`/usr/local/vufind/import-alphabetic-browse.sh`
 
 ### 1.5.4: Solr interface
 
