@@ -184,7 +184,7 @@ Within this file there are 3 alias:
 
 All the external files linked from the Drupal code used in VuFind will be under the folder called deposit.
 
-#6. ACCESS TO LAT-AMS DATABASE
+# 6. ACCESS TO LAT-AMS DATABASE
 
 VuFind requires connection to LAT-AMS database to get required data not included in the metadata records that are imported and indexed in VuFind. The database has two instances: soas and corpustructure.
 
