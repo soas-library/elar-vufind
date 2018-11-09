@@ -2,182 +2,250 @@ Open-source VuFind software [https://vufind-org.github.io/vufind/](https://vufin
 
 This site was largely designed by Scanbit [https://www.scanbit.net/](https://www.scanbit.net/) who provide software development and hosting for cultural heritage and research institutions.
 
-This page collects notes and instructions on ELAR's VuFind repository.
+This page collects technical documentation on ELAR's VuFind repository. This was produced by Scanbit as ELAR_VuFind_technical_documentation_v1-2.pdf.
 
 For updates and support with VuFind, join the vufind-general@lists.sourceforge.net and the vufind-tech@lists.sourceforge.net mailing lists at [http://sourceforge.net/p/vufind/mailman/](http://sourceforge.net/p/vufind/mailman/). Thorough documentation and manuals on VuFind can be found at [https://vufind.org/wiki/](https://vufind.org/wiki/).
 
-# 1.0: VuFind application
+# 1. SCOPE
 
-## 1.1: Servers
+This document aims to be a VuFind technical documentation for SOAS IT staff to provide a first level support service for the ELAR interface via VuFind implementation delivered by SCANBIT
 
-VuFind is installed on two servers for dev (sjon) and production (wurin). 
+# 2. SERVER INSTALLATION
 
-The intended change management process is to develop new features or customisations on sjon, send it to ELAR for testing and UAT, and then transfer the code to wurin. 
+## SYSTEM REQUIREMENTS
 
-### 1.1.1: Version control
+Software requirements for VuFind 2.5 installation:
+* Apache 2.2.12+
+* PHP 5.4+ 
+* MySQL 5.1.10+
+* Java JDK 1.7+
+* PostgreSQL 9.0+
 
-GitHub is used for version control and transferring files. To commit changes on the dev server:
+Additionally, VuFind installation requires at least 2GB of memory RAM and 15 GB of hard disk.
 
-`git commit -a --author="SimonXIX <sb174@soas.ac.uk>" -m "Changes to header"`
+### Vufind components and description
 
-`git push origin [BRANCH_NAME]`
+* Apache is a web server. VuFind needs Apache so that its pages are visible to users who want to access them.
+* Solr is a search engine. VuFind uses Solr to index your records and search through them for users. VuFind interacts with Solr in exactly the same way that your web browser talks to a web server. To make this possible, Solr runs inside its own web server software called Jetty.
+* PHP is the programming language that was used to write VuFind. Apache uses PHP to turn VuFind's code into web pages customized to answer user requests. PHP is the engine that drives all of VuFind's interactivity; without it, VuFind wouldn't be able to do anything.
+* An Integrated Library Management System (ILMS, ILS) is the software that traditionally handles catalog searches as well as circulation and administration. VuFind is designed to talk to an ILMS of some sort, though non-library users may be able to use it in other creative ways.
+* MySQL is the Database Management System (DBMS) that houses VuFind's local application database for your social metadata and such. When users add tags or leave comments, that information is stored in the MySQL database.
 
-To retrieve changes in the production server:
+All VuFind’s web server configuration files are stored in /usr/local/vufind2 folder, this are the main configuration and script files
 
-`git fetch origin`
+* /usr/local/vufind2/local/httpd-vufind.conf . Apache configuration for linking with VuFind
+* /usr/local/vufind2/config/vufind/config.ini . Main configuration file of VuFind
+* /usr/local/vufind2/vufind.sh . Startup/shutdown script of VuFind daemon
 
-`git reset --hard origin/[BRANCH_NAME]`
+VuFind additional documentation can be retrieved from official webpage https://vufind.org
 
-To merge changes from a dev branch into the master branch, merge [BRANCH NAME] into soas via pull request: [https://help.github.com/articles/merging-a-pull-request/](https://help.github.com/articles/merging-a-pull-request/) 
+## VUFIND SERVERS FOR SOAS ELAR
 
-### 1.1.2: Crontab 
+Currently, there are 2 servers for the project ELAR discovery Via VuFind:
 
-The crontab on the VuFind server is under the root username. To see it:
+Development: http://sjon.lis.soas.ac.uk/
+Production: http://wurin.lis.soas.ac.uk/
 
-`sudo -i`
+The access to these servers requires a username (person name) and, to perform the connection as root, it will be necessary to insert the ‘su’ command and the root password.
 
-Enter root password
+To upload files to those platforms, the user will access to the FTP/SSH using their person username. The files will be saved in the folder /home/xxxxx. After that, from the terminal and using root as username, those files will be moved to the desired path.
 
-`crontab -e`
+To create a back up of the MySQL database, there is a script in /root/scripts/ called backup_mysql.sh. This script creates a file containing the copy of the database within the path /usr/local/vufind/mysqldump/. That resulting file is named with the creation date. In addition to the database, it will also be necessary to copy the content of the folders /usr/local/vufind and /root/scripts (the harvesting and importing scripts used by the cron tasks are stored in thsis folder)
 
-## 1.2: Basic Linux
+# 3. VUFIND FOR PUBLISHING LAT DATA VIA DISCOVERY INTERFACE
 
-VuFind is installed on Linux servers and therefore requires at least a basic understanding of administration in a Linux environment and how to access Linux servers.
+LAT is the application used by SOAS ELAR team to store, view and query language metadata and multimedia files. Before installing VuFind, the online public interface to search and retrieve references to those data and resources was based on Drupal open source content management system. VuFind was the discovery tool used by publishing the library catalog. Because of the more powerful search features of VuFind and because there was a short-term project in SOAS for grouping all the institution’s resources under the same platform, the ELAR team decided to publish the catalogue of languages in a new VuFind installation.
 
-On Windows PCs, use PuTTY for access to VuFind servers: http://www.chiark.greenend.org.uk/~sgtatham/putty/
+The requirements for the new interface based on VuFind included maintaining all the functionalities and the ‘look and feel’ already implemented in the old Drupal interface. In addition, the VuFind specific features were customized and added to the new ELAR interface.
 
-On Macs, use the built-in Terminal application.
+This is a list of the main features included in the current ELAR interface for searching and discovering the metadata and multimedia resources collected and catalogued in LAT by the ELAR team:
 
-For Linux server administration, the best text available is: Nemeth, E., et al, 2011. _Unix and Linux systems administration handbook_. Fourth Edition. Boston: Pearson Education, Inc. Buy or otherwise acquire a copy of that. See also: Shotts, W. E., 2013. _The Linux command line_. Second Internet Edition. This book is available under Creative Commons at [http://linuxcommand.org/tlcl.php](http://linuxcommand.org/tlcl.php) and is a gentler introduction to the more advanced command line functions in Linux.
+* Responsive design
+* Browse by collections
+* Alphabetical browse
+* List of deposits
+* Map of deposits
+* Carousel showing the latest records added to the platform
+* One search box (All fields, Title, Keywords, Language)
+* Specific filters or facets for LAT data to refine the results
+* Display of images and embedded HTML
+* Suggestion of similar items from the detailed view of a record
+* Search bundles within a deposit
+* Access to the multimedia resources.
+* Images, audios and videos embedded through plugins
+* SQL access to LAT/AMS database (access permissions, depositor view, …)
+* Multi-tier data management
+* Registration and login
+* Active sitemaps for indexing the references in Google
 
-In a pinch, there's a handy list of basic Unix commands here: [http://mally.stanford.edu/~sr/computing/basic-unix.html](http://mally.stanford.edu/~sr/computing/basic-unix.html) and here: [http://journal.code4lib.org/articles/9158](http://journal.code4lib.org/articles/9158)
+# 4. HARVESTING AND IMPORTING DATA
 
-Some good general commands to use to troubleshoot problems on the Linux servers:
+The latest records catalogued in LAT are nightly exported from LAT (as XML) and imported and indexed in VuFind. Therefore, records added to LAT will be available for searching the day after they were catalogued.
 
-* w - who is logged in at this moment. Load averages are fine up to about 5.
+VuFind is a discovery tool, initially for libraries, that works as a metasearch engine for publishing and indexing all the references to the library resources (references or metadata from library bibliographic catalogue, digital library, archives, bibliographies, …). The search engine is based on Solr.
 
-* top - Top is a load-checking program similar to Task Manager in Windows.
+To import the data from LAT (the management system for cataloguing language archives, used by ELAR), VuFind uses the OAI-PMH protocol (https://www.openarchives.org/pmh/ ). The data are harvesting daily (there is a scheduled task in the crontab) and the metadata that VuFind gets are stored in VuFind as XML files. Those files will be indexed in VuFind to make the records searchable. The process is as follows:
 
-* htop - more advanced load-checking program. Shows virtual and real memory. Use F6 to sort the process list. Kill processes in a safe way by matching by PID in Innopac client. DON'T KILL ANYTHING USING TOP OR HTOP. IT ISN'T SAFE TO DO SO.
+1. The record is created in LAT
+2. The record is exposed by LAT and identified with an OAI url (URI)
+3. VuFind harvests the new records created in LAT (it takes into account the last harvesting date: last_harvest). Once the records are harvested, the last harvesting date will be automatically updated in VuFind. The configuration file for the harvesting is saved as /usr/local/vufind/harvest/oai.ini
 
-* ps -ef will give a quick view of processes running. Under a heavy load ps might work where htop doesn’t.
+The description for each of the fields imported in VuFind is in the same file oai.ini. This file doesn’t require any changes (only if the OAI url changes).
 
-* df will show disk space.
+To perform the harvesting, run the following:
 
-* df -i will show available inodes.
+`cd /usr/local/vufind/harvest
+/usr/bin/php harvest_oai.php ELAR`
 
-* df -ih will show the memory load for every partition.
+This is a standard output:
 
-* ls -l | wc -l shows how many files are in the current directory.
+`Processing ELAR...
+Autodetecting date granularity... found YYYY-MM-DD.
+Processing 100 records...
+Processing 100 records...
+Processing 3 records...
+Completed without errors -- 1 source(s) processed.`
 
-* ls -lrt will show which user owns (and therefore probably created) those files.
+This example means that 203 records were processed using the last harvesting date. This date is saved in the file /usr/local/vufind/local/harvest/ELAR/last_harvest.txt. If the user requires to harvest records from a specific date, the administrator will have to edit this file. If the user requires to get all the records, the administrator will remove this file (the system will not take into account that date if the file doesn’t exist). When this process is finished, the last harvesting date will be always the current date.
 
-* $ for i in /*; do echo $i; find $i |wc -l; done will list directories and number of files in them.
+Processed records are stored in the path /usr/local/vufind/local/harvest/ELAR
 
-* du -smh * to check disk space
+4. VuFind uses a style sheet to convert the input metadata (deposits or bundles) into a XML file containing the fields that will be indexed by Solr search engine. This style sheet is saved as: /usr/local/vufind/local/import/xsl/elar-scb.xslt. There is another style sheet to convert and manage the depositor profiles provided by ELAR: /usr/local/vufind/local/import/xsl/authors.xsl
 
-* free -m to show available RAM
+5. The resulting XML files will be imported in VuFind. To import the records, it is necessary to run the following:
 
-## 1.3: VuFind application structure
+`cd /usr/local/vufind/harvest
+/usr/local/vufind/harvest/batch-import-xsl.sh ./ELAR/ ../import/elar-scb.properties`
 
-VuFind is a PHP application with all files held in the /usr/local/vufind directory on the server. The application comprises a SolrMarc indexer to build a search index out of Marc records, an Apache website to display it, and a PHP Zend framework to manage catalogue functions. The website runs on port 443 as a https site.
+The expected output will be something like this:
 
-Important sub-directories are:
+`Processing /usr/local/vufind2/local/harvest/./ELAR//1460040639_oai_soas_ac_uk_MPI194589.xml ...
+Successfully imported /usr/local/vufind2/local/harvest/./ELAR//1460040639_oai_soas_ac_uk_MPI194589.xml...
+Processing /usr/local/vufind2/local/harvest/./ELAR//1460040639_oai_soas_ac_uk_MPI43292.xml ...
+Successfully imported /usr/local/vufind2/local/harvest/./ELAR//1460040639_oai_soas_ac_uk_MPI43292.xml...
+Processing /usr/local/vufind2/local/harvest/./ELAR//1460040639_oai_soas_ac_uk_MPI666480.xml ...
+Successfully imported /usr/local/vufind2/local/harvest/./ELAR//1460040639_oai_soas_ac_uk_MPI666480.xml...
+Processing /usr/local/vufind2/local/harvest/./ELAR//1460044136_oai_soas_ac_uk_MPI43292.xml ...
+Successfully imported /usr/local/vufind2/local/harvest/./ELAR//1460044136_oai_soas_ac_uk_MPI43292.xml...
+Optimizing index...`
 
-* /usr/local/vufind/config (Original blank config files)
+If the records have been processed successfully, they will be saved in the folder /usr/local/vufind/local/harvest/ELAR/processed/. If there are any error, the record will remain as it is.
 
-* /usr/local/vufind/harvest (Files to configure OAI-PMH harvest)
+Once those files are imported, it is necessary to extract their depositors:
 
-* /usr/local/vufind/import (Files to configure Marc import and indexing)
+`find $VUFIND_HOME/local/harvest/ELAR/processed -name '*.xml' | xargs mv -t $VUFIND_HOME/local/harvest/Authors/
+/usr/local/vufind/harvest/batch-import-xsl-auth.sh ./Authors/ ../import/authors.properties`
 
-* /usr/local/vufind/languages (Language files for display languages)
+Finally, the alphabetic browse will require to be updated with the latest records added to VuFind:
 
-* /usr/local/vufind/local (Local files)
+`cd /usr/local/vufind
+./index-alphabetic-browse.sh`
 
-* /usr/local/vufind/local/cache (Cache files for cover images, languages, objects, and searchspecs)
+All those tasks are automatized in a script: /root/scripts/import_vufind.sh (latest records) and /root/scripts/import_vufind_full.sh (all the records)
 
-* /usr/local/vufind/local/config (Copies of the /usr/local/vufind2/config files which have been customised for ELAR)
+6. The scheduled task should be within the crontab. Is should be daily. An example: 00 00 * * * /root/scripts/import_vufind_full.sh > /dev/null 2>&
 
-* /usr/local/vufind/module (VuFind application code)
+# 5. ACCESS TO LOCAL FILES
 
-* /usr/local/vufind/public (Files for public display on the website: logos, favicons, sitemaps, etc.)
+The first requirement for the new ELAR interface based on VuFind was to replicate the design of the old Drupal interface. Because of that, to display the deposit data it was necessary to include some the embedded HTML of Drupal in VuFind. They are mainly links to image, audio or video files. These files were saved as:
 
-* /usr/local/vufind/solr	(Solr config and indexes)
+/mnt/ELAR_Deposit_Resources
+/mnt/ELAR_Home_Page_Resources
 
-* /usr/local/vufind/solr/vufind/biblio (Bibliographic records indexes and configuration)
+An Apache configuration file was also created to set the properties of those files:
 
-* /usr/local/vufind/solr/vufind/biblio/conf (Configuration for Solr's bibliographic records search and indexing)
+/usr/local/vufind/local/httpd-vufind.conf
 
-* /usr/local/vufind/solr/vufind/alphabetical_browse (Alphabrowse records indexes)
+Within this file there are 3 alias:
 
-* /usr/local/vufind/themes (HTML and CSS files for website display)
+`Alias /projects/ "/mnt/ELAR_Home_Page_Resources/projects/"
+Alias /swf/ "/mnt/ELAR_Home_Page_Resources/"
+Alias /depositStore/ "/mnt/ELAR_Home_Page_Resources/"`
 
-* /usr/local/vufind/themes/templates/elar (Highly customised files for ELAR display)
+All the external files linked from the Drupal code used in VuFind will be under the folder called deposit.
 
-* /usr/local/vufind/util (Utilities scripts: optimization, sitemap building, dedupe, etc.)
+#6. ACCESS TO LAT-AMS DATABASE
 
-### 1.3.1: Configuration files
+VuFind requires connection to LAT-AMS database to get required data not included in the metadata records that are imported and indexed in VuFind. The database has two instances: soas and corpustructure.
 
-.ini configuration files are where the configuration for VuFind is kept. These are not versioned in git because they contain details that should not be made publicly accessible. Most are kept in the local directory in the config folder: /usr/local/vufind/local/config/vufind/... The important ones are:
+The configuration file to the database connection is stored as:
 
-* /usr/local/vufind/local/config/vufind/config.ini (Main configuration file for VuFind. Contains most general configuration: theme, ILS, debug mode, proxy settings, languages, authentication, links to external sites, SFX link, browsing, alphabrowsing, and more.)
+/usr/local/vufind/local/config/vufind/Ams.ini
 
-* /usr/local/vufind/local/config/vufind/Ams.ini	(Configuration file for connection to LAT's access management database.)
+The database connection is required for the following issues:
 
-* /usr/local/vufind/local/config/vufind/facets.ini (Controls the facets / filters.)
+* Importing access levels. The field Access protocol is indexed in Solr during the metadata import. During the import process, VuFind gets that value from the database to use it as a facet for filtering search results. The query is stored in this file (getAccessLevel) /usr/local/vufind/module/VuFind/src/VuFind/XSLT/Import/Soas.php
+* Display resources. The display of the resources at bundle level requires a database connection to show the resource list: name, access level, type, url. The action is encoded in this file (getResource): /usr/local/vufind/module/VuFind/src/VuFind/ILS/Driver/Ams.php
+* Authentication. The login requires a database connection against AMS. The query is saved in this file (patronLogin): /usr/local/vufind/module/VuFind/src/VuFind/ILS/Driver/Ams.php
 
-* /usr/local/vufind/local/config/vufind/searches.ini (Controls search settings.)
+# 7. WEBMASTER TOOLS
 
-* /usr/local/vufind/local/config/vufind/searchspecs.yaml	(Controls distribution of 'points' for searches and hence relevancy ranking. More information here: https://vufind.org/wiki/searches_customizing_tuning_adding)
+VuFind allows these webmaster tools:
 
-* /usr/local/vufind/local/config/vufind/sitemap.ini (Controls how the sitemap is built.)
+* Sitemaps. A sitemap for every identified URL (deposits and bundles) is automatically created if this setting is activated. The configuration file is /usr/local/vufind/local/config/vufind. To generate the sitemaps, the administrator will execute this command:
 
-* /usr/local/vufind/local/config/vufind/searchbox.ini (Controls the searchbox: largely used to turn on the 'combined search' module.)
+`cd /usr/local/vufind/util/
+php sitemap.php`
 
-* /usr/local/vufind/harvest/oai.ini (Defines OAI-PMH connections. Used for connecting to LAT.)
+Once executed, check the path: /usr/local/vufind/public/sitemap/
 
-### 1.3.2: Basic Apache control
+* Robots.txt. Once the metadata are published, the search engines will index them. We have included a robots.txt file in the path /url/local/vufind/public to disallow the indexation for certain URLs:
 
-VuFind runs on an Apache http server. The Apache configuration file can be found at /etc/httpd/conf.d/vufind.conf (which is a symlink to /usr/local/vufind/local/httpd-vufind.conf). Other Apache config files are at /etc/httpd/conf/ and /etc/httpd/conf.d/. 
+Disallow: /AJAX
+Disallow: /Alphabrowse
+Disallow: /Author
+Disallow: /Browse
+Disallow: /Combined
+Disallow: /Search/Results
+Disallow: /Summon
+Disallow: /SummonRecord
 
-To start Apache:
+Moreover, the administrator should review the indexation by robots, such as Baidu and Yandex, in the file access.log. If they slow the access to the interface, control them in the firewall.
 
-`service httpd start`
+# 8. MAPPING
 
-To restart Apache:
+After the import of the metadata, VuFind creates its own list of data fields to allow searching by them. Some of the data from LAT were stored as the default data fields of VuFind (title, keyword…), but the specific data for LAT were analyzed and stored in new VuFind data fields created for this project. This mapping from the XML fields to the VuFind data fields is published on:
+https://docs.google.com/spreadsheets/d/1QYSH7wzibLVIPolh6wAXczCv7PfggbsTkmAUxXUZD_I/edit#gid=836858062
 
-`service httpd restart`
+The table shows:
+* XML field
+* VuFind-Solr data field
+* Facet or not
+* Search term or not
+* Page
 
-### 1.5.3: Basic VuFind control
+# 9. STATISTICS
 
-The main files to control VuFind are kept in the base /usr/local/vufind folder. This basic control is scripted using scripts in the vufind_integration_scripts repository but can also be run manually.
+VuFind is compliant with Google Analytics and Piwik to get statistics. To configure it, the administrator should modify the file /usr/local/vufind/local/config/vufind/config.ini.
 
-solr.sh starts and stops the application. import-marc.sh imports Marc files and starts the indexing process. index-alphabetic-browse.sh starts the alphabrowse indexing for the 'Browse Alphabetically' feature.
+Currently, Google Analytics is already configured and the account number is: UA-56492944-2
 
-To start the VuFind application (user must be root):
+# 10. FAQ
 
-`/usr/local/vufind/solr.sh start`
+Some FAQs:
 
-To stop the VuFind application (user must be root):
+* VuFind is not updated. Most of the times, the cause is a harvesting error. The administrator should verify that the cron tasks are being executing. Logs are stored in: /usr/local/vufind/harvest.log
+* VuFind doesn’t harvest. The cause is the harvest_oai.php command has not been executed. The administrator should check the file /usr/local/vufind/harvest/oai.ini to manually create a URL using the values got from host and set variables: https://lat1.lis.soas.ac.uk/ds/oaiprovider/oai2?verb=ListRecords&metadataPrefix=imdi&set=MPI0:MPI43292:MPI663110&from=2016-02-24
 
-`/usr/local/vufind/solr.sh stop`
+Example:
+- https://lat1.lis.soas.ac.uk/ds/oaiprovider/oai2 : host value
+- MPI0:MPI43292:MPI663110: set value
+- 2016-02-24: date of the file /usr/local/vufind/local/harvest/ELAR/last_harvest.txt
 
-To restart the VuFind application (user must be root):
+If that URL fails, the administrator should contact the metadata provider to ask them for data fixes.
 
-`/usr/local/vufind/solr.sh restart`
+The error might be in the metadata. The administrator should verify it checking the file /usr/local/vufind/local/harvest/ELAR/soas-lat-harvest.log. In that file there is a list of the harvested files.
 
-### 1.5.4: Solr interface
+* VuFind doesn’t import. If VuFind doesn’t import records, the service should be stopped to verify if the search engine (Solr) is down. To stop the service use:
 
-VuFind's Apache Solr has a separate interface for debugging issues with the Solr search index. It's available on port 8080.
+`cd /usr/local/vufind/
+./vufind.sh restart`
 
-This interface allows you to run direct queries on the Solr index to check how fields have been indexed, to delete the Solr indexes, and to view JVM performance statistics. It also logs errors so you can see which errors get thrown up during the indexing process. 
+If the problem continues, the administrator should verify if the generated XML has any errors. The log /usr/local/vufind/solr/logs/solr.log will show that information.
 
-If you want to see the Solr interface, port 8080 will need to be opened. The larger SOAS firewall should prevent port 8080 from being seen outside the network so even opening this port will only make the interface available within SOAS' network.
+* VuFind is down. If VuFind is down, the administrator should execute this command:
 
-### 1.5.5: Cache
+`cd /usr/local/vufind/
+./vufind.sh restart`
 
-Clearing the cache may sometimes be necessary to make changes appear (in the case of languages or certain feature changes). To clear the caches, run:
-
-`cd /usr/local/vufind`
-
-`rm -rf ./local/cache/*`
+* Changes to VuFind texts. All the English texts are stored in the file /usr/local/vufind/languages/en.ini. To edit that file, it is recommended to download first the file. Before upload again the file, the administrator should verify that the character codification is UTF-8. To see the changes, it is necessary to empty the cache: rm -Rf /usr/local/vufind/local/cache/languages/*
