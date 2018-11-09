@@ -44,6 +44,7 @@ VuFind additional documentation can be retrieved from official webpage https://v
 Currently, there are 2 servers for the project ELAR discovery Via VuFind:
 
 Development: http://sjon.lis.soas.ac.uk/
+
 Production: http://wurin.lis.soas.ac.uk/
 
 The access to these servers requires a username (person name) and, to perform the connection as root, it will be necessary to insert the ‘su’ command and the root password.
@@ -94,17 +95,23 @@ The description for each of the fields imported in VuFind is in the same file oa
 
 To perform the harvesting, run the following:
 
-`cd /usr/local/vufind/harvest
-/usr/bin/php harvest_oai.php ELAR`
+`cd /usr/local/vufind/harvest`
+
+`/usr/bin/php harvest_oai.php ELAR`
 
 This is a standard output:
 
-`Processing ELAR...
-Autodetecting date granularity... found YYYY-MM-DD.
-Processing 100 records...
-Processing 100 records...
-Processing 3 records...
-Completed without errors -- 1 source(s) processed.`
+`Processing ELAR...`
+
+`Autodetecting date granularity... found YYYY-MM-DD.`
+
+`Processing 100 records...`
+
+`Processing 100 records...`
+
+`Processing 3 records...`
+
+`Completed without errors -- 1 source(s) processed.`
 
 This example means that 203 records were processed using the last harvesting date. This date is saved in the file /usr/local/vufind/local/harvest/ELAR/last_harvest.txt. If the user requires to harvest records from a specific date, the administrator will have to edit this file. If the user requires to get all the records, the administrator will remove this file (the system will not take into account that date if the file doesn’t exist). When this process is finished, the last harvesting date will be always the current date.
 
@@ -114,32 +121,43 @@ Processed records are stored in the path /usr/local/vufind/local/harvest/ELAR
 
 5. The resulting XML files will be imported in VuFind. To import the records, it is necessary to run the following:
 
-`cd /usr/local/vufind/harvest
-/usr/local/vufind/harvest/batch-import-xsl.sh ./ELAR/ ../import/elar-scb.properties`
+`cd /usr/local/vufind/harvest`
+
+`/usr/local/vufind/harvest/batch-import-xsl.sh ./ELAR/ ../import/elar-scb.properties`
 
 The expected output will be something like this:
 
-`Processing /usr/local/vufind2/local/harvest/./ELAR//1460040639_oai_soas_ac_uk_MPI194589.xml ...
-Successfully imported /usr/local/vufind2/local/harvest/./ELAR//1460040639_oai_soas_ac_uk_MPI194589.xml...
-Processing /usr/local/vufind2/local/harvest/./ELAR//1460040639_oai_soas_ac_uk_MPI43292.xml ...
-Successfully imported /usr/local/vufind2/local/harvest/./ELAR//1460040639_oai_soas_ac_uk_MPI43292.xml...
-Processing /usr/local/vufind2/local/harvest/./ELAR//1460040639_oai_soas_ac_uk_MPI666480.xml ...
-Successfully imported /usr/local/vufind2/local/harvest/./ELAR//1460040639_oai_soas_ac_uk_MPI666480.xml...
-Processing /usr/local/vufind2/local/harvest/./ELAR//1460044136_oai_soas_ac_uk_MPI43292.xml ...
-Successfully imported /usr/local/vufind2/local/harvest/./ELAR//1460044136_oai_soas_ac_uk_MPI43292.xml...
-Optimizing index...`
+`Processing /usr/local/vufind2/local/harvest/./ELAR//1460040639_oai_soas_ac_uk_MPI194589.xml ...`
+
+`Successfully imported /usr/local/vufind2/local/harvest/./ELAR//1460040639_oai_soas_ac_uk_MPI194589.xml...`
+
+`Processing /usr/local/vufind2/local/harvest/./ELAR//1460040639_oai_soas_ac_uk_MPI43292.xml ...`
+
+`Successfully imported /usr/local/vufind2/local/harvest/./ELAR//1460040639_oai_soas_ac_uk_MPI43292.xml...`
+
+`Processing /usr/local/vufind2/local/harvest/./ELAR//1460040639_oai_soas_ac_uk_MPI666480.xml ...`
+
+`Successfully imported /usr/local/vufind2/local/harvest/./ELAR//1460040639_oai_soas_ac_uk_MPI666480.xml...`
+
+`Processing /usr/local/vufind2/local/harvest/./ELAR//1460044136_oai_soas_ac_uk_MPI43292.xml ...`
+
+`Successfully imported /usr/local/vufind2/local/harvest/./ELAR//1460044136_oai_soas_ac_uk_MPI43292.xml...`
+
+`Optimizing index...`
 
 If the records have been processed successfully, they will be saved in the folder /usr/local/vufind/local/harvest/ELAR/processed/. If there are any error, the record will remain as it is.
 
 Once those files are imported, it is necessary to extract their depositors:
 
-`find $VUFIND_HOME/local/harvest/ELAR/processed -name '*.xml' | xargs mv -t $VUFIND_HOME/local/harvest/Authors/
-/usr/local/vufind/harvest/batch-import-xsl-auth.sh ./Authors/ ../import/authors.properties`
+`find $VUFIND_HOME/local/harvest/ELAR/processed -name '*.xml' | xargs mv -t $VUFIND_HOME/local/harvest/Authors/`
+
+`/usr/local/vufind/harvest/batch-import-xsl-auth.sh ./Authors/ ../import/authors.properties`
 
 Finally, the alphabetic browse will require to be updated with the latest records added to VuFind:
 
-`cd /usr/local/vufind
-./index-alphabetic-browse.sh`
+`cd /usr/local/vufind`
+
+`./index-alphabetic-browse.sh`
 
 All those tasks are automatized in a script: /root/scripts/import_vufind.sh (latest records) and /root/scripts/import_vufind_full.sh (all the records)
 
@@ -158,9 +176,11 @@ An Apache configuration file was also created to set the properties of those fil
 
 Within this file there are 3 alias:
 
-`Alias /projects/ "/mnt/ELAR_Home_Page_Resources/projects/"
-Alias /swf/ "/mnt/ELAR_Home_Page_Resources/"
-Alias /depositStore/ "/mnt/ELAR_Home_Page_Resources/"`
+`Alias /projects/ "/mnt/ELAR_Home_Page_Resources/projects/"`
+
+`Alias /swf/ "/mnt/ELAR_Home_Page_Resources/"`
+
+`Alias /depositStore/ "/mnt/ELAR_Home_Page_Resources/"`
 
 All the external files linked from the Drupal code used in VuFind will be under the folder called deposit.
 
@@ -184,8 +204,9 @@ VuFind allows these webmaster tools:
 
 * Sitemaps. A sitemap for every identified URL (deposits and bundles) is automatically created if this setting is activated. The configuration file is /usr/local/vufind/local/config/vufind. To generate the sitemaps, the administrator will execute this command:
 
-`cd /usr/local/vufind/util/
-php sitemap.php`
+`cd /usr/local/vufind/util/`
+
+`php sitemap.php`
 
 Once executed, check the path: /usr/local/vufind/public/sitemap/
 
@@ -238,14 +259,16 @@ The error might be in the metadata. The administrator should verify it checking 
 
 * VuFind doesn’t import. If VuFind doesn’t import records, the service should be stopped to verify if the search engine (Solr) is down. To stop the service use:
 
-`cd /usr/local/vufind/
-./vufind.sh restart`
+`cd /usr/local/vufind/`
+
+`./vufind.sh restart`
 
 If the problem continues, the administrator should verify if the generated XML has any errors. The log /usr/local/vufind/solr/logs/solr.log will show that information.
 
 * VuFind is down. If VuFind is down, the administrator should execute this command:
 
-`cd /usr/local/vufind/
-./vufind.sh restart`
+`cd /usr/local/vufind/`
+
+`./vufind.sh restart`
 
 * Changes to VuFind texts. All the English texts are stored in the file /usr/local/vufind/languages/en.ini. To edit that file, it is recommended to download first the file. Before upload again the file, the administrator should verify that the character codification is UTF-8. To see the changes, it is necessary to empty the cache: rm -Rf /usr/local/vufind/local/cache/languages/*
