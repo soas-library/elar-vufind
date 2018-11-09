@@ -108,10 +108,10 @@
 	         		<td class="table-align">
 	         			<span class="m-urcs">
 	         				<span <?if($field['accessavailability']=="O") echo 'class="vd"';?>>O</span>
-						<span <?if($field['accessavailability']=="U") echo 'class="vd"';?>>U</span>
-						<span <?if($field['accessavailability']=="S") echo 'class="vd"';?>>S</span>
-					</span>
-				</td>
+							<span <?if($field['accessavailability']=="U") echo 'class="vd"';?>>U</span>
+							<span <?if($field['accessavailability']=="S") echo 'class="vd"';?>>S</span>
+						</span>
+					</td>
          		<?}?>
          		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			
@@ -120,33 +120,33 @@
 			?>
 				<?// SCB - Exist file
 				if(is_file($file) && $field['type']!=""){?>
-         				<?if($field['filename']!=""){?>
-						<td class="table-align"> 
-                                                <input type="hidden" name="nodeid" value="" />
-                                                <input type="hidden" name="userid" value="" />
-                                                <input type="hidden" name="filename" value="" />
-<a onclick="insertStat('<?=$user->firstname;?>','<?=$user->lastname;?>','<?=$user->email;?>','<?=$field['path1'].'.'.$field['path2'];?>','<?=$field['filename'];?>','<?=$int_node_id;?>','<?=date('Y-m-d H:i:s');?>','<?=$dep;?>','<?=$dep_node_id;?>','V','<?=$field['accessavailability'];?>','<?=strtolower($field['type']);?>','<?=$field['funding_body'];?>','<?=$field['size'];?>','<?=$field['duration'];?>')" href="http<?=(isset($_SERVER['HTTPS']) ? 's' : '');?>://<?= $_SERVER['SERVER_NAME'];?>/MyResearch/Resource/<?=$url?>" download><?=$field['filename']?></a> </td>	         		
-         				<? } else { ?>
-                                		<td class="table-align"></td>
-                        		<?}?>
+         			<?if($field['filename']!=""){?>
+						<td class="table-align">
+                            <input type="hidden" name="nodeid" value="" />
+                            <input type="hidden" name="userid" value="" />
+                            <input type="hidden" name="filename" value="" />
+							<a onclick="insertStat('<?=$user->firstname;?>','<?=$user->lastname;?>','<?=$user->email;?>','<?=$field['path1'].'.'.$field['path2'];?>','<?=$field['filename'];?>','<?=$int_node_id;?>','<?=date('Y-m-d H:i:s');?>','<?=$dep;?>','<?=$dep_node_id;?>','V','<?=$field['accessavailability'];?>','<?=strtolower($field['type']);?>','<?=$field['funding_body'];?>','<?=$field['size'];?>','<?=$field['duration'];?>')" href="http<?=(isset($_SERVER['HTTPS']) ? 's' : '');?>://<?= $_SERVER['SERVER_NAME'];?>/MyResearch/Resource/<?=$url?>" download><?=$field['filename'];?></a> </td>	         		
+         			<? } else { ?>
+                     	<td class="table-align"></td>
+                    <?}?>
 				<? } else { ?>
 					<?if($field['filename']!=""){?>
-						<td class="table-align"> <?=$field['filename']?> </td>
+						<td class="table-align"> <?=$field['filename'];?> </td>
 					<? } else {?>
 						<td class="table-align"></td>
 					<?}?>	
 				<? } ?>
 			<? } else { ?>
-         			<?if($field['filename']!=""){?>
+         		<?if($field['filename']!=""){?>
 					<?if ($field['authorised']=="1") {?>
-						<td class="table-align"> 
-
-                                                 <input type="hidden" name="nodeid" value="" />
-                                                 <input type="hidden" name="userid" value="" />
-<a onclick="insertStat('<?=$user->firstname;?>','<?=$user->lastname;?>','<?=$user->email;?>','<?=$field['path1'].'.'.$field['path2'];?>','<?=$field['filename'];?>','<?=$int_node_id;?>','<?=date('Y-m-d H:i:s');?>','<?=$dep;?>','<?=$dep_node_id;?>','V','<?=$field['accessavailability'];?>','<?=strtolower($field['type']);?>','<?=($field['funding_body']);?>','<?=($field['size']);?>','<?=($field['duration']);?>')" href="http<?=(isset($_SERVER['HTTPS']) ? 's' : '');?>://<?= $_SERVER['SERVER_NAME'];?>/resources/<?=$filename.'.'.$extension;?>,'" download><?=$field['filename']?></a> </td>	
-                                        <? } else { ?>
-						<td class="table-align"> <?=$field['filename']?> </td>
-                                        <? } ?>
+						<td class="table-align">
+							<input type="hidden" name="nodeid" value="" />
+                            <input type="hidden" name="userid" value="" />
+							<a onclick="insertStat('<?=$user->firstname;?>','<?=$user->lastname;?>','<?=$user->email;?>','<?=$field['path1'].'.'.$field['path2'];?>','<?=$field['filename'];?>','<?=$int_node_id;?>','<?=date('Y-m-d H:i:s');?>','<?=$dep;?>','<?=$dep_node_id;?>','V','<?=$field['accessavailability'];?>','<?=strtolower($field['type']);?>','<?=($field['funding_body']);?>','<?=($field['size']);?>','<?=($field['duration']);?>')" href="http<?=(isset($_SERVER['HTTPS']) ? 's' : '');?>://<?= $_SERVER['SERVER_NAME'];?>/resources/<?=$filename.'.'.$extension;?>" download><?=$field['filename'];?></a></td>
+							<?print_r($extension);?>
+                    <? } else { ?>
+						<td class="table-align"> <?=$field['filename'];?> </td>
+                    <? } ?>
 				<?}?>
 				<?if($field['filename']==""){?>
 					<td class="table-align"></td>
@@ -222,7 +222,7 @@
 				if(strtolower($field['type'])=="image"):
 				    echo '<td class="table-align"><div align="center"><img src="http' . (isset($_SERVER['HTTPS']) ? 's' : '')  . '://'.$_SERVER['SERVER_NAME'].'/MyResearch/Resource/'.$url.'" alt="Description" height="150" width="150" class="img-responsive">
 <input type="hidden" class="nodeid" value=""/><input type="hidden" class="filename" value=""/><input type="hidden" class="userid" value=""/>
-<a onclick="insertStat(\''.$user->firstname.'\',\''.$user->lastname.'\',\''.$user->email.'\',\''.$field['path1'].'.'.$field['path2'].'\',\''.$field['filename'].'\',\''.$int_node_id.'\',\''.date('Y-m-d H:i:s').'\',\''.$dep.'\',\''.$dep_node_id.'\',\'V\',\''.$field['accessavailability'].'\',\''.strtolower($field['type']).'\',\''.strtolower($field['funding_body']).'\',\''.strtolower($field['size']).'\',\''.strtolower($field['duration']).'\')" href="http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://'.$_SERVER['SERVER_NAME'].'/MyResearch/Resource/'.$url.'" download  target="_blank">'.$this->transEsc('Download').'</a></div></td>';
+<a onclick="insertStat(\''.$user->firstname.'\',\''.$user->lastname.'\',\''.$user->email.'\',\''.$field['path1'].'.'.$field['path2'].'\',\''.$field['filename'].'\',\''.$int_node_id.'\',\''.date('Y-m-d H:i:s').'\',\''.$dep.'\',\''.$dep_node_id.'\',\'V\',\''.$field['accessavailability'].'\',\''.strtolower($field['type']).'\',\''.strtolower($field['funding_body']).'\'\''.strtolower($field['size']).'\',\''.strtolower($field['duration']).'\')" href="http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://'.$_SERVER['SERVER_NAME'].'/MyResearch/Resource/'.$url.'" download  target="_blank">'.$this->transEsc('Download').'</a></div></td>';
 
 				    
 				else:
@@ -244,7 +244,7 @@
 	
 				<?if($filename.'.'.$extension!=""){?>
                                  <? /*OJOOOOOOOOOOO QUITO EL ! SOLO PARA EL ENTORNO DE PRUEBA*/ ?>
-                                 <?if(!is_file($file)){?>
+                                 <?if(is_file($file)){?>
 
                                         <? echo '<td class="table-align"><strong>' . $this->transEsc('File not available') . '</strong></td>' ; ?>
 
