@@ -1,3 +1,2 @@
-Proccess started Wednesday 7th of November 2018 08:54:52 PM
-PHP Warning:  file_get_contents(https://lat1.lis.soas.ac.uk/ds/oaiprovider/oai2?verb=GetRecord&metadataPrefix=imdi&identifier=MPI1069861): failed to open stream: HTTP request failed!  in /usr/local/vufind2/module/VuFindConsole/src/VuFindConsole/Controller/ResourceController.php on line 81
-Proccess finished.Wednesday 7th of November 2018 09:30:11 PM
+Proccess started Wednesday 21st of November 2018 09:10:15 PM
+Proccess finished.Wednesday 21st of November 2018 09:40:47 PM
